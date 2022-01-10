@@ -1,0 +1,5 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  me.youm.reactor.webflux.config.WebSocketAutoConfiguration,\
+  me.youm.reactor.webflux.filter.ReactorContextWebFilter,\
+  me.youm.reactor.webflux.handler.GlobalErrorHandler,\
+  me.youm.reactor.webflux.config.DateConverterConfiguration

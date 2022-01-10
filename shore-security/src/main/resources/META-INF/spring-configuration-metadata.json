@@ -1,0 +1,25 @@
+{
+  "groups": [
+    {
+      "name": "shore.auth",
+      "type": "me.youm.reactor.security.props.TokenProperties",
+      "sourceType": "me.youm.reactor.security.props.TokenProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "shore.auth.enable",
+      "type": "java.lang.Boolean",
+      "description": "shore auth enable",
+      "sourceType": "me.youm.reactor.security.props.TokenProperties",
+      "defaultValue": "true"
+    },
+    {
+      "name": "shore.auth.ignore-url",
+      "type": "java.util.List",
+      "description": "shore auth ignore url",
+      "sourceType": "me.youm.reactor.security.props.TokenProperties"
+    }
+  ],
+  "hints": []
+}

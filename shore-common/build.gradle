@@ -1,0 +1,7 @@
+dependencies {
+    api "io.projectreactor:reactor-core:${reactorVersion}"
+    api "cn.hutool:hutool-all:${hutoolVersion}"
+    api "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonBaseVersion}"
+    api "com.fasterxml.jackson.core:jackson-databind:${jacksonBaseVersion}"
+    api "org.springframework:spring-web:${springVersion}"
+}

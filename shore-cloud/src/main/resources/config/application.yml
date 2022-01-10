@@ -1,0 +1,7 @@
+shore:
+  version: ${VERSION}
+spring:
+  data:
+    redis:
+      repositories:
+        enabled: false

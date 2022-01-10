@@ -1,0 +1,10 @@
+dependencies {
+    api "org.springframework.cloud:spring-cloud-starter-bootstrap:${springCloudVersion}"
+    api "com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config:${alibabaCloudVersion}"
+    api "com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery:${alibabaCloudVersion}"
+}
+processResources {
+    filesMatching('config/application.yml') {
+        expand(project.properties)
+    }
+}

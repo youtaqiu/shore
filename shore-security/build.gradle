@@ -1,0 +1,5 @@
+dependencies {
+    compileOnly "org.springframework.boot:spring-boot-autoconfigure:${springBootVersion}"
+    api "org.springframework.security:spring-security-crypto:${springSecurityVersion}"
+    api "javax.annotation:javax.annotation-api:${javaxAnnotation}"
+}

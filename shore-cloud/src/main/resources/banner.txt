@@ -1,0 +1,6 @@
+${AnsiColor.BRIGHT_GREEN}
+              /
+         _   /_  __ __  _
+        /_)_/ /_(_)/ (_</_
+ :: shore version ::     (v${shore.version})
+${AnsiColor.BLACK}

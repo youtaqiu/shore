@@ -1,0 +1,6 @@
+dependencies {
+    api "org.springframework.boot:spring-boot-starter-data-r2dbc:${springBootVersion}"
+    runtimeOnly "dev.miku:r2dbc-mysql:${r2dbcMysqlVersion}"
+    runtimeOnly "mysql:mysql-connector-java:${mysqlVersion}"
+    api "org.hibernate.validator:hibernate-validator:${validatorVersion}"
+}

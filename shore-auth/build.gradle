@@ -1,0 +1,8 @@
+dependencies {
+    api(project(":shore-common"))
+    api(project(":shore-redis"))
+    api(project(":shore-security"))
+    api "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}"
+    api "cn.dev33:sa-token-reactor-spring-boot-starter:${saTokenVersion}"
+    api "cn.dev33:sa-token-dao-redis-jackson:${saTokenVersion}"
+}

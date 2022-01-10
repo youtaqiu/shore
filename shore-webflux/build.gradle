@@ -1,0 +1,6 @@
+dependencies {
+    api(project(":shore-common"))
+    api("org.springframework.boot:spring-boot-starter-webflux:${springBootVersion}")
+    api "com.github.ben-manes.caffeine:caffeine:${caffeineVersion}"
+    api "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
+}
