@@ -107,6 +107,9 @@ public class BeanUtil extends org.springframework.beans.BeanUtils {
         return JacksonHolder.INSTANCE;
     }
 
+    /**
+     * JacksonHolder
+     */
     private static class JacksonHolder {
         private static final ObjectMapper INSTANCE = new JacksonObjectMapper();
     }
@@ -120,6 +123,9 @@ public class BeanUtil extends org.springframework.beans.BeanUtils {
 
         private static final Locale CHINA = Locale.CHINA;
 
+        /**
+         * Default constructor.
+         */
         JacksonObjectMapper() {
             super(jsonFactory());
             super.setLocale(CHINA);
