@@ -19,9 +19,9 @@ abstract class MavenRepositoryPlugin implements Plugin<Project> {
         try {
             def releasesRepoUrl = project.property("mvn.releasesRepoUrl") as String
             def snapshotsRepoUrl = project.property("mvn.snapshotsRepoUrl") as String
-            def username = System.getenv("REPO_USER_NAME")
+            def username = System.getenv("MVN_USERNAME")
             def mvnUser = Optional.ofNullable(username).orElse(project.property("mvn.username") as String)
-            def password = System.getenv("REPO_PASS_WORD")
+            def password = System.getenv("MVN_PASSWORD")
             def mvnPass = Optional.ofNullable(password).orElse(project.property("mvn.password") as String)
             publishing.repositories.maven { maven ->
                 maven.setAllowInsecureProtocol(true)
