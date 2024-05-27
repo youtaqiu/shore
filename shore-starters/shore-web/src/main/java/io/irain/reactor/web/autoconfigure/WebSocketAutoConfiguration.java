@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.HandlerMapping;
 import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -33,7 +34,7 @@ public class WebSocketAutoConfiguration {
      * @return WebSocketSenderMap
      */
     @Bean
-    public ConcurrentHashMap<String, WebSocketSender> senderMap() {
+    public Map<String, WebSocketSender> senderMap() {
         return new ConcurrentHashMap<>();
     }
 
