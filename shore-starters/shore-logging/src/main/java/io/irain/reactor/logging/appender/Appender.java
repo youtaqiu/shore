@@ -22,6 +22,6 @@ public enum Appender {
 	/**
 	 * loki
 	 */
-	LOKI;
+	LOKI
 
 }

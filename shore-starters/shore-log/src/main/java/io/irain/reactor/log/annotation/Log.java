@@ -14,13 +14,6 @@ import java.lang.annotation.*;
 public @interface Log {
 
     /**
-     * 类型.
-     *
-     * @return 类型
-     */
-    String type() default "";
-
-    /**
      * 操作内容.
      *
      * @return 操作内容
