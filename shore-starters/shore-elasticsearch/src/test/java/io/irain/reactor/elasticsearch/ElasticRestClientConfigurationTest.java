@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * @author youta
  **/
-public class ElasticRestClientConfigurationTest {
+class ElasticRestClientConfigurationTest {
 
     @Test
     void testRestClientBuilder() {
