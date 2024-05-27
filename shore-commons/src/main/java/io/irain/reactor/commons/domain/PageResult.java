@@ -58,7 +58,7 @@ public class PageResult<T> implements Serializable {
      * @param list the list of data items
      */
     public PageResult(List<T> list) {
-        this.list = list;
+        this.list = Collections.unmodifiableList(list);
     }
 
     /**

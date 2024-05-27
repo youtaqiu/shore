@@ -4,7 +4,7 @@ import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.IdUtil;
 import io.irain.reactor.commons.bean.R;
 import io.irain.reactor.commons.bean.Result;
-import io.irain.reactor.core.util.BeanUtils;
+import io.irain.reactor.core.util.BeanUtil;
 import io.irain.reactor.security.constants.TokenConstants;
 import io.irain.reactor.security.domain.ClientInfo;
 import io.irain.reactor.security.domain.CurrentUser;
@@ -59,7 +59,7 @@ public class TokenServerAuthenticationSuccessHandler implements ServerAuthentica
             userDetails.setUserId(userDetails.getId());
         }
         ClientInfo clientInfo = tokens._3;
-        var tokenInfo = BeanUtils.copy(userDetails, TokenInfo.class);
+        var tokenInfo = BeanUtil.copy(userDetails, TokenInfo.class);
         tokenInfo
                 .setAccessToken(tokens._1)
                 .setRefreshToken(tokens._2)

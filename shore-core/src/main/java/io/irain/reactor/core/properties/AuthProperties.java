@@ -3,6 +3,7 @@ package io.irain.reactor.core.properties;
 import io.irain.reactor.commons.annotation.RequestMethodEnum;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.CollectionUtils;
@@ -19,6 +20,11 @@ import java.util.Set;
 @ConfigurationProperties("shore.security")
 public class AuthProperties {
 
+    /**
+     * 设置是否开启
+     * enable 是否开启
+     */
+    @Setter
     private Boolean enable = true;
     private static final AntPathMatcher MATCHER = new AntPathMatcher();
 
@@ -32,13 +38,27 @@ public class AuthProperties {
      * 排除路径.
      */
     private final Set<String> excludePatterns = new HashSet<>();
+    /**
+     * 设置get排除路径.
+     * getExcludePatterns get排除路径
+     */
+    @Setter
     private Set<String> getExcludePatterns = new HashSet<>();
     private Set<String> postExcludePatterns = new HashSet<>();
     private Set<String> putExcludePatterns = new HashSet<>();
     private Set<String> patchExcludePatterns = new HashSet<>();
     private Set<String> deleteExcludePatterns = new HashSet<>();
 
+    /**
+     * 设置登录路径.
+     * loginPattern 登录路径
+     */
+    @Setter
     private String loginPattern = "/login";
+    /**
+     * 设置登出路径.
+     */
+    @Setter
     private String logoutPattern = "/logout";
     private final Long renewTimeSeconds = 3600L;
 
@@ -63,30 +83,12 @@ public class AuthProperties {
     };
 
     /**
-     * 设置是否开启
-     *
-     * @param enable 是否开启
-     */
-    public void setEnable(Boolean enable) {
-        this.enable = enable;
-    }
-
-    /**
-     * 设置get排除路径.
-     *
-     * @param getExcludePatterns get排除路径
-     */
-    public void setGetExcludePatterns(Set<String> getExcludePatterns) {
-        this.getExcludePatterns = getExcludePatterns;
-    }
-
-    /**
      * 设置post排除路径.
      *
      * @param postExcludePatterns post排除路径
      */
     public void setPostExcludePatterns(Set<String> postExcludePatterns) {
-        this.postExcludePatterns = postExcludePatterns;
+        this.postExcludePatterns = Collections.unmodifiableSet(postExcludePatterns);
     }
 
     /**
@@ -95,7 +97,7 @@ public class AuthProperties {
      * @param putExcludePatterns put排除路径
      */
     public void setPutExcludePatterns(Set<String> putExcludePatterns) {
-        this.putExcludePatterns = putExcludePatterns;
+        this.putExcludePatterns = Collections.unmodifiableSet(putExcludePatterns);
     }
 
     /**
@@ -104,34 +106,12 @@ public class AuthProperties {
      * @param patchExcludePatterns patch排除路径
      */
     public void setPatchExcludePatterns(Set<String> patchExcludePatterns) {
-        this.patchExcludePatterns = patchExcludePatterns;
+        this.patchExcludePatterns = Collections.unmodifiableSet(patchExcludePatterns);
     }
 
-    /**
-     * 设置删除排除路径.
-     *
-     * @param deleteExcludePatterns 删除排除路径
-     */
+
     public void setDeleteExcludePatterns(Set<String> deleteExcludePatterns) {
-        this.deleteExcludePatterns = deleteExcludePatterns;
-    }
-
-    /**
-     * 设置登录路径.
-     *
-     * @param loginPattern 登录路径
-     */
-    public void setLoginPattern(String loginPattern) {
-        this.loginPattern = loginPattern;
-    }
-
-    /**
-     * 设置登出路径.
-     *
-     * @param logoutPattern 登出路径
-     */
-    public void setLogoutPattern(String logoutPattern) {
-        this.logoutPattern = logoutPattern;
+        this.deleteExcludePatterns = Collections.unmodifiableSet(deleteExcludePatterns);
     }
 
 

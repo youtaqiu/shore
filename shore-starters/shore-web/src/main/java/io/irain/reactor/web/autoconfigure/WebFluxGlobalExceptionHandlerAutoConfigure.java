@@ -15,6 +15,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.web.reactive.result.view.ViewResolver;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -47,7 +48,7 @@ public class WebFluxGlobalExceptionHandlerAutoConfigure {
                                                       List<ViewResolver> viewResolvers, ServerCodecConfigurer serverCodecConfigurer) {
         this.serverProperties = serverProperties;
         this.resourceProperties = webProperties.getResources();
-        this.viewResolvers = viewResolvers;
+        this.viewResolvers = Collections.unmodifiableList(viewResolvers);
         this.serverCodecConfigurer = serverCodecConfigurer;
     }
 
