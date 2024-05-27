@@ -63,10 +63,11 @@ public class BeanUtil extends org.springframework.beans.BeanUtils {
 
     /**
      * 复制集合
+     *
      * @param collection 集合
      * @param targetType 目标类型
+     * @param <T>        目标类型
      * @return List
-     * @param <T> 目标类型
      */
     public static <T> List<T> copyToList(Collection<?> collection, Class<T> targetType) {
         if (null == collection) {
@@ -80,6 +81,7 @@ public class BeanUtil extends org.springframework.beans.BeanUtils {
 
     /**
      * 获取属性为空的属性名
+     *
      * @param source 源头
      * @return String[]
      */
@@ -98,6 +100,7 @@ public class BeanUtil extends org.springframework.beans.BeanUtils {
 
     /**
      * 获取实例
+     *
      * @return objectMapper
      */
     public static ObjectMapper getInstance() {
@@ -108,6 +111,9 @@ public class BeanUtil extends org.springframework.beans.BeanUtils {
         private static final ObjectMapper INSTANCE = new JacksonObjectMapper();
     }
 
+    /**
+     * A custom ObjectMapper for configuring JSON serialization and deserialization settings.
+     */
     private static class JacksonObjectMapper extends ObjectMapper {
         @Serial
         private static final long serialVersionUID = 4288193147502386170L;
@@ -128,10 +134,20 @@ public class BeanUtil extends org.springframework.beans.BeanUtils {
             super.findAndRegisterModules();
         }
 
+        /**
+         * Copy constructor.
+         *
+         * @param src the source ObjectMapper to copy from
+         */
         JacksonObjectMapper(ObjectMapper src) {
             super(src);
         }
 
+        /**
+         * Creates a custom JsonFactory with specific settings.
+         *
+         * @return a configured JsonFactory instance
+         */
         private static JsonFactory jsonFactory() {
             return JsonFactory.builder()
                     .configure(JsonReadFeature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true)

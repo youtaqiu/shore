@@ -44,6 +44,11 @@ public final class ReactiveAddrUtil {
         return ip;
     }
 
+    /**
+     * get ip from headers.
+     * @param headers headers
+     * @return ip
+     */
     private static String getIpFromHeaders(Map<String, String> headers) {
         String[] headerKeys = {"X-Forwarded-For", "Proxy-Client-IP", "WL-Proxy-Client-IP", "HTTP_CLIENT_IP", "HTTP_X_FORWARDED_FOR"};
         for (String key : headerKeys) {
@@ -55,6 +60,11 @@ public final class ReactiveAddrUtil {
         return null;
     }
 
+    /**
+     * extract first not empty ip.
+     * @param ip ip
+     * @return ip
+     */
     private static String extractFirstNonEmptyIp(String ip) {
         String[] ips = ip.split(",");
         for (String strIp : ips) {
@@ -66,6 +76,11 @@ public final class ReactiveAddrUtil {
     }
 
 
+    /**
+     * 判断ip是否为空.
+     * @param ip ip
+     * @return boolean
+     */
     private static boolean isEmpty(String ip) {
         return StringUtils.hasLength(ip) && !UNKNOWN_STR.equalsIgnoreCase(ip);
     }
