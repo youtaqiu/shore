@@ -1,0 +1,63 @@
+import org.gradle.util.GradleVersion
+
+apply plugin: "groovy-gradle-plugin"
+
+repositories {
+    maven { url "https://plugins.gradle.org/m2/" }
+    maven { url "https://repo.spring.io/release" }
+    maven { url "https://mirrors.cloud.tencent.com/nexus/repository/maven-public" }
+}
+
+ext {
+    bootVersion = libs.versions.springBoot.get()
+    releaseVersion = libs.versions.gradleRelease.get()
+}
+
+dependencies {
+    implementation "org.springframework.boot:spring-boot-gradle-plugin:$bootVersion"
+    implementation "com.faendir.gradle:gradle-release:$releaseVersion"
+}
+
+
+gradlePlugin {
+    plugins {
+        bomPlugin {
+            id = "io.irain.bom"
+            implementationClass = "io.irain.plugin.BomPlugin"
+        }
+        modulePlugin {
+            id = "io.irain.module"
+            implementationClass = "io.irain.plugin.ModulePlugin"
+        }
+        commonPlugin {
+            id = "io.irain.common"
+            implementationClass = "io.irain.plugin.CommonPlugin"
+        }
+        rootProjectPlugin {
+            id = "io.irain.root"
+            implementationClass = "io.irain.plugin.RootPlugin"
+        }
+        servicePlugin {
+            id = "io.irain.service"
+            implementationClass = "io.irain.plugin.ServicePlugin"
+        }
+        deployedPlugin {
+            id = "io.irain.mvn.deployed"
+            implementationClass = "io.irain.plugin.maven.DeployedPlugin"
+        }
+        releasePlugin {
+            id = "io.irain.release"
+            implementationClass = "io.irain.plugin.ReleasePlugin"
+        }
+    }
+}
+
+(project.tasks.named(JavaPlugin.JAR_TASK_NAME).get() as Jar).manifest {
+    attributes(
+            [
+                    "Created-By"    : System.getProperty("java.version") + " (" +
+                            System.getProperty("java.specification.vendor") + ")",
+                    "Gradle-Version": GradleVersion.current()
+            ]
+    )
+}

@@ -1,0 +1,14 @@
+plugins {
+    id "io.irain.common"
+    id "io.irain.mvn.deployed"
+}
+
+description "shore limit starter"
+
+dependencies {
+    optional project(":shore-core")
+    optional project(":shore-starters:shore-security")
+    api "org.redisson:redisson-spring-boot-starter"
+    optional "org.springframework.boot:spring-boot-starter-aop"
+    optional "org.springframework.boot:spring-boot-autoconfigure"
+}

@@ -1,0 +1,16 @@
+plugins{
+    id "io.irain.common"
+    id "io.irain.mvn.deployed"
+}
+
+
+description "shore security starter"
+
+dependencies {
+    api project(":shore-core")
+    api project(":shore-starters:shore-redis")
+    api "org.springframework.boot:spring-boot-starter-security"
+    optional "org.springframework:spring-webflux"
+    optional "io.projectreactor:reactor-core"
+    testImplementation "org.springframework.security:spring-security-test"
+}

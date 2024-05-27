@@ -1,0 +1,21 @@
+plugins {
+    id "io.irain.common"
+    id "io.irain.mvn.deployed"
+}
+
+description "shore core packages"
+
+dependencies {
+    api project(":shore-commons")
+    api "cn.hutool:hutool-all"
+    api "org.slf4j:slf4j-api"
+    api "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+    compileOnly "org.springframework.boot:spring-boot-autoconfigure"
+    compileOnly "jakarta.annotation:jakarta.annotation-api"
+    api "io.vavr:vavr"
+    api "org.hibernate.validator:hibernate-validator"
+    api "com.github.ben-manes.caffeine:caffeine"
+    api "org.springdoc:springdoc-openapi-starter-webflux-ui"
+    api "org.springframework.boot:spring-boot-starter-webflux"
+    optional "io.projectreactor:reactor-core"
+}

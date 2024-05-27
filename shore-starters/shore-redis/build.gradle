@@ -1,0 +1,13 @@
+plugins {
+    id "io.irain.common"
+    id "io.irain.mvn.deployed"
+}
+
+description "shore redis starter"
+
+dependencies {
+    optional "org.springframework.boot:spring-boot-autoconfigure"
+    api "org.springframework.boot:spring-boot-starter-data-redis-reactive"
+    optional "com.fasterxml.jackson.core:jackson-databind"
+    optional "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+}

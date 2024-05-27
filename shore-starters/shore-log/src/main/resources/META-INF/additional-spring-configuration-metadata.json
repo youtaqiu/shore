@@ -1,0 +1,54 @@
+{
+  "properties": [
+    {
+      "name": "shore.log.console",
+      "type": "java.lang.Boolean",
+      "defaultValue": "true",
+      "description": "Enable console request logging."
+    },
+    {
+      "name": "shore.loki.http.url",
+      "type": "java.lang.String",
+      "defaultValue": "http://localhost:3100/loki/api/v1/push",
+      "description": "Loki地址."
+    },
+    {
+      "name": "shore.loki.batch.items",
+      "type": "java.lang.Integer",
+      "defaultValue": "1000",
+      "description": "Loki单个批次最大条目大小."
+    },
+    {
+      "name": "shore.loki.batch.timeout",
+      "type": "java.lang.Integer",
+      "defaultValue": "60000",
+      "description": "Loki单个批次最大超时毫秒数."
+    },
+    {
+      "name": "shore.loki.batch.bytes",
+      "type": "java.lang.Integer",
+      "defaultValue": "4194304",
+      "description": "Loki单个批次最大字节数."
+    },
+    {
+      "name": "shore.loki.http.connection.timeout",
+      "type": "java.lang.Integer",
+      "defaultValue": "30000",
+      "description": "Loki网络发送建立连接的超时毫秒时间."
+    },
+    {
+      "name": "shore.loki.http.request.timeout",
+      "type": "java.lang.Integer",
+      "defaultValue": "5000",
+      "description": "Loki网络发送等待响应的超时毫秒时间."
+    },
+    {
+      "name": "shore.loki.http.tenant-id",
+      "type": "java.lang.String",
+      "defaultValue": "rain",
+      "description": "Loki租户标识符(仅在将日志直接发送到在多租户模式下运行的 Loki 时才需要.否则此设置无效)."
+    }
+
+  ],
+  "hints": []
+}

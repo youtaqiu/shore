@@ -1,0 +1,2 @@
+io.irain.reactor.http.autoconfigure.HttpInterfaceAutoConfiguration
+io.irain.reactor.http.autoconfigure.WebClientLoadBalancerConfiguration

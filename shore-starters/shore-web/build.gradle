@@ -1,0 +1,16 @@
+plugins{
+    id "io.irain.common"
+    id "io.irain.mvn.deployed"
+}
+
+
+description "shore web starter"
+
+dependencies {
+    api project(":shore-core")
+    api "org.springframework.boot:spring-boot-starter-webflux"
+    api "org.springdoc:springdoc-openapi-starter-webflux-ui"
+    api "org.springframework.boot:spring-boot-starter-actuator"
+    api "io.micrometer:micrometer-registry-prometheus"
+    optional "org.springframework.cloud:spring-cloud-commons"
+}

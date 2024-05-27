@@ -1,0 +1,17 @@
+plugins {
+    id "io.irain.common"
+    id "io.irain.mvn.deployed"
+}
+
+description "shore r2dbc starter"
+
+dependencies {
+    api project(":shore-starters:shore-security")
+    api "org.springframework.boot:spring-boot-starter-data-r2dbc"
+    runtimeOnly "io.asyncer:r2dbc-mysql"
+    testCompileOnly "io.asyncer:r2dbc-mysql"
+    testCompileOnly "io.r2dbc:r2dbc-h2"
+    testRuntimeOnly "io.r2dbc:r2dbc-h2"
+    runtimeOnly "com.mysql:mysql-connector-j"
+    api "org.liquibase:liquibase-core"
+}

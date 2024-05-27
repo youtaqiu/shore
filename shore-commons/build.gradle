@@ -1,0 +1,21 @@
+plugins {
+    id "io.irain.common"
+    id "io.irain.mvn.deployed"
+}
+
+description "shore commons packages"
+
+dependencies {
+    api "com.fasterxml.jackson.core:jackson-databind"
+    api "jakarta.validation:jakarta.validation-api"
+    api "org.springframework:spring-web"
+    compileOnly "org.springframework:spring-context"
+    api "cn.hutool:hutool-all"
+    api "org.slf4j:slf4j-api"
+    api "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+    api "com.github.spotbugs:spotbugs-annotations"
+    compileOnly "org.springframework:spring-web"
+    compileOnly "org.springframework.boot:spring-boot-autoconfigure"
+    optional "io.projectreactor:reactor-core"
+    optional "io.swagger.core.v3:swagger-annotations-jakarta"
+}

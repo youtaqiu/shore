@@ -1,0 +1,49 @@
+[versions]
+springBoot = "3.3.0"
+springCloud = "2023.0.1"
+hutool = "5.8.27"
+slf4jApi = "2.0.12"
+logstash = "7.4"
+loki4j = "1.5.1"
+jjwt = "0.9.1"
+springdoc = "2.5.0"
+r2dbcMysql = "1.1.3"
+vavr = "0.10.4"
+redisson = "3.30.0"
+spotbugsAnnotations = "4.8.5"
+swaggerAnnotations = "2.2.22"
+mapstruct = "1.5.5.Final"
+mapstructSpring = "1.1.1"
+gradleRelease = "3.3.1"
+qualityVersion = "5.0.0"
+opentelemetry = "2.4.0"
+reactorRabbitmq = "1.5.6"
+swaggerV3Annotations = "2.2.22"
+awsSdk = "1.12.722"
+
+[libraries]
+r2dbc-mysql = { group = "io.asyncer", name = "r2dbc-mysql", version.ref = "r2dbcMysql" }
+redisson-starter = { group = "org.redisson", name = "redisson-spring-boot-starter", version.ref = "redisson" }
+redisson = { group = "org.redisson", name = "redisson", version.ref = "redisson" }
+logstash-logback-encoder = { group = "net.logstash.logback", name = "logstash-logback-encoder", version.ref = "logstash" }
+loki4j-logback = { group = "com.github.loki4j", name = "loki-logback-appender", version.ref = "loki4j" }
+jsonwebtoken = { group = "io.jsonwebtoken", name = "jjwt", version.ref = "jjwt" }
+spotbugs-annotations = { group = "com.github.spotbugs", name = "spotbugs-annotations", version.ref = "spotbugsAnnotations" }
+mapstruct = { group = "org.mapstruct", name = "mapstruct", version.ref = "mapstruct" }
+mapstruct-processor = { group = "org.mapstruct", name = "mapstruct-processor", version.ref = "mapstruct" }
+mapstruct-spring = { group = "org.mapstruct.extensions.spring", name = "mapstruct-spring-annotations", version.ref = "mapstructSpring" }
+hutool = { group = "cn.hutool", name = "hutool-all", version.ref = "hutool" }
+slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4jApi" }
+swagger-annotations = { group = "io.swagger.core.v3", name = "swagger-annotations", version.ref = "swaggerAnnotations" }
+spring-doc = { group = "org.springdoc", name = "springdoc-openapi-starter-webflux-ui", version.ref = "springdoc" }
+vavr = { group = "io.vavr", name = "vavr", version.ref = "vavr" }
+opentelemetry-extension = { group = "io.opentelemetry.instrumentation", name = "opentelemetry-instrumentation-annotations", version.ref = "opentelemetry" }
+reactor-rabbitmq = { group = "io.projectreactor.rabbitmq", name = "reactor-rabbitmq", version.ref = "reactorRabbitmq" }
+swagger-v3-annotations = { group = "io.swagger.core.v3", name = "swagger-annotations-jakarta", version.ref = "swaggerV3Annotations" }
+aws-sdk-s3 = { group = "com.amazonaws", name = "aws-java-sdk-s3", version.ref = "awsSdk" }
+aws-sdk-sts = { group = "com.amazonaws", name = "aws-java-sdk-sts", version.ref = "awsSdk" }
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
+gradle-release = { id = "net.researchgate.release", version.ref = "gradleRelease" }
+code-quality = { id = "ru.vyarus.quality", version.ref = "qualityVersion" }

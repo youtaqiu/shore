@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <!-- 日志级别 -->
+    <springProperty scope="context" name="loggingLevelRoot" source="logging.level.root" defaultValue="INFO"/>
+    <!-- 控制台日志 -->
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+
+    <root level="${loggingLevelRoot}">
+        <appender-ref ref="CONSOLE" />
+    </root>
+
+    <!-- 减少部分debug日志 -->
+    <logger name="org.springframework.context" level="WARN"/>
+    <logger name="org.springframework.beans" level="WARN"/>
+    <logger name="springfox.bean.validators" level="ERROR"/>
+    <logger name="springfox.documentation" level="ERROR" />
+
+    <logger name="ch.qos.logback.classic.jul.LevelChangePropagator" level="OFF"/>
+    <logger name="ch.qos.logback.classic.model.processor.**" level="OFF"/>
+    <!-- 其他配置 -->
+
+    <!-- 关闭 mybatis 默认的 sql 日志 -->
+    <logger name="log.mybatis" level="INFO"/>
+    <!-- 基础组件 -->
+    <Logger name="org.reflections" level="ERROR"/>
+    <logger name="org.springframework.boot.actuate.endpoint.EndpointId" level="OFF"/>
+    <logger name="org.springframework.context.support.PostProcessorRegistrationDelegate" level="OFF"/>
+    <logger name="org.reflections.Reflections" level="OFF"/>
+    <logger name="org.hibernate.validator.internal.util.Version" level="OFF"/>
+    <logger name="org.springframework.core.LocalVariableTableParameterNameDiscoverer" level="OFF"/>
+    <logger name="io.netty.resolver.dns.DnsServerAddressStreamProviders" level="OFF"/>
+    <logger name="org.springframework.context.support.ResourceBundleMessageSource" level="OFF"/>
+    <logger name="org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport" level="OFF"/>
+
+    <springProfile name="dev | test">
+        <logger name="com.moment.reactor" level="INFO"/>
+    </springProfile>
+    <springProfile name="ontest">
+        <Logger name="com.moment.reactor" level="INFO"/>
+    </springProfile>
+    <springProfile name="prod">
+        <Logger name="com.moment.reactor" level="ERROR"/>
+    </springProfile>
+
+    <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+    </contextListener>
+
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+</configuration>

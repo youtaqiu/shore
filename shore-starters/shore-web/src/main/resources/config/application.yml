@@ -1,0 +1,24 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+    banner-mode: off
+  profiles:
+    active: local
+  web:
+    resources:
+      add-mappings: false
+springdoc:
+  swagger-ui:
+    path: /docs
+
+server:
+  error:
+    path: /error
+
+management:
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true

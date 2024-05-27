@@ -1,0 +1,2 @@
+io.irain.reactor.log.autoconfigure.LogAutoConfigure
+io.irain.reactor.log.autoconfigure.LogConsoleAutoConfiguration

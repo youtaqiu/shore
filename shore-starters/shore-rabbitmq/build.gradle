@@ -1,0 +1,17 @@
+plugins {
+    id "io.irain.common"
+    id "io.irain.mvn.deployed"
+}
+
+description "shore rabbitmq starter"
+
+dependencies {
+    api project(":shore-core")
+    optional "org.springframework.boot:spring-boot-autoconfigure"
+    optional "org.springframework.boot:spring-boot-configuration-processor"
+    optional "jakarta.annotation:jakarta.annotation-api"
+    testImplementation("org.springframework.amqp:spring-rabbit-test")
+    testImplementation("io.projectreactor:reactor-test")
+    api("io.projectreactor.rabbitmq:reactor-rabbitmq")
+//    api("org.springframework.boot:spring-boot-starter-amqp")
+}

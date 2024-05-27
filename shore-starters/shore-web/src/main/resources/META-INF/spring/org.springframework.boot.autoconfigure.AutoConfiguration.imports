@@ -1,0 +1,5 @@
+io.irain.reactor.web.autoconfigure.ReactorContextWebFilterAutoConfigure
+io.irain.reactor.web.autoconfigure.WebFluxGlobalExceptionHandlerAutoConfigure
+io.irain.reactor.web.autoconfigure.SwaggerConfiguration
+io.irain.reactor.web.autoconfigure.WebSocketAutoConfiguration
+io.irain.reactor.web.autoconfigure.JacksonConfiguration

@@ -1,0 +1,45 @@
+plugins {
+    id "io.irain.root"
+    id "io.irain.release"
+}
+
+
+ext {
+    bom = Set.of(project(":shore-bom"))
+    gradleModuleProjects = (subprojects.findAll { it.buildFile.exists() } - (bom ))
+}
+
+configure(gradleModuleProjects) {
+    apply plugin: "io.irain.module"
+
+    dependencies {
+        management platform(project(":shore-bom"))
+        compileProcessor "org.projectlombok:lombok"
+        compileProcessor "org.springframework.boot:spring-boot-configuration-processor"
+        compileProcessor "org.springframework.boot:spring-boot-autoconfigure-processor"
+        testImplementation "org.springframework:spring-tx"
+        testImplementation "org.springframework.boot:spring-boot-starter-test"
+        testImplementation "io.projectreactor:reactor-test"
+    }
+
+    test {
+        systemProperties(System.getProperties())
+        def skipExclude = systemProperties.get("exclude") as Boolean
+        if (skipExclude) {
+            try (def reader = new FileReader("./exclude.txt")
+                 def bufferedReader = new BufferedReader(reader)) {
+                def lines = bufferedReader.readLines()
+                        .stream().map { it.replaceAll("\\.", "/") + ".class" }.toList()
+                exclude(lines)
+            }
+        }
+    }
+}
+
+configure(allprojects) {
+    repositories {
+        maven { url "https://mirrors.cloud.tencent.com/nexus/repository/maven-public/"}
+        maven { url "https://repo.spring.io/release" }
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+}

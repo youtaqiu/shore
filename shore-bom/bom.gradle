@@ -1,0 +1,35 @@
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+
+plugins {
+    id "io.irain.bom"
+}
+
+description "shore bom"
+
+def versionCatalog = rootProject.extensions
+        .getByType(VersionCatalogsExtension.class)
+        .named("libs")
+
+def bom = versionCatalog.libraryAliases
+        .findAll { it.endsWith("dependencies") || it.endsWith("bom") }
+def dependency = (versionCatalog.libraryAliases - bom)
+
+static Collection<String> dependencyManagement(Collection<String> dependencyNames, VersionCatalog versionCatalog) {
+    return dependencyNames.stream().map { versionCatalog.findLibrary(it).get().get().toString() }.toList()
+}
+
+def cloudVersion = libs.versions.springCloud.get()
+
+dependencies {
+    api platform(SpringBootPlugin.BOM_COORDINATES)
+    api platform("org.springframework.cloud:spring-cloud-dependencies:${cloudVersion}")
+    dependencyManagement(bom, versionCatalog).forEach { api(platform(it)) }
+    constraints {
+        dependencyManagement(dependency, versionCatalog).forEach { api(it) }
+        api(project(":shore-commons"))
+        api(project(":shore-core"))
+        project(":shore-starters").subprojects {
+            api(it)
+        }
+    }
+}
