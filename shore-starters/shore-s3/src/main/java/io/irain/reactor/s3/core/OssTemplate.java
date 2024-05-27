@@ -15,7 +15,7 @@ import com.amazonaws.services.securitytoken.AWSSecurityTokenService;
 import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder;
 import com.amazonaws.services.securitytoken.model.Credentials;
 import com.amazonaws.services.securitytoken.model.GetSessionTokenRequest;
-import io.irain.reactor.core.util.BeanUtils;
+import io.irain.reactor.core.util.BeanUtil;
 import io.irain.reactor.s3.bean.OssToken;
 import io.irain.reactor.s3.bean.ResourcePathConfig;
 import io.irain.reactor.s3.props.OssProperties;
@@ -243,7 +243,7 @@ public class OssTemplate implements InitializingBean {
         PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, objectName, stream, objectMetadata);
         // Setting the read limit value to one byte greater than the size of stream will
         // reliably avoid a ResetException
-        putObjectRequest.getRequestClientOptions().setReadLimit(Long.valueOf(size).intValue() + 1);
+        putObjectRequest.getRequestClientOptions().setReadLimit((int) size + 1);
         return amazonS3.putObject(putObjectRequest);
 
     }
@@ -300,7 +300,7 @@ public class OssTemplate implements InitializingBean {
         if (resourcePathConfig == null) {
             throw new IllegalArgumentException("configKey is not exist");
         }
-        return BeanUtils.copy(resourcePathConfig, credentials);
+        return BeanUtil.copy(resourcePathConfig, credentials);
     }
 
     @Override

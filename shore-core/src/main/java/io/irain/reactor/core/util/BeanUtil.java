@@ -1,6 +1,5 @@
 package io.irain.reactor.core.util;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.util.ReflectUtil;
 import com.fasterxml.jackson.core.JsonFactory;
@@ -22,7 +21,7 @@ import java.util.stream.Collectors;
  * @author youta
  */
 @SuppressWarnings("unused")
-public class BeanUtils extends org.springframework.beans.BeanUtils {
+public class BeanUtil extends org.springframework.beans.BeanUtils {
 
     /**
      * source属性为空的不赋值给target
@@ -59,7 +58,7 @@ public class BeanUtils extends org.springframework.beans.BeanUtils {
      */
     @SuppressWarnings("unchecked")
     public static Map<String, Object> beanToMap(Object bean) {
-        return BeanUtil.copyProperties(bean, Map.class);
+        return cn.hutool.core.bean.BeanUtil.copyProperties(bean, Map.class);
     }
 
     /**
