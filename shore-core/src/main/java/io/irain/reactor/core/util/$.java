@@ -17,7 +17,6 @@ import java.util.Map;
  *
  * @author youta
  */
-@SuppressWarnings("unused")
 @NoArgsConstructor
 public class $ extends Assert {
 

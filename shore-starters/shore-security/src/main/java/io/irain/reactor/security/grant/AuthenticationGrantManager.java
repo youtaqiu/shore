@@ -3,7 +3,6 @@ package io.irain.reactor.security.grant;
 import io.irain.reactor.commons.exception.ServerException;
 import io.irain.reactor.core.util.OptionalBean;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,7 +18,6 @@ import static io.irain.reactor.commons.enums.GrantType.PASSWORD;
  **/
 @Service
 @AllArgsConstructor
-@Slf4j
 public class AuthenticationGrantManager {
 
     /**

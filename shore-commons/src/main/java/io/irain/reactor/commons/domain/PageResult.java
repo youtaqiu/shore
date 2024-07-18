@@ -23,7 +23,6 @@ import java.util.List;
 @NoArgsConstructor
 @Accessors(chain = true)
 @Builder
-@SuppressWarnings("unused")
 public class PageResult<T> implements Serializable {
 
 

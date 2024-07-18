@@ -6,7 +6,6 @@ import io.irain.reactor.commons.enums.CommonExceptionEnum;
 import io.irain.reactor.core.properties.AuthProperties;
 import io.irain.reactor.security.domain.RoleEnum;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.ReactiveAuthorizationManager;
@@ -24,7 +23,6 @@ import java.util.Arrays;
  **/
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class CustomAuthorizationManager implements ReactiveAuthorizationManager<AuthorizationContext> {
 
     private final AuthProperties properties;

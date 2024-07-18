@@ -10,7 +10,6 @@ import lombok.Setter;
  **/
 @Setter
 @Getter
-@SuppressWarnings("unused")
 class UserDemo extends BaseDomain<Long> {
     private Long id;
     private String name;

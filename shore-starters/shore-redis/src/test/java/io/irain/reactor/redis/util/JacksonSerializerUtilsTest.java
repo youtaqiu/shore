@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * @author youta
  **/
-@SuppressWarnings("unused")
 class JacksonSerializerUtilsTest {
 
 

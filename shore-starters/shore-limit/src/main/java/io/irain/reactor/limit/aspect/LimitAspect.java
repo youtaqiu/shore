@@ -6,7 +6,6 @@ import io.irain.reactor.limit.annotation.Limit;
 import io.irain.reactor.limit.provider.LimitProvider;
 import io.irain.reactor.limit.support.LimitSupport;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
@@ -26,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author youta
  **/
-@Slf4j
 @Aspect
 @RequiredArgsConstructor
 @Order(2)

@@ -23,7 +23,6 @@ import static org.springframework.data.relational.core.query.Query.query;
  **/
 @AllArgsConstructor
 @NoArgsConstructor
-@SuppressWarnings("unused")
 public class PageWrap<T> {
 
     private R2dbcEntityTemplate template;

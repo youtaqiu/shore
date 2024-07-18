@@ -18,7 +18,6 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-@SuppressWarnings("unused")
 public class Token implements Serializable {
 
     /**

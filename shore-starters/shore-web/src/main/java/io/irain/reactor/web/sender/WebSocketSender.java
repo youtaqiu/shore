@@ -30,7 +30,6 @@ public class WebSocketSender {
      *
      * @param data 数据
      */
-    @SuppressWarnings("unused")
     public void sendData(String data) {
         sink.next(session.textMessage(data));
     }

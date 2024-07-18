@@ -14,7 +14,6 @@ import java.util.function.Supplier;
 /**
  * @author youta
  */
-@SuppressWarnings("unused")
 public class OptionalBean<T> implements Serializable {
 
     @Serial

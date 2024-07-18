@@ -17,7 +17,6 @@ import static org.springframework.data.relational.core.query.Query.query;
 /**
  * @author youta
  **/
-@SuppressWarnings("unused")
 public interface DbUtils {
 
     /**

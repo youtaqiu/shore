@@ -11,7 +11,6 @@ import reactor.core.publisher.Mono;
  *
  * @author youta
  **/
-@SuppressWarnings("unused")
 public interface UserDetailService extends ReactiveUserDetailsService {
 
     /**

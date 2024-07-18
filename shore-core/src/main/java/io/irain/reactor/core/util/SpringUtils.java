@@ -19,7 +19,6 @@ import java.util.Map;
  * @author youta
  **/
 @Configuration(proxyBeanMethods = false)
-@SuppressWarnings("unused")
 public class SpringUtils implements ApplicationContextAware {
 
     private static ApplicationContext context = null;
