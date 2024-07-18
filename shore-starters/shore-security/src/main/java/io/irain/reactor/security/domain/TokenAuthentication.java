@@ -13,7 +13,6 @@ import java.util.Collection;
  **/
 @Getter
 @Accessors(chain = true)
-@SuppressWarnings("unused")
 public class TokenAuthentication extends AbstractAuthenticationToken {
 
     /**

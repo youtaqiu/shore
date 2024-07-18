@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 /**
  * @author youta
  **/
-@SuppressWarnings("unused")
 public class ReactiveBodyParamUtil {
 
     private static final String EQ = "=";

@@ -10,7 +10,6 @@ import java.util.Map;
  *
  * @author youta
  */
-@SuppressWarnings("unused")
 public interface ExpressionResolver {
 
     /**

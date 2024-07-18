@@ -9,7 +9,6 @@ package io.irain.reactor.commons.constants;
  *
  * @author youta
  */
-@SuppressWarnings("unused")
 public class Constants {
 
     private Constants() {

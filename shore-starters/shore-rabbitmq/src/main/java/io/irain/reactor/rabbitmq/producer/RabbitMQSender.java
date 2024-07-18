@@ -29,7 +29,6 @@ import static reactor.rabbitmq.ResourcesSpecification.*;
 @Slf4j
 @Component
 @AllArgsConstructor
-@SuppressWarnings("unused")
 public class RabbitMQSender {
 
     private final Sender sender;

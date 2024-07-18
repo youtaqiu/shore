@@ -23,7 +23,6 @@ import java.util.List;
  * @author youta
  */
 @ToString
-@SuppressWarnings("unused")
 public class R<T> implements Serializable {
 
     /**

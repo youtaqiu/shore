@@ -12,7 +12,6 @@ import reactor.core.publisher.Mono;
 /**
  * @author youta
  **/
-@SuppressWarnings("unused")
 public class UserContextHolder {
 
     /**

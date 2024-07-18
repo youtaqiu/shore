@@ -16,7 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author youta
  */
-@SuppressWarnings("unused")
 public class SpringExpressionResolver implements ExpressionResolver {
 
     private final ExpressionParser expressionParser;

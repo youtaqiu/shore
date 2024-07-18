@@ -12,7 +12,6 @@ import java.util.Arrays;
  * @author youta
  */
 @Getter
-@SuppressWarnings("unused")
 public enum EnvEnum {
 
     /**

@@ -29,7 +29,6 @@ import java.util.function.Function;
  * @param <V> the type of the value
  * @author youta
  */
-@SuppressWarnings("unused")
 @EqualsAndHashCode
 @RequiredArgsConstructor(staticName = "of")
 @JsonSerialize(using = Pair.PairJsonSerializer.class)

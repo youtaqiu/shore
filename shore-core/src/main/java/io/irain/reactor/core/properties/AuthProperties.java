@@ -28,11 +28,6 @@ public class AuthProperties {
     private Boolean enable = true;
     private static final AntPathMatcher MATCHER = new AntPathMatcher();
 
-    /**
-     * 分隔符.
-     */
-    private static final String SEPARATOR = "<=>";
-
 
     /**
      * 排除路径.
@@ -109,7 +104,10 @@ public class AuthProperties {
         this.patchExcludePatterns = Collections.unmodifiableSet(patchExcludePatterns);
     }
 
-
+    /**
+     * 设置delete排除路径.
+     * @param deleteExcludePatterns delete排除路径
+     */
     public void setDeleteExcludePatterns(Set<String> deleteExcludePatterns) {
         this.deleteExcludePatterns = Collections.unmodifiableSet(deleteExcludePatterns);
     }

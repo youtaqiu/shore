@@ -6,7 +6,6 @@ import org.springframework.data.domain.PageRequest;
 /**
  * @author youta
  **/
-@SuppressWarnings("unused")
 public class IPageUtil {
 
     private IPageUtil() {

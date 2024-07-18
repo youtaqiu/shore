@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 /**
  * @author youta
  */
-@SuppressWarnings("unused")
 public class BeanUtil extends org.springframework.beans.BeanUtils {
 
     /**

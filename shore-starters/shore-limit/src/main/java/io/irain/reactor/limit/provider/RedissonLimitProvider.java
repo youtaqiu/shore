@@ -3,7 +3,6 @@ package io.irain.reactor.limit.provider;
 import cn.hutool.core.util.StrUtil;
 import io.irain.reactor.commons.exception.ServerException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RRateLimiterReactive;
 import org.redisson.api.RateIntervalUnit;
 import org.redisson.api.RateType;
@@ -16,7 +15,6 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author youta
  **/
-@Slf4j
 @RequiredArgsConstructor
 public class RedissonLimitProvider implements LimitProvider {
 
