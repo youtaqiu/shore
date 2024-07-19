@@ -1,1 +1,1 @@
-io.irain.reactor.s3.autoconfigure.OssAutoConfiguration
+sh.rime.reactor.s3.autoconfigure.OssAutoConfiguration

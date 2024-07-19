@@ -1,6 +1,6 @@
 plugins {
-    id "io.irain.common"
-    id "io.irain.mvn.deployed"
+    id "sh.rime.common"
+    id "sh.rime.mvn.deployed"
 }
 
 description "shore log starter"

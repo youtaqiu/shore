@@ -1,1 +1,1 @@
-io.irain.reactor.redis.CustomizeRedisAutoConfiguration
+sh.rime.reactor.redis.CustomizeRedisAutoConfiguration

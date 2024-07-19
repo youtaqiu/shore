@@ -1,7 +1,7 @@
 import org.springframework.boot.gradle.plugin.SpringBootPlugin
 
 plugins {
-    id "io.irain.bom"
+    id "sh.rime.bom"
 }
 
 description "shore bom"

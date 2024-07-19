@@ -1,1 +1,1 @@
-io.irain.reactor.rabbitmq.autoconfigure.RabbitMqAutoConfiguration
+sh.rime.reactor.rabbitmq.autoconfigure.RabbitMqAutoConfiguration

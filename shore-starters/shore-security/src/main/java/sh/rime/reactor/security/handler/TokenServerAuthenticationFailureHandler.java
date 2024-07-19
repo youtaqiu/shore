@@ -1,0 +1,23 @@
+package sh.rime.reactor.security.handler;
+
+import sh.rime.reactor.commons.bean.Result;
+import sh.rime.reactor.security.util.ResponseUtils;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.server.WebFilterExchange;
+import org.springframework.security.web.server.authentication.ServerAuthenticationFailureHandler;
+import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
+
+/**
+ * @author youta
+ **/
+@Component
+public class TokenServerAuthenticationFailureHandler implements ServerAuthenticationFailureHandler {
+
+    @Override
+    public Mono<Void> onAuthenticationFailure(WebFilterExchange webFilterExchange, AuthenticationException exception) {
+        Result<Void> result = Result.failed(500, exception.getMessage());
+        return ResponseUtils.build(webFilterExchange.getExchange().getResponse(), result);
+    }
+
+}
