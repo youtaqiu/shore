@@ -1,2 +1,2 @@
-io.irain.reactor.security.autoconfigure.WebSecurityAutoconfigure
-io.irain.reactor.security.autoconfigure.PasswordEncoderAutoconfigure
+sh.rime.reactor.security.autoconfigure.WebSecurityAutoconfigure
+sh.rime.reactor.security.autoconfigure.PasswordEncoderAutoconfigure

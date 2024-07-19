@@ -1,6 +1,6 @@
 plugins {
-    id "io.irain.root"
-    id "io.irain.release"
+    id "sh.rime.root"
+    id "sh.rime.release"
 }
 
 
@@ -10,7 +10,7 @@ ext {
 }
 
 configure(gradleModuleProjects) {
-    apply plugin: "io.irain.module"
+    apply plugin: "sh.rime.module"
 
     dependencies {
         management platform(project(":shore-bom"))

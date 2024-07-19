@@ -1,2 +1,2 @@
-io.irain.reactor.http.autoconfigure.HttpInterfaceAutoConfiguration
-io.irain.reactor.http.autoconfigure.WebClientLoadBalancerConfiguration
+sh.rime.reactor.http.autoconfigure.HttpInterfaceAutoConfiguration
+sh.rime.reactor.http.autoconfigure.WebClientLoadBalancerConfiguration

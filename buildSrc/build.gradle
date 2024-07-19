@@ -22,32 +22,32 @@ dependencies {
 gradlePlugin {
     plugins {
         bomPlugin {
-            id = "io.irain.bom"
-            implementationClass = "io.irain.plugin.BomPlugin"
+            id = "sh.rime.bom"
+            implementationClass = "sh.rime.plugin.BomPlugin"
         }
         modulePlugin {
-            id = "io.irain.module"
-            implementationClass = "io.irain.plugin.ModulePlugin"
+            id = "sh.rime.module"
+            implementationClass = "sh.rime.plugin.ModulePlugin"
         }
         commonPlugin {
-            id = "io.irain.common"
-            implementationClass = "io.irain.plugin.CommonPlugin"
+            id = "sh.rime.common"
+            implementationClass = "sh.rime.plugin.CommonPlugin"
         }
         rootProjectPlugin {
-            id = "io.irain.root"
-            implementationClass = "io.irain.plugin.RootPlugin"
+            id = "sh.rime.root"
+            implementationClass = "sh.rime.plugin.RootPlugin"
         }
         servicePlugin {
-            id = "io.irain.service"
-            implementationClass = "io.irain.plugin.ServicePlugin"
+            id = "sh.rime.service"
+            implementationClass = "sh.rime.plugin.ServicePlugin"
         }
         deployedPlugin {
-            id = "io.irain.mvn.deployed"
-            implementationClass = "io.irain.plugin.maven.DeployedPlugin"
+            id = "sh.rime.mvn.deployed"
+            implementationClass = "sh.rime.plugin.maven.DeployedPlugin"
         }
         releasePlugin {
-            id = "io.irain.release"
-            implementationClass = "io.irain.plugin.ReleasePlugin"
+            id = "sh.rime.release"
+            implementationClass = "sh.rime.plugin.ReleasePlugin"
         }
     }
 }

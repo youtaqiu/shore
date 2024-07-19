@@ -1,5 +1,5 @@
-io.irain.reactor.web.autoconfigure.ReactorContextWebFilterAutoConfigure
-io.irain.reactor.web.autoconfigure.WebFluxGlobalExceptionHandlerAutoConfigure
-io.irain.reactor.web.autoconfigure.SwaggerConfiguration
-io.irain.reactor.web.autoconfigure.WebSocketAutoConfiguration
-io.irain.reactor.web.autoconfigure.JacksonConfiguration
+sh.rime.reactor.web.autoconfigure.ReactorContextWebFilterAutoConfigure
+sh.rime.reactor.web.autoconfigure.WebFluxGlobalExceptionHandlerAutoConfigure
+sh.rime.reactor.web.autoconfigure.SwaggerConfiguration
+sh.rime.reactor.web.autoconfigure.WebSocketAutoConfiguration
+sh.rime.reactor.web.autoconfigure.JacksonConfiguration

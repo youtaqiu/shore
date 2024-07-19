@@ -2,8 +2,8 @@
   "groups": [
     {
       "name": "shore.rabbitmq",
-      "type": "io.irain.reactor.rabbitmq.properties.RabbitMQProperties",
-      "sourceType": "io.irain.reactor.rabbitmq.properties.RabbitMQProperties"
+      "type": "sh.rime.reactor.rabbitmq.properties.RabbitMQProperties",
+      "sourceType": "sh.rime.reactor.rabbitmq.properties.RabbitMQProperties"
     }
   ],
   "properties": [
@@ -11,56 +11,56 @@
       "name": "shore.rabbitmq.host",
       "type": "java.lang.String",
       "defaultValue": "localhost",
-      "sourceType": "io.irain.reactor.rabbitmq.properties.RabbitMQProperties",
+      "sourceType": "sh.rime.reactor.rabbitmq.properties.RabbitMQProperties",
       "description": "rabbitmq主机地址."
     },
     {
       "name": "shore.rabbitmq.port",
       "type": "java.lang.Integer",
       "defaultValue": "5672",
-      "sourceType": "io.irain.reactor.rabbitmq.properties.RabbitMQProperties",
+      "sourceType": "sh.rime.reactor.rabbitmq.properties.RabbitMQProperties",
       "description": "rabbitmq主机端口."
     },
     {
       "name": "shore.rabbitmq.username",
       "type": "java.lang.String",
       "defaultValue": "guest",
-      "sourceType": "io.irain.reactor.rabbitmq.properties.RabbitMQProperties",
+      "sourceType": "sh.rime.reactor.rabbitmq.properties.RabbitMQProperties",
       "description": "rabbitmq用户名."
     },
     {
       "name": "shore.rabbitmq.password",
       "type": "java.lang.String",
       "defaultValue": "guest",
-      "sourceType": "io.irain.reactor.rabbitmq.properties.RabbitMQProperties",
+      "sourceType": "sh.rime.reactor.rabbitmq.properties.RabbitMQProperties",
       "description": "rabbitmq密码."
     },
     {
       "name": "shore.rabbitmq.virtual-host",
       "type": "java.lang.String",
       "defaultValue": "/",
-      "sourceType": "io.irain.reactor.rabbitmq.properties.RabbitMQProperties",
+      "sourceType": "sh.rime.reactor.rabbitmq.properties.RabbitMQProperties",
       "description": "rabbitmq虚拟主机."
     },
     {
       "name": "shore.rabbitmq.retry",
       "type": "java.lang.Long",
       "defaultValue": "3",
-      "sourceType": "io.irain.reactor.rabbitmq.properties.RabbitMQProperties",
+      "sourceType": "sh.rime.reactor.rabbitmq.properties.RabbitMQProperties",
       "description": "rabbitmq重试次数."
     },
     {
       "name": "shore.rabbitmq.min-backoff",
       "type": "java.lang.Long",
       "defaultValue": "1",
-      "sourceType": "io.irain.reactor.rabbitmq.properties.RabbitMQProperties",
+      "sourceType": "sh.rime.reactor.rabbitmq.properties.RabbitMQProperties",
       "description": "rabbitmq最小重试间隔."
     },
     {
       "name": "shore.rabbitmq.addresses",
       "type": "java.lang.String",
       "description": "rabbitmq地址列表.",
-      "sourceType": "io.irain.reactor.rabbitmq.properties.RabbitMQProperties"
+      "sourceType": "sh.rime.reactor.rabbitmq.properties.RabbitMQProperties"
     }
   ],
   "hints": []
