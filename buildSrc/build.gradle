@@ -11,53 +11,53 @@ repositories {
 ext {
     bootVersion = libs.versions.springBoot.get()
     releaseVersion = libs.versions.gradleRelease.get()
+    jreleaserhVersion = libs.versions.jreleaserhVersion.get()
 }
 
 dependencies {
     implementation "org.springframework.boot:spring-boot-gradle-plugin:$bootVersion"
     implementation "com.faendir.gradle:gradle-release:$releaseVersion"
+    implementation "org.jreleaser:jreleaser-gradle-plugin:$jreleaserhVersion"
 }
 
 
 gradlePlugin {
     plugins {
-        bomPlugin {
+        create("bomPlugin") {
             id = "sh.rime.bom"
             implementationClass = "sh.rime.plugin.BomPlugin"
         }
-        modulePlugin {
+        create("modulePlugin") {
             id = "sh.rime.module"
             implementationClass = "sh.rime.plugin.ModulePlugin"
         }
-        commonPlugin {
+        create("commonPlugin") {
             id = "sh.rime.common"
             implementationClass = "sh.rime.plugin.CommonPlugin"
         }
-        rootProjectPlugin {
+        create("rootProjectPlugin") {
             id = "sh.rime.root"
             implementationClass = "sh.rime.plugin.RootPlugin"
         }
-        servicePlugin {
+        create("servicePlugin") {
             id = "sh.rime.service"
             implementationClass = "sh.rime.plugin.ServicePlugin"
         }
-        deployedPlugin {
+        create("deployedPlugin") {
             id = "sh.rime.mvn.deployed"
-            implementationClass = "sh.rime.plugin.maven.DeployedPlugin"
+            implementationClass = "sh.rime.plugin.maven.MavenCentralPlugin"
         }
-        releasePlugin {
+        create("releasePlugin") {
             id = "sh.rime.release"
             implementationClass = "sh.rime.plugin.ReleasePlugin"
         }
     }
 }
 
-(project.tasks.named(JavaPlugin.JAR_TASK_NAME).get() as Jar).manifest {
-    attributes(
-            [
-                    "Created-By"    : System.getProperty("java.version") + " (" +
-                            System.getProperty("java.specification.vendor") + ")",
-                    "Gradle-Version": GradleVersion.current()
-            ]
+tasks.withType(Jar).configureEach {
+    manifest.attributes.putIfAbsent(
+            "Created-By",
+            System.getProperty("java.version") + " (" + System.getProperty("java.specification.vendor") + ")"
     )
+    manifest.attributes.putIfAbsent("Gradle-Version", GradleVersion.current())
 }

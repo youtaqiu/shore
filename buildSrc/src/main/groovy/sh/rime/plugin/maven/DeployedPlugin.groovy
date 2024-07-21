@@ -21,19 +21,6 @@ abstract class DeployedPlugin implements Plugin<Project> {
     void apply(Project project) {
         project.pluginManager.apply(SigningPlugin.class)
         def publication = publication(project)
-        def signing = project.extensions.getByType(SigningExtension.class)
-        signing.setRequired(false)
-        def signId = System.getenv("SIGNING_KEY_ID")
-        def keyId = Optional.ofNullable(signId).orElse(project.property("signing.keyId") as String)
-        def signKey = System.getenv("SIGNING_KEY")
-        def key = Optional.ofNullable(signKey).orElse(Optional.ofNullable(project.findProperty("signing.key") as String).orElse(""))
-        def signPass = System.getenv("SIGNING_PASSWORD")
-        def password = Optional.ofNullable(signPass).orElse(project.property("signing.password") as String)
-        if (!key.isEmpty()) {
-            signing.useInMemoryPgpKeys(keyId, key, password)
-        }
-        signing.configuration.artifacts
-        signing.sign(publication)
         project.afterEvaluate { evaluated ->
             project.plugins.withType(JavaPlugin.class).every {
                 if ((project.tasks.named(JavaPlugin.JAR_TASK_NAME).get() as Jar).isEnabled()) {
