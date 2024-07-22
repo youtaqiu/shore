@@ -47,10 +47,6 @@ gradlePlugin {
             id = "sh.rime.mvn.deployed"
             implementationClass = "sh.rime.plugin.maven.MavenCentralPlugin"
         }
-        create("releasePlugin") {
-            id = "sh.rime.release"
-            implementationClass = "sh.rime.plugin.ReleasePlugin"
-        }
     }
 }
 

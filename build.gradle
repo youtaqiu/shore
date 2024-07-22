@@ -2,7 +2,6 @@ import org.jreleaser.gradle.plugin.tasks.JReleaserFullReleaseTask
 
 plugins {
     id "sh.rime.root"
-    id "sh.rime.release"
     id 'org.jreleaser'
 }
 
