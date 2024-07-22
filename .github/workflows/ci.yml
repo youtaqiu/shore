@@ -86,7 +86,6 @@ jobs:
           distribution: 'liberica'
           java-version: '21'
       - name: Nexus publish
-        uses: gradle/actions/setup-gradle@v3
         run: ./gradlew publish
       - name: Release commit and push
         uses: EndBug/add-and-commit@v9
@@ -95,7 +94,6 @@ jobs:
           message: 'chore(release): ${{ needs.version.outputs.version_next }} [skip ci]'
           default_author: github_actions
       - name: JReleaser full release
-        uses: gradle/actions/setup-gradle@v3
         if: inputs.perform_release
         env:
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.GPG_KEY }}
