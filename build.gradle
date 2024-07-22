@@ -12,7 +12,7 @@ ext {
 }
 
 allprojects {
-    group = sh.rime.reactor
+    group = 'sh.rime.reactor'
 }
 
 configure(gradleModuleProjects) {
