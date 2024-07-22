@@ -11,6 +11,10 @@ ext {
     gradleModuleProjects = (subprojects.findAll { it.buildFile.exists() } - (bom))
 }
 
+allprojects {
+    group = sh.rime.reactor
+}
+
 configure(gradleModuleProjects) {
     apply plugin: "sh.rime.module"
 
