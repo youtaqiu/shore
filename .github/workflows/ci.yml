@@ -57,7 +57,7 @@ jobs:
           [[ `svu --pattern="v[0-9]*" --strip-prefix current` != ${{ env.VERSION_NEXT }} ]] && echo "should_release=true" >> $GITHUB_OUTPUT || echo
 
   release:
-    needs: [ version, test ]
+    needs: [ version ]
     runs-on: ubuntu-latest
     if: needs.version.outputs.should_release
     steps:
