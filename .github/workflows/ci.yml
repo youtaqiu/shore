@@ -55,11 +55,11 @@ jobs:
           echo "version_current=`svu --pattern="v[0-9]*" --strip-prefix current`" >> $GITHUB_OUTPUT
           echo "version_next=${{ env.VERSION_NEXT_SUFFIX }}" >> $GITHUB_OUTPUT
           [[ `svu --pattern="v[0-9]*" --strip-prefix current` != ${{ env.VERSION_NEXT }} ]] && echo "should_release=true" >> $GITHUB_OUTPUT || echo
-      - name: Debug information
+      - name: Show computed versions
         run: |
-          echo "CURRENT_VERSION=$(svu --pattern="v[0-9]*" --strip-prefix current)"
-          echo "VERSION_NEXT=${{ env.VERSION_NEXT }}"
-          echo "should_release=${{ steps.versions.outputs.should_release }}"
+          echo "Current version: ${{ steps.set-versions.outputs.version_current }}"
+          echo "Next version: ${{ steps.compute-version.outputs.VERSION_NEXT }}"
+          echo "Should release: ${{ steps.set-versions.outputs.should_release }}"
   release:
     needs: [ version ]
     runs-on: ubuntu-latest
