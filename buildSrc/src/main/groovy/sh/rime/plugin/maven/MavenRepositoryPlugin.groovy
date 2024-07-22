@@ -18,7 +18,7 @@ abstract class MavenRepositoryPlugin implements Plugin<Project> {
         try {
             publishing.repositories.maven { maven ->
                 maven.setAllowInsecureProtocol(true)
-                maven.url = layout.buildDirectory.dir('staging-deploy')
+                maven.url = project.layout.buildDirectory.dir('staging-deploy')
             }
         } catch (Exception ignored) {
 

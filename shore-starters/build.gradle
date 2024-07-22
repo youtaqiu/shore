@@ -1,0 +1,9 @@
+plugins {
+    id "sh.rime.root"
+    id "java-library"
+}
+
+
+subprojects {
+	apply plugin : "sh.rime.common"
+}

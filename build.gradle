@@ -1,12 +1,15 @@
+import org.jreleaser.gradle.plugin.tasks.JReleaserFullReleaseTask
+
 plugins {
     id "sh.rime.root"
     id "sh.rime.release"
+    id 'org.jreleaser'
 }
 
 
 ext {
     bom = Set.of(project(":shore-bom"))
-    gradleModuleProjects = (subprojects.findAll { it.buildFile.exists() } - (bom ))
+    gradleModuleProjects = (subprojects.findAll { it.buildFile.exists() } - (bom))
 }
 
 configure(gradleModuleProjects) {
@@ -38,8 +41,93 @@ configure(gradleModuleProjects) {
 
 configure(allprojects) {
     repositories {
-        maven { url "https://mirrors.cloud.tencent.com/nexus/repository/maven-public/"}
+        maven { url "https://mirrors.cloud.tencent.com/nexus/repository/maven-public/" }
         maven { url "https://repo.spring.io/release" }
         maven { url "https://plugins.gradle.org/m2/" }
+    }
+}
+
+subprojects {
+    apply plugin: 'maven-publish'
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                pom {
+                    name.set(project.name)
+                    def projectDescription = project.description
+                    if (projectDescription == null || projectDescription.isBlank()) {
+                        projectDescription = project.name.replaceAll("-", " ")
+                    }
+                    description.set(projectDescription)
+                    def rootProjectName = project.rootProject.name
+                    url.set("https://github.com/youtaqiu/" + rootProjectName + "/")
+                    licenses {
+                        license {
+                            name.set("The Apache License, Version 2.0")
+                            url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                        }
+                    }
+                    developers {
+                        developer {
+                            name.set("rime")
+                            email.set("k@rime.sh")
+                        }
+                    }
+                    scm {
+                        connection.set("git@github.com:youtaqiu/" + rootProjectName + ".git")
+                        url.set("https://github.com/youtaqiu/" + rootProjectName + "/")
+                    }
+                }
+            }
+        }
+
+        repositories {
+            maven {
+                url = layout.buildDirectory.dir('staging-deploy')
+            }
+        }
+    }
+    jreleaser {
+        deploy {
+            maven {
+                mavenCentral {
+                    sonatype {
+                        active = 'ALWAYS'
+                        url = 'https://central.sonatype.com/api/v1/publisher'
+                        var file = layout.buildDirectory.dir('staging-deploy')
+                        stagingRepository(file.get().toString())
+                    }
+                }
+            }
+        }
+    }
+
+    tasks.register("conditionalJReleaserDeploy", JReleaserFullReleaseTask) {
+        onlyIf {
+            layout.buildDirectory.get().asFile.toPath().resolve('jreleaser').toFile().exists()
+        }
+        doFirst {
+            println "Executing JReleaser deployment because jreleaser directory exists."
+        }
+        doLast {
+            println "JReleaser deployment completed."
+        }
+    }
+}
+
+
+jreleaser {
+    signing(({
+        active = 'ALWAYS'
+        armored = true
+        mode = 'FILE'
+        publicKey = '.jreleaser/gpg/public.pgp'
+        secretKey = '.jreleaser/gpg/private.pgp'
+    } as Closure<Void>))
+    catalog {
+        active = 'ALWAYS'
+        sbom(({
+            enabled = true
+        } as Closure<Void>))
     }
 }

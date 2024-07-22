@@ -49,6 +49,7 @@ gradle-app.setting
 /.idea/
 /.vscode/
 /.fleet/
+/.jreleaser/
 /gradlew.bat
 /gradlew
 /gradle

@@ -1,8 +1,3 @@
-plugins {
-    id "sh.rime.common"
-    id "sh.rime.mvn.deployed"
-}
-
 description "shore rabbitmq starter"
 
 dependencies {
