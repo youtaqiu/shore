@@ -102,7 +102,7 @@ jobs:
             echo "Should release: false"
           fi
   release:
-    needs: [ version ]
+    needs: [ version, test ]
     runs-on: ubuntu-latest
     if: needs.version.outputs.should_release
     steps:
