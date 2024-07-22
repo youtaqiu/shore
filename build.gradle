@@ -119,9 +119,6 @@ jreleaser {
     signing(({
         active = 'ALWAYS'
         armored = true
-        mode = 'FILE'
-        publicKey = '.jreleaser/gpg/public.pgp'
-        secretKey = '.jreleaser/gpg/private.pgp'
     } as Closure<Void>))
     catalog {
         active = 'ALWAYS'

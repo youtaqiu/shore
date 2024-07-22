@@ -10,13 +10,11 @@ repositories {
 
 ext {
     bootVersion = libs.versions.springBoot.get()
-    releaseVersion = libs.versions.gradleRelease.get()
     jreleaserhVersion = libs.versions.jreleaserhVersion.get()
 }
 
 dependencies {
     implementation "org.springframework.boot:spring-boot-gradle-plugin:$bootVersion"
-    implementation "com.faendir.gradle:gradle-release:$releaseVersion"
     implementation "org.jreleaser:jreleaser-gradle-plugin:$jreleaserhVersion"
 }
 

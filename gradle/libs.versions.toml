@@ -14,7 +14,6 @@ spotbugsAnnotations = "4.8.5"
 swaggerAnnotations = "2.2.22"
 mapstruct = "1.5.5.Final"
 mapstructSpring = "1.1.1"
-gradleRelease = "3.3.1"
 jreleaserhVersion = "1.13.1"
 qualityVersion = "5.0.0"
 opentelemetry = "2.6.0"
@@ -46,6 +45,5 @@ aws-sdk-sts = { group = "com.amazonaws", name = "aws-java-sdk-sts", version.ref 
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
-gradle-release = { id = "net.researchgate.release", version.ref = "gradleRelease" }
 publish-release = { id = "org.jreleaser", version.ref = "jreleaserhVersion" }
 code-quality = { id = "ru.vyarus.quality", version.ref = "qualityVersion" }
