@@ -17,7 +17,6 @@ class BomPlugin implements Plugin<Project> {
     void apply(Project project) {
         project.pluginManager.apply(JavaPlatformPlugin.class)
         project.pluginManager.apply(DeployedPlugin.class)
-
         project.extensions.getByType(JavaPlatformExtension.class).allowDependencies()
     }
 }
