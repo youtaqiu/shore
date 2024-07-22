@@ -84,25 +84,12 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'liberica'
-          java-version: '17'
+          java-version: '21'
       - name: Nexus publish
         uses: gradle/actions/setup-gradle@v3
-        env:
-          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.GPG_KEY }}
-          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.GPG_PASSPHRASE }}
-          ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.MAVENCENTRAL_USER }}
-          ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.MAVENCENTRAL_PASSWORD }}
-        with:
-          arguments: publish
+        run: ./gradlew publish
       - name: Release commit and push
         uses: EndBug/add-and-commit@v9
-        env:
-          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.GPG_KEY }}
-          JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          JRELEASER_MAVENCENTRAL_USERNAME: ${{ secrets.MAVENCENTRAL_USER }}
-          JRELEASER_MAVENCENTRAL_PASSWORD: ${{ secrets.MAVENCENTRAL_PASSWORD }}
-          JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
-          JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
         if: inputs.perform_release
         with:
           message: 'chore(release): ${{ needs.version.outputs.version_next }} [skip ci]'
@@ -111,6 +98,11 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         if: inputs.perform_release
         env:
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.GPG_KEY }}
+          JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          JRELEASER_MAVENCENTRAL_USERNAME: ${{ secrets.MAVENCENTRAL_USER }}
+          JRELEASER_MAVENCENTRAL_PASSWORD: ${{ secrets.MAVENCENTRAL_PASSWORD }}
+          JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
+          JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
-        with:
-          arguments: jreleaserFullRelease
+        run: ./gradlew jreleaserFullRelease
