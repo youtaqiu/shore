@@ -124,10 +124,10 @@ jreleaser {
         active = 'ALWAYS'
         armored = true
     } as Closure<Void>))
-    catalog {
-        active = 'ALWAYS'
-        sbom(({
-            enabled = true
-        } as Closure<Void>))
-    }
+//    catalog {
+//        active = 'ALWAYS'
+//        sbom(({
+//            enabled = true
+//        } as Closure<Void>))
+//    }
 }
