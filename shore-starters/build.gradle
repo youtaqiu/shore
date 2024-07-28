@@ -6,4 +6,5 @@ plugins {
 
 subprojects {
 	apply plugin : "sh.rime.common"
+    apply plugin : "sh.rime.deployed"
 }
