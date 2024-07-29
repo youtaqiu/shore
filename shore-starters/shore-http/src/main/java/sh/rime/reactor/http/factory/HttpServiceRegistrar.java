@@ -1,6 +1,6 @@
 package sh.rime.reactor.http.factory;
 
-import sh.rime.reactor.http.annotation.RemoteClient;
+import sh.rime.reactor.core.annotation.RemoteClient;
 import lombok.Setter;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;

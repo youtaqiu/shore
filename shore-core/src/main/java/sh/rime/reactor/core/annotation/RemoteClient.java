@@ -1,4 +1,4 @@
-package sh.rime.reactor.http.annotation;
+package sh.rime.reactor.core.annotation;
 
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.stereotype.Component;
