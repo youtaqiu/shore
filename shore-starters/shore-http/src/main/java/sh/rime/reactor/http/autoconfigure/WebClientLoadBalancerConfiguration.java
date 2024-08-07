@@ -16,13 +16,23 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * webclient负载均衡配置
+ *
  * @author youta
  **/
 @Configuration
 public class WebClientLoadBalancerConfiguration {
 
     /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public WebClientLoadBalancerConfiguration() {
+    }
+
+    /**
      * 负载均衡工厂
+     *
      * @return 负载均衡工厂
      */
     @Bean

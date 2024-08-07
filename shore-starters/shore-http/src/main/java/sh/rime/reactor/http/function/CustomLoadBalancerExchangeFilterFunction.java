@@ -16,6 +16,8 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 /**
+ * custom load balancer exchange filter function.
+ *
  * @author youta
  **/
 public class CustomLoadBalancerExchangeFilterFunction extends ReactorLoadBalancerExchangeFilterFunction {
