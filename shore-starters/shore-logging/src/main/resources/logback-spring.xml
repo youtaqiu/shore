@@ -33,17 +33,6 @@
     <logger name="org.springframework.context.support.ResourceBundleMessageSource" level="OFF"/>
     <logger name="org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport" level="OFF"/>
 
-    <springProfile name="dev | test">
-        <logger name="com.moment.reactor" level="INFO"/>
-    </springProfile>
-    <springProfile name="ontest">
-        <Logger name="com.moment.reactor" level="INFO"/>
-    </springProfile>
-    <springProfile name="prod">
-        <Logger name="com.moment.reactor" level="ERROR"/>
-    </springProfile>
-
-    <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
     <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
         <resetJUL>true</resetJUL>
     </contextListener>

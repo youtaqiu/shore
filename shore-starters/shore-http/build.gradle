@@ -7,4 +7,5 @@ dependencies {
     optional "org.springframework.cloud:spring-cloud-commons"
     optional "io.projectreactor.netty:reactor-netty-core"
     optional "io.projectreactor.netty:reactor-netty-http"
+    implementation "org.springframework.cloud:spring-cloud-starter-loadbalancer"
 }
