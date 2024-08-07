@@ -5,6 +5,8 @@ import reactor.core.publisher.Mono;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 限流提供者
+ *
  * @author youta
  **/
 public interface LimitProvider {

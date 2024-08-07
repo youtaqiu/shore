@@ -8,6 +8,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
+ * 客户端信息服务.
  * @author youta
  **/
 public interface ClientInfoService {

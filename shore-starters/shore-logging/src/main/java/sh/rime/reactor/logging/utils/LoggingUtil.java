@@ -18,6 +18,14 @@ import java.util.Objects;
  * 包含日志文件的相关配置和操作
  */
 public class LoggingUtil {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public LoggingUtil() {
+    }
+
     /**
      * 默认日志文件夹
      */

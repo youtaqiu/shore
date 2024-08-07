@@ -4,6 +4,8 @@ import sh.rime.reactor.commons.exception.ServerFailure;
 import lombok.AllArgsConstructor;
 
 /**
+ * SecurityExceptionEnum is a class that represents security exception enumeration.
+ *
  * @author youta
  **/
 @AllArgsConstructor

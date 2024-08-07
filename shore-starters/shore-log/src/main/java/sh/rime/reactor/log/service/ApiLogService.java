@@ -4,7 +4,6 @@ import sh.rime.reactor.log.annotation.Log;
 import sh.rime.reactor.log.handler.LogHandler;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanContext;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.ObjectProvider;
@@ -12,17 +11,29 @@ import org.springframework.lang.Nullable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 
 /**
+ * Api log service.
+ *
  * @author youta
  **/
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class ApiLogService {
 
     private final ObjectProvider<LogHandler> logHandlersProvider;
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     *
+     * @param logHandlersProvider the log handlers provider
+     */
+    public ApiLogService(ObjectProvider<LogHandler> logHandlersProvider) {
+        this.logHandlersProvider = logHandlersProvider;
+    }
 
     /**
      * 处理日志
@@ -30,6 +41,7 @@ public class ApiLogService {
      * @param content         日志内容
      * @param method          请求方法
      * @param uri             请求uri
+     * @param queryParams     查询参数
      * @param params          请求参数
      * @param requestId       请求id
      * @param clientId        客户端id
@@ -40,10 +52,12 @@ public class ApiLogService {
      * @param apiLog          日志注解
      */
     @Async
-    public void log(String content, String method, String uri, Map<String, Object> params, String requestId, String clientId, String remoteAddr,
-                    @Nullable Object obj, @Nullable Throwable ex, MethodSignature methodSignature, Log apiLog) {
+    public void log(String content, String method, String uri, Map<String, Object> queryParams, List<Object> params,
+                    String requestId, String clientId, String remoteAddr, @Nullable Object obj, @Nullable Throwable ex,
+                    MethodSignature methodSignature, Log apiLog) {
         logHandlersProvider.stream().filter(handler -> handler.accept(methodSignature, apiLog))
-                .forEach(handler -> logHandler(content, method, uri, params, requestId, clientId, remoteAddr, obj, ex, handler));
+                .forEach(handler -> logHandler(content, method, uri, queryParams, params, requestId, clientId,
+                        remoteAddr, obj, ex, handler));
     }
 
     /**
@@ -60,10 +74,12 @@ public class ApiLogService {
      * @param ex         异常
      * @param handler    日志处理器
      */
-    private void logHandler(String logContent, String method, String uri, Map<String, Object> params, String requestId, String clientId, String ip,
+    private void logHandler(String logContent, String method, String uri, Map<String, Object> queryParams,
+                            List<Object> params, String requestId, String clientId, String ip,
                             @Nullable Object result, @Nullable Throwable ex, LogHandler handler) {
         try {
-            handler.handler(logContent, method, uri, requestId, getTraceId(), clientId, ip, params, result, ex).subscribe();
+            handler.handler(logContent, method, uri, requestId, getTraceId(), clientId, ip, queryParams,
+                    params, result, ex).subscribe();
         } catch (Exception e) {
             log.error(e.getLocalizedMessage(), e);
         }

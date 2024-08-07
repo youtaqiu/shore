@@ -16,6 +16,13 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 public class RequestUtil {
 
     /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public RequestUtil() {
+    }
+
+    /**
      * 解析请求路径.
      *
      * @param request 请求对象

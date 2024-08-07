@@ -11,12 +11,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * RabbitMQ properties.
+ *
  * @author youta
  **/
 @ConfigurationProperties(prefix = RabbitMQProperties.PREFIX)
 @Getter
 @Setter
 public class RabbitMQProperties {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public RabbitMQProperties() {
+    }
 
     /**
      * prefix

@@ -6,7 +6,6 @@ import sh.rime.reactor.core.util.ReactiveAddrUtil;
 import sh.rime.reactor.limit.annotation.Limit;
 import sh.rime.reactor.limit.provider.LimitProvider;
 import sh.rime.reactor.security.context.UserContextHolder;
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -14,9 +13,10 @@ import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 限流支持
+ *
  * @author youta
  **/
-@RequiredArgsConstructor(staticName = "of")
 public class LimitSupport {
 
     /**
@@ -26,6 +26,16 @@ public class LimitSupport {
 
 
     private final LimitProvider limitProvider;
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     *
+     * @param limitProvider the limit provider
+     */
+    public LimitSupport(LimitProvider limitProvider) {
+        this.limitProvider = limitProvider;
+    }
 
     /**
      * Exec boolean.

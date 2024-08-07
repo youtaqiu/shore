@@ -4,7 +4,6 @@ import sh.rime.reactor.commons.enums.GrantType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 
@@ -12,14 +11,22 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
+ * ClientInfo is a class that represents client information.
+ *
  * @author youta
  **/
 @Data
 @SuperBuilder
 @AllArgsConstructor
-@NoArgsConstructor
 @Accessors(chain = true)
 public class ClientInfo implements Serializable {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public ClientInfo() {
+    }
 
     /**
      * 客户端id
@@ -65,7 +72,8 @@ public class ClientInfo implements Serializable {
 
     /**
      * 构造基础客户端信息
-     * @param clientId 客户端id
+     *
+     * @param clientId     客户端id
      * @param clientSecret 客户端密钥
      * @return 客户端信息
      */

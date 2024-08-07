@@ -11,6 +11,8 @@ import java.time.Duration;
 import java.util.Map;
 
 /**
+ * Redis工具类
+ *
  * @author youta
  **/
 @SuppressWarnings(value = {"unchecked"})

@@ -13,15 +13,22 @@ import java.util.function.Function;
  */
 public class Loki4jOkHttpSender extends AbstractHttpSender {
 
-	@Override
-	public Function<HttpConfig, Loki4jHttpClient> getHttpClientFactory() {
-		return Loki4jOkHttpClient::new;
-	}
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public Loki4jOkHttpSender() {
+    }
 
-	@Override
-	public HttpConfig.Builder getConfig() {
-		HttpConfig.Builder builder = HttpConfig.builder();
-		super.fillHttpConfig(builder);
-		return builder;
-	}
+    @Override
+    public Function<HttpConfig, Loki4jHttpClient> getHttpClientFactory() {
+        return Loki4jOkHttpClient::new;
+    }
+
+    @Override
+    public HttpConfig.Builder getConfig() {
+        HttpConfig.Builder builder = HttpConfig.builder();
+        super.fillHttpConfig(builder);
+        return builder;
+    }
 }

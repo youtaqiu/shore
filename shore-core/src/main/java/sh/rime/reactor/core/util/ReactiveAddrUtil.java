@@ -24,6 +24,13 @@ public final class ReactiveAddrUtil {
     private static final int IP_MAX_LENGTH = 15;
 
     /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public ReactiveAddrUtil() {
+    }
+
+    /**
      * 获取客户端IP地址.
      *
      * @param request request
@@ -46,6 +53,7 @@ public final class ReactiveAddrUtil {
 
     /**
      * get ip from headers.
+     *
      * @param headers headers
      * @return ip
      */
@@ -62,6 +70,7 @@ public final class ReactiveAddrUtil {
 
     /**
      * extract first not empty ip.
+     *
      * @param ip ip
      * @return ip
      */
@@ -78,6 +87,7 @@ public final class ReactiveAddrUtil {
 
     /**
      * 判断ip是否为空.
+     *
      * @param ip ip
      * @return boolean
      */

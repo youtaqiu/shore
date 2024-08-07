@@ -6,7 +6,6 @@ import sh.rime.reactor.commons.constants.Constants;
 import sh.rime.reactor.security.constants.TokenConstants;
 import sh.rime.reactor.security.repository.AuthenticationRepository;
 import sh.rime.reactor.security.util.ResponseUtils;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.server.WebFilterExchange;
@@ -18,13 +17,24 @@ import static sh.rime.reactor.commons.enums.CommonExceptionEnum.LOGOUT_TOKEN_ERR
 
 
 /**
+ * token server logout success handler.
+ *
  * @author youta
  **/
 @Component
-@RequiredArgsConstructor
 public class TokenServerLogoutSuccessHandler implements ServerLogoutSuccessHandler {
 
     private final AuthenticationRepository authenticationRepository;
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     *
+     * @param authenticationRepository the authentication repository
+     */
+    public TokenServerLogoutSuccessHandler(AuthenticationRepository authenticationRepository) {
+        this.authenticationRepository = authenticationRepository;
+    }
 
     @Override
     public Mono<Void> onLogoutSuccess(WebFilterExchange exchange, Authentication authentication) {

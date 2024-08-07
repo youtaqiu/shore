@@ -19,6 +19,8 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import reactor.core.publisher.Flux;
 
 /**
+ * The type Customize redis autoconfiguration.
+ *
  * @author youta
  **/
 @ConditionalOnClass(RedisOperations.class)
@@ -26,7 +28,15 @@ import reactor.core.publisher.Flux;
 public class CustomizeRedisAutoConfiguration {
 
     /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public CustomizeRedisAutoConfiguration() {
+    }
+
+    /**
      * Customize redis template customize redis template.
+     *
      * @param redisConnectionFactory the redis connection factory
      * @return the customize redis template
      */
@@ -43,13 +53,20 @@ public class CustomizeRedisAutoConfiguration {
     public static class CustomizeReactiveRedisAutoConfiguration {
 
         /**
+         * Default constructor.
+         * This constructor is used for serialization and other reflective operations.
+         */
+        public CustomizeReactiveRedisAutoConfiguration() {
+        }
+
+        /**
          * customize reactive redis template customize reactive redis template.
          *
          * @param redisConnectionFactory the redis connection factory
          * @return customize reactive redis template
          */
         @Bean("customizeReactiveRedisTemplate")
-        public CustomizeReactiveRedisTemplate<String,Object> customizeReactiveRedisTemplate(ReactiveRedisConnectionFactory redisConnectionFactory) {
+        public CustomizeReactiveRedisTemplate<String, Object> customizeReactiveRedisTemplate(ReactiveRedisConnectionFactory redisConnectionFactory) {
             RedisSerializationContext<String, Object> serializationContext = RedisSerializationContext.
                     <String, Object>newSerializationContext()
                     .key(RedisSerializer.string()).value(JacksonSerializerUtils.json())
@@ -61,12 +78,13 @@ public class CustomizeRedisAutoConfiguration {
 
     /**
      * Reactive redis util reactive redis util.
+     *
      * @param customizeReactiveRedisTemplate reactive redis template
      * @return the reactive redis util
      */
     @Bean
     @ConditionalOnBean(name = "customizeReactiveRedisTemplate")
-    public ReactiveRedisUtil reactiveRedisUtil(CustomizeReactiveRedisTemplate<String,Object> customizeReactiveRedisTemplate) {
+    public ReactiveRedisUtil reactiveRedisUtil(CustomizeReactiveRedisTemplate<String, Object> customizeReactiveRedisTemplate) {
         return new ReactiveRedisUtil(customizeReactiveRedisTemplate);
     }
 

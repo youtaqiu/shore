@@ -4,6 +4,8 @@ import sh.rime.reactor.commons.domain.Search;
 import org.springframework.data.domain.PageRequest;
 
 /**
+ * 分页工具类
+ *
  * @author youta
  **/
 public class IPageUtil {

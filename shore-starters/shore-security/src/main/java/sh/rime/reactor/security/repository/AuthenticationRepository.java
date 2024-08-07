@@ -2,7 +2,6 @@ package sh.rime.reactor.security.repository;
 
 import sh.rime.reactor.redis.util.ReactiveRedisUtil;
 import sh.rime.reactor.security.domain.CurrentUser;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
@@ -13,14 +12,27 @@ import java.util.List;
 
 
 /**
+ * 认证信息仓库
+ *
  * @author youta
  **/
 @Repository
-@RequiredArgsConstructor
 public class AuthenticationRepository {
 
     private final ReactiveRedisUtil reactiveRedisUtil;
     private final ReactiveStringRedisTemplate reactiveStringRedisTemplate;
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     *
+     * @param reactiveRedisUtil           the reactive redis util
+     * @param reactiveStringRedisTemplate the reactive string redis template
+     */
+    public AuthenticationRepository(ReactiveRedisUtil reactiveRedisUtil, ReactiveStringRedisTemplate reactiveStringRedisTemplate) {
+        this.reactiveRedisUtil = reactiveRedisUtil;
+        this.reactiveStringRedisTemplate = reactiveStringRedisTemplate;
+    }
 
     /**
      * 缓存认证信息
@@ -141,11 +153,12 @@ public class AuthenticationRepository {
 
     /**
      * 续期
-     * @param expire 过期时间 单位秒
-     * @param tokenKey token
+     *
+     * @param expire    过期时间 单位秒
+     * @param tokenKey  token
      * @param renewTime 续期时间 单位秒
      */
-    public void renew(long expire, String tokenKey,long renewTime) {
+    public void renew(long expire, String tokenKey, long renewTime) {
         var renewExpire = expire - renewTime > 0 ? renewTime : expire;
         Schedulers.boundedElastic().schedule(() -> this.renew(tokenKey, renewExpire).subscribe());
     }

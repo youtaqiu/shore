@@ -1,11 +1,11 @@
 package sh.rime.reactor.log.aspect;
 
 import cn.hutool.core.util.StrUtil;
+import org.springframework.util.MultiValueMap;
 import sh.rime.reactor.core.context.ReactiveContextHolder;
 import sh.rime.reactor.core.util.ReactiveAddrUtil;
 import sh.rime.reactor.log.annotation.Log;
 import sh.rime.reactor.log.service.ApiLogService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -22,26 +22,36 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static sh.rime.reactor.commons.constants.Constants.CLIENT_ID_HEADER;
 import static sh.rime.reactor.commons.constants.Constants.REQUEST_ID_HEADER;
 
 
 /**
+ * Api log aspect.
+ *
  * @author youta
  **/
 @Aspect
-@RequiredArgsConstructor
 @Slf4j
 @Order(1)
 public class ApiLogAspect {
 
     private final MessageSource messageSource;
     private final ApiLogService apiLogService;
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     *
+     * @param messageSource the message source
+     * @param apiLogService the api log service
+     */
+    public ApiLogAspect(MessageSource messageSource, ApiLogService apiLogService) {
+        this.messageSource = messageSource;
+        this.apiLogService = apiLogService;
+    }
 
     /**
      * 处理日志
@@ -91,7 +101,9 @@ public class ApiLogAspect {
     }
 
 
-    private Mono<?> logMonoResult(ProceedingJoinPoint joinPoint, Mono<? extends Tuple2<ServerHttpRequest, Object>> zipData, Log apiLog, Throwable ex) {
+    private Mono<?> logMonoResult(ProceedingJoinPoint joinPoint,
+                                  Mono<? extends Tuple2<ServerHttpRequest, Object>> zipData,
+                                  Log apiLog, Throwable ex) {
         Signature signature = joinPoint.getSignature();
         String logContent = StrUtil.trimToNull(apiLog.value());
         return zipData
@@ -109,14 +121,22 @@ public class ApiLogAspect {
                     }
                     Object[] args = joinPoint.getArgs();
                     String[] parameterNames = methodSignature.getParameterNames();
-                    if (!Objects.equals(args.length, parameterNames.length)) {
-                        log.error("parameter length is {}, but args length is {}", parameterNames.length, args.length);
-                        return obj;
+                    Map<String, Object> queryParamMap = Map.of();
+                    MultiValueMap<String, String> queryParams = request.getQueryParams();
+                    if (!queryParams.isEmpty()) {
+                        queryParamMap = buildParamMap(queryParams);
+                    }
+                    Collection<Object> values = queryParamMap.values();
+                    List<Object> params = new ArrayList<>();
+                    for (Object arg : args) {
+                        if (!values.contains(arg)) {
+                            params.add(arg);
+                        }
                     }
                     String formattedLogContent = parseLogContent(logContent, args);
-                    Map<String, Object> params = buildParamMap(args, parameterNames);
                     String remoteAddr = ReactiveAddrUtil.getRemoteAddr(request);
-                    this.apiLogService.log(formattedLogContent, method, uri, params, requestId, clientId, remoteAddr, obj, ex, methodSignature, apiLog);
+                    this.apiLogService.log(formattedLogContent, method, uri, queryParamMap, params, requestId, clientId,
+                            remoteAddr, obj, ex, methodSignature, apiLog);
                     return obj;
                 });
     }
@@ -139,5 +159,16 @@ public class ApiLogAspect {
         return params;
     }
 
+    private Map<String, Object> buildParamMap(MultiValueMap<String, String> parameterNames) {
+        Map<String, Object> params = new HashMap<>(parameterNames.size());
+        parameterNames.forEach((key, value) -> {
+            if (value.size() == 1) {
+                params.put(key, value.getFirst());
+            } else {
+                params.put(key, value);
+            }
+        });
+        return params;
+    }
 
 }

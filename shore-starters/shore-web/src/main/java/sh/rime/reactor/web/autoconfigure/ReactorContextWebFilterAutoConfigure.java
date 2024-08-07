@@ -14,6 +14,13 @@ import org.springframework.context.annotation.Configuration;
 public class ReactorContextWebFilterAutoConfigure {
 
     /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public ReactorContextWebFilterAutoConfigure() {
+    }
+
+    /**
      * reactor context web filter.
      *
      * @return reactor context web filter

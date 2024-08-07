@@ -20,7 +20,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WebSocketAutoConfiguration {
 
     /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public WebSocketAutoConfiguration() {
+    }
+
+    /**
      * 创建WebSocketHandlerAdapter.
+     *
      * @return WebSocketHandlerAdapter
      */
     @Bean
@@ -31,6 +39,7 @@ public class WebSocketAutoConfiguration {
 
     /**
      * 创建WebSocketSenderMap.
+     *
      * @return WebSocketSenderMap
      */
     @Bean
@@ -40,6 +49,7 @@ public class WebSocketAutoConfiguration {
 
     /**
      * 创建WebSocketMappingHandlerMapping.
+     *
      * @return WebSocketMappingHandlerMapping
      */
     @Bean

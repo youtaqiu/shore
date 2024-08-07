@@ -4,14 +4,22 @@ import sh.rime.reactor.commons.enums.GrantType;
 import lombok.*;
 
 /**
+ * LoginRequest is a class that represents login request information.
+ *
  * @author youta
  **/
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 public class LoginRequest {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public LoginRequest() {
+    }
 
 
     /**

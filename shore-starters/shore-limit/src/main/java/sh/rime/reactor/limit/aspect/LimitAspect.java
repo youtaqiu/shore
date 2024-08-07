@@ -5,7 +5,6 @@ import sh.rime.reactor.commons.exception.ServerException;
 import sh.rime.reactor.limit.annotation.Limit;
 import sh.rime.reactor.limit.provider.LimitProvider;
 import sh.rime.reactor.limit.support.LimitSupport;
-import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
@@ -23,14 +22,27 @@ import java.text.MessageFormat;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 限流切面
+ *
  * @author youta
  **/
 @Aspect
-@RequiredArgsConstructor
 @Order(2)
 public class LimitAspect {
 
     private final ObjectProvider<LimitProvider> provider;
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.a
+     *
+     * @param provider      the provider
+     * @param messageSource the message source
+     */
+    public LimitAspect(ObjectProvider<LimitProvider> provider, MessageSource messageSource) {
+        this.provider = provider;
+        this.messageSource = messageSource;
+    }
 
     /**
      * Handler object.
@@ -49,7 +61,7 @@ public class LimitAspect {
         }
         Method method = methodSignature.getMethod();
         Object[] args = point.getArgs();
-        LimitSupport limitSupport = LimitSupport.of(provider.getIfAvailable());
+        LimitSupport limitSupport = new LimitSupport(provider.getIfAvailable());
         var msg = "Do not repeat the request, please wait for {0} {1} and try again";
         msg = MessageFormat.format(msg, limit.expire(), getTimeUnitName(limit.unit()));
         return limitSupport.exec(limit, method, args)

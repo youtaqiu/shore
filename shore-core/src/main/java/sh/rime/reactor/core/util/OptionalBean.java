@@ -12,6 +12,9 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
+ * OptionalBean is a utility class for creating optional values in a reactive Spring application.
+ *
+ * @param <T> The type of data that this class can handle.
  * @author youta
  */
 public class OptionalBean<T> implements Serializable {
@@ -121,9 +124,10 @@ public class OptionalBean<T> implements Serializable {
 
     /**
      * 否则进行抛出异常
+     *
      * @param exceptionEnum 异常枚举
+     * @param <X>           X
      * @return T
-     * @param <X> X
      * @throws X Throwable
      */
     public <X extends Throwable> T orElseThrow(ServerFailure exceptionEnum) throws X {
@@ -136,6 +140,7 @@ public class OptionalBean<T> implements Serializable {
 
     /**
      * 如果目标值不为空 返回true
+     *
      * @return boolean
      */
     public boolean isPresent() {
@@ -144,6 +149,7 @@ public class OptionalBean<T> implements Serializable {
 
     /**
      * 如果目标值不为空 执行一个lambda表达式
+     *
      * @param consumer consumer
      */
     public void ifPresent(Consumer<? super T> consumer) {

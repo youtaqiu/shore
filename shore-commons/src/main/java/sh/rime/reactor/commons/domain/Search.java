@@ -16,6 +16,13 @@ import java.io.Serializable;
 public class Search implements Serializable {
 
     /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public Search() {
+    }
+
+    /**
      * The current page number.
      */
     private Integer current = 1;

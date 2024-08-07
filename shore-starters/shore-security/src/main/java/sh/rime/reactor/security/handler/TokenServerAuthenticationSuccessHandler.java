@@ -14,7 +14,6 @@ import sh.rime.reactor.security.service.ClientInfoService;
 import sh.rime.reactor.security.util.ResponseUtils;
 import io.vavr.Tuple;
 import io.vavr.Tuple3;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -29,14 +28,27 @@ import static sh.rime.reactor.commons.enums.CommonExceptionEnum.LOGIN_TOKEN_CACH
 
 
 /**
+ * token server authentication success handler.
+ *
  * @author youta
  **/
 @Component
-@RequiredArgsConstructor
 public class TokenServerAuthenticationSuccessHandler implements ServerAuthenticationSuccessHandler {
 
     private final AuthenticationRepository authenticationRepository;
     private final ObjectProvider<ClientInfoService> clientProvider;
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     *
+     * @param authenticationRepository the authentication repository
+     * @param clientProvider           the client provider
+     */
+    public TokenServerAuthenticationSuccessHandler(AuthenticationRepository authenticationRepository, ObjectProvider<ClientInfoService> clientProvider) {
+        this.authenticationRepository = authenticationRepository;
+        this.clientProvider = clientProvider;
+    }
 
     @Override
     public Mono<Void> onAuthenticationSuccess(WebFilterExchange webFilterExchange, Authentication authentication) {
@@ -69,7 +81,7 @@ public class TokenServerAuthenticationSuccessHandler implements ServerAuthentica
                         .stream()
                         .map(SimpleGrantedAuthority::getAuthority)
                         .toList());
-        if (!userDetails.getRoleInfos().isEmpty()){
+        if (!userDetails.getRoleInfos().isEmpty()) {
             tokenInfo.setRoles(userDetails.getRoleInfos());
         }
         return this.authenticationRepository.getTokenList(TokenConstants.tokenList(tokenInfo.getUsername()))

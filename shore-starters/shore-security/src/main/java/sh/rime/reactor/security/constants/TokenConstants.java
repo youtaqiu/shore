@@ -5,9 +5,18 @@ import org.springframework.http.HttpHeaders;
 
 
 /**
+ * TokenConstants is a class that defines constants for tokens.
+ *
  * @author youta
  **/
 public class TokenConstants {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public TokenConstants() {
+    }
 
     /**
      * token缓存前缀

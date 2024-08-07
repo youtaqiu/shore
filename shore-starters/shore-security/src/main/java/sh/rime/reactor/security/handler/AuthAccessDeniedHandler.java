@@ -14,9 +14,17 @@ import reactor.core.publisher.Mono;
  **/
 @Component
 public class AuthAccessDeniedHandler implements ServerAccessDeniedHandler {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public AuthAccessDeniedHandler() {
+    }
+
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, AccessDeniedException denied) {
         //抛出异常,交由全局异常处理器处理
-        throw new ServerException(403,"Access denied");
+        throw new ServerException(403, "Access denied");
     }
 }

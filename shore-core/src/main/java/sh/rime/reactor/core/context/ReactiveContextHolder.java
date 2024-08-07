@@ -4,9 +4,18 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
+ * reactive context holder
+ *
  * @author youta
  **/
 public class ReactiveContextHolder {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public ReactiveContextHolder() {
+    }
 
     /**
      * server web exchange key

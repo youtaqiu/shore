@@ -6,6 +6,9 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 
 /**
  * customize reactive redis template
+ *
+ * @param <K> key
+ * @param <V> value
  * @author youta
  **/
 public class CustomizeReactiveRedisTemplate<K, V> extends ReactiveRedisTemplate<String, Object> {

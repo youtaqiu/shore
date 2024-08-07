@@ -19,7 +19,6 @@ import sh.rime.reactor.core.util.BeanUtil;
 import sh.rime.reactor.s3.bean.OssToken;
 import sh.rime.reactor.s3.bean.ResourcePathConfig;
 import sh.rime.reactor.s3.props.OssProperties;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.InitializingBean;
 
 import java.io.IOException;
@@ -38,13 +37,22 @@ import java.util.Optional;
  * @author youta
  **/
 @SuppressWarnings("unused")
-@RequiredArgsConstructor
 public class OssTemplate implements InitializingBean {
 
     private final OssProperties ossProperties;
 
     private AmazonS3 amazonS3;
     private AWSSecurityTokenService awsSecurityTokenService;
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     *
+     * @param ossProperties the oss properties
+     */
+    public OssTemplate(OssProperties ossProperties) {
+        this.ossProperties = ossProperties;
+    }
 
     /**
      * 创建bucket
@@ -67,6 +75,8 @@ public class OssTemplate implements InitializingBean {
     }
 
     /**
+     * get bucket
+     *
      * @param bucketName bucket名称
      * @return bucket
      */
@@ -75,6 +85,8 @@ public class OssTemplate implements InitializingBean {
     }
 
     /**
+     * remove bucket
+     *
      * @param bucketName bucket名称
      */
     public void removeBucket(String bucketName) {

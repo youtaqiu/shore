@@ -44,6 +44,13 @@ public class R<T> implements Serializable {
     private T data;
 
     /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public R() {
+    }
+
+    /**
      * 响应成功
      *
      * @param monoBody 响应体

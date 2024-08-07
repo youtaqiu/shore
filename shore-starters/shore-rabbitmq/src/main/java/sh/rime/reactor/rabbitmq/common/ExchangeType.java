@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
+ * 交换机类型
+ *
  * @author youta
  **/
 @Getter

@@ -10,16 +10,25 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * 限流自动配置
+ *
  * @author youta
  **/
 @Configuration
 public class LimitAutoConfiguration {
 
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public LimitAutoConfiguration() {
+    }
+
 
     /**
      * limit aspect.
      *
-     * @param provider the provider
+     * @param provider      the provider
      * @param messageSource the message source
      * @return the limit aspect
      */

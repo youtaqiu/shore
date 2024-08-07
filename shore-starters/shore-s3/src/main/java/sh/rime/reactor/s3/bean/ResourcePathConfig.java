@@ -4,22 +4,29 @@ package sh.rime.reactor.s3.bean;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
 
 /**
+ * 资源路径配置.
+ *
  * @author youta
  **/
 @Data
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 public class ResourcePathConfig implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public ResourcePathConfig() {
+    }
 
     /**
      * 文件路径

@@ -26,7 +26,6 @@ import java.io.Serializable;
 @ToString
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 @Accessors(chain = true)
 public class Result<T> implements Serializable {
 
@@ -58,6 +57,13 @@ public class Result<T> implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @Schema(description = "数据载体")
     private T data;
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public Result() {
+    }
 
 
     /**

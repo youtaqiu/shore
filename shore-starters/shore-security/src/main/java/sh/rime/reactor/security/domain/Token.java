@@ -3,7 +3,6 @@ package sh.rime.reactor.security.domain;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 
@@ -11,14 +10,21 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
+ * Token is a class that represents token information.
  * @author youta
  **/
 @SuperBuilder
 @AllArgsConstructor
-@NoArgsConstructor
 @Data
 @Accessors(chain = true)
 public class Token implements Serializable {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public Token() {
+    }
 
     /**
      * accessToken

@@ -9,16 +9,25 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * 日志自动配置
+ *
  * @author youta
  **/
 @Configuration
 public class LogAutoConfigure {
 
     /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public LogAutoConfigure() {
+    }
+
+    /**
      * 日志切面
      *
      * @param apiLogService 日志处理器
-     * @param messageSource       国际化
+     * @param messageSource 国际化
      * @return 日志切面
      */
     @Bean
@@ -28,6 +37,7 @@ public class LogAutoConfigure {
 
     /**
      * 日志服务
+     *
      * @param logHandlersProvider 日志处理器提供者
      * @return 日志服务
      */

@@ -5,7 +5,6 @@ import sh.rime.reactor.commons.bean.R;
 import sh.rime.reactor.commons.enums.CommonExceptionEnum;
 import sh.rime.reactor.core.properties.AuthProperties;
 import sh.rime.reactor.security.domain.RoleEnum;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.ReactiveAuthorizationManager;
@@ -19,13 +18,24 @@ import java.util.Arrays;
 
 
 /**
+ * CustomAuthorizationManager is a class that represents the custom authorization manager.
+ *
  * @author youta
  **/
 @Component
-@RequiredArgsConstructor
 public class CustomAuthorizationManager implements ReactiveAuthorizationManager<AuthorizationContext> {
 
     private final AuthProperties properties;
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     *
+     * @param properties the properties
+     */
+    public CustomAuthorizationManager(AuthProperties properties) {
+        this.properties = properties;
+    }
 
     @Override
     public Mono<AuthorizationDecision> check(Mono<Authentication> authentication, AuthorizationContext context) {

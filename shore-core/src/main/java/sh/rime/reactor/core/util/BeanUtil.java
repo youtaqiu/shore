@@ -18,9 +18,18 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
+ * bean util.
+ *
  * @author youta
  */
 public class BeanUtil extends org.springframework.beans.BeanUtils {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public BeanUtil() {
+    }
 
     /**
      * source属性为空的不赋值给target

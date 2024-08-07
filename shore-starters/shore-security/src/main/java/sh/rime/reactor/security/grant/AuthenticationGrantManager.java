@@ -2,7 +2,6 @@ package sh.rime.reactor.security.grant;
 
 import sh.rime.reactor.commons.exception.ServerException;
 import sh.rime.reactor.core.util.OptionalBean;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,11 +13,22 @@ import static sh.rime.reactor.commons.enums.GrantType.PASSWORD;
 
 
 /**
+ * AuthenticationGrantManager is a class that represents authentication grant manager.
+ *
  * @author youta
  **/
 @Service
-@AllArgsConstructor
 public class AuthenticationGrantManager {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     *
+     * @param strategies the strategies
+     */
+    public AuthenticationGrantManager(List<AuthenticationGrant> strategies) {
+        this.strategies = strategies;
+    }
 
     /**
      * 授权策略
@@ -27,6 +37,7 @@ public class AuthenticationGrantManager {
 
     /**
      * 初始化授权
+     *
      * @param grantType 授权类型
      * @return 授权策略
      */

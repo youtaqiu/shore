@@ -10,9 +10,18 @@ import org.springframework.security.core.context.SecurityContext;
 import reactor.core.publisher.Mono;
 
 /**
+ * 用户上下文
+ *
  * @author youta
  **/
 public class UserContextHolder {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public UserContextHolder() {
+    }
 
     /**
      * 获取用户id

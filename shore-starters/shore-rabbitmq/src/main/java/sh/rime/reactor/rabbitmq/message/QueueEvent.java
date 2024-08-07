@@ -12,10 +12,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
+ * 队列事件
+ *
  * @author youta
  **/
 @AllArgsConstructor
-@NoArgsConstructor
 @SuperBuilder
 @Data
 @EqualsAndHashCode
@@ -24,6 +25,13 @@ public abstract class QueueEvent implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public QueueEvent() {
+    }
 
     /**
      * 消息id

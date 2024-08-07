@@ -8,7 +8,6 @@ import sh.rime.reactor.security.domain.SecurityExceptionEnum;
 import sh.rime.reactor.security.domain.TokenAuthentication;
 import sh.rime.reactor.security.service.UserDetailService;
 import sh.rime.reactor.security.service.SimpleUserDetailServiceImpl;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,14 +16,27 @@ import reactor.core.publisher.Mono;
 
 
 /**
+ * PasswordAuthenticationGrant is a class that represents the password authentication grant.
+ *
  * @author youta
  **/
 @Service
-@RequiredArgsConstructor
 public class PasswordAuthenticationGrant implements AuthenticationGrant {
 
     private final PasswordEncoder passwordEncoder;
     private final ObjectProvider<UserDetailService> userDetailServices;
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     *
+     * @param passwordEncoder    the password encoder
+     * @param userDetailServices the user detail services
+     */
+    public PasswordAuthenticationGrant(PasswordEncoder passwordEncoder, ObjectProvider<UserDetailService> userDetailServices) {
+        this.passwordEncoder = passwordEncoder;
+        this.userDetailServices = userDetailServices;
+    }
 
     @Override
     public Mono<Authentication> authentication(LoginRequest request) {

@@ -10,9 +10,18 @@ import org.springframework.web.server.ServerWebExchange;
 
 
 /**
+ * ClientUtil is a utility class that provides methods for getting client information.
+ *
  * @author youta
  **/
 public class ClientUtil {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public ClientUtil() {
+    }
 
     /**
      * 获取客户端信息

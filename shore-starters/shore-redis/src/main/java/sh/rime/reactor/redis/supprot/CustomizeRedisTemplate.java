@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
 /**
+ * The type Customize redis template.
  * @author youta
  **/
 public class CustomizeRedisTemplate extends RedisTemplate<String, Object> {

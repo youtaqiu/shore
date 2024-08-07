@@ -12,11 +12,20 @@ import reactor.core.scheduler.Schedulers;
 import reactor.rabbitmq.*;
 
 /**
+ * RabbitMQ自动配置.
+ *
  * @author youta
  **/
 @Configuration
 @EnableConfigurationProperties(RabbitMQProperties.class)
 public class RabbitMqAutoConfiguration {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public RabbitMqAutoConfiguration() {
+    }
 
     /**
      * 连接配置

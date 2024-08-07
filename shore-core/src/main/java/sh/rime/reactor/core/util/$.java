@@ -2,7 +2,6 @@ package sh.rime.reactor.core.util;
 
 import sh.rime.reactor.commons.exception.ServerException;
 import sh.rime.reactor.commons.exception.ServerFailure;
-import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -17,9 +16,15 @@ import java.util.Map;
  *
  * @author youta
  */
-@NoArgsConstructor
 public class $ extends Assert {
 
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public $() {
+    }
 
     /**
      * 断言状态

@@ -9,10 +9,19 @@ import org.springframework.lang.Nullable;
 import reactor.core.publisher.Mono;
 
 /**
+ * Simple log handler.
+ *
  * @author youta
  **/
 @Slf4j
 public class SimpleLogHandler implements LogHandler {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public SimpleLogHandler() {
+    }
 
     @Override
     public boolean accept(MethodSignature methodSignature, Log log) {
@@ -22,18 +31,20 @@ public class SimpleLogHandler implements LogHandler {
     @Override
     public Mono<Boolean> handler(String logContent, String requestMethod, String requestUri,
                                  String requestId, String traceId, String clientId, String ip,
+                                 @Nullable Object queryParams,
                                  @Nullable Object operationParam,
                                  @Nullable Object result, @Nullable Throwable ex) {
-        var logStr = "logContent: {}, requestMethod: {}, requestUri: {}, requestId: {}, ip: {}, traceId: {}, clientId: {}, operationParam: {}, result: {}";
+        var logStr = "logContent: {}, requestMethod: {}, requestUri: {}, requestId: {}, ip: {}, " +
+                "traceId: {}, clientId: {}, queryParams: {}, operationParam: {}, result: {}";
         if (ex == null) {
             log.info(logStr, logContent, requestMethod, requestUri,
-                    requestId, ip, traceId, clientId,
+                    requestId, ip, traceId, clientId, JSONUtil.toJsonStr(queryParams),
                     JSONUtil.toJsonStr(operationParam), JSONUtil.toJsonStr(result));
             return Mono.just(true);
         }
         logStr = logStr + ", ex: {}";
         log.info(logStr, logContent, requestMethod, requestUri,
-                requestId, traceId, clientId,ip,
+                requestId, traceId, clientId, ip,
                 JSONUtil.toJsonStr(operationParam), JSONUtil.toJsonStr(result),
                 OptionalBean.ofNullable(ex).getBean(Throwable::getLocalizedMessage).orElse(null));
         return Mono.just(true);

@@ -19,6 +19,13 @@ public class WebSocketMappingHandlerMapping extends SimpleUrlHandlerMapping {
 
     private final Map<String, WebSocketHandler> handlerMap = new LinkedHashMap<>();
 
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public WebSocketMappingHandlerMapping() {
+    }
+
     @Override
     public void initApplicationContext() {
         Map<String, Object> beanMap = obtainApplicationContext()

@@ -1,10 +1,10 @@
 package sh.rime.reactor.security.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.security.web.server.authentication.ServerAuthenticationConverter;
 import sh.rime.reactor.commons.exception.ServerException;
 import sh.rime.reactor.security.domain.LoginRequest;
 import sh.rime.reactor.security.grant.AuthenticationGrantManager;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.lang.NonNull;
@@ -21,15 +21,28 @@ import static sh.rime.reactor.commons.enums.CommonExceptionEnum.LOGIN_BODY_PARSE
 
 
 /**
+ * PostLoginAuthConverter is a class that represents the converter of post login authentication.
+ *
  * @author youta
  **/
 @Slf4j
 @Component
-@RequiredArgsConstructor
-public class PostLoginAuthConverter extends ServerFormLoginAuthenticationConverter {
+public class PostLoginAuthConverter implements ServerAuthenticationConverter {
 
     private final ObjectMapper objectMapper;
     private final AuthenticationGrantManager authenticationGrantManager;
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     *
+     * @param objectMapper               the object mapper
+     * @param authenticationGrantManager the authentication grant manager
+     */
+    public PostLoginAuthConverter(ObjectMapper objectMapper, AuthenticationGrantManager authenticationGrantManager) {
+        this.objectMapper = objectMapper;
+        this.authenticationGrantManager = authenticationGrantManager;
+    }
 
     @Override
     public Mono<Authentication> convert(ServerWebExchange exchange) {

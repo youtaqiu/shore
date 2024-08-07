@@ -15,6 +15,8 @@ import java.util.List;
 import static org.springframework.data.relational.core.query.Query.query;
 
 /**
+ * 数据库工具类
+ *
  * @author youta
  **/
 public interface DbUtils {
@@ -26,16 +28,17 @@ public interface DbUtils {
 
     /**
      * 更新
+     *
      * @param template 模板
-     * @param entity 实体
+     * @param entity   实体
+     * @param <T>      实体类型
      * @return 更新结果
-     * @param <T> 实体类型
      */
     static <T> Mono<Long> update(R2dbcEntityTemplate template, T entity) {
         PropertyDescriptor[] descriptors = BeanUtils.getPropertyDescriptors(entity.getClass());
         Update update = null;
         Query query = null;
-        for (PropertyDescriptor descriptor: descriptors) {
+        for (PropertyDescriptor descriptor : descriptors) {
             try {
                 String name = descriptor.getName();
 
@@ -49,7 +52,7 @@ public interface DbUtils {
                 if ("id".equals(name)) {
                     query = query(Criteria.where(name).is(invoke));
                 } else {
-                    update = update == null? Update.update(name, invoke):
+                    update = update == null ? Update.update(name, invoke) :
                             update.set(name, invoke);
                 }
             } catch (IllegalAccessException | InvocationTargetException e) {

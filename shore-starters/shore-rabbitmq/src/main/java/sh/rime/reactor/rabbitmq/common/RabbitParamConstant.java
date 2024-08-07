@@ -8,6 +8,13 @@ package sh.rime.reactor.rabbitmq.common;
 public class RabbitParamConstant {
 
     /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public RabbitParamConstant() {
+    }
+
+    /**
      * delay header name
      */
     public static final String DELAY_HEADER = "x-delay";

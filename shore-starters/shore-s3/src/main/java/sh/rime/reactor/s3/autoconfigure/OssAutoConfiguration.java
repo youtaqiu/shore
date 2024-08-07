@@ -9,15 +9,24 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * 对象存储自动配置.
+ *
  * @author youta
  */
 @Configuration
 @EnableConfigurationProperties({OssProperties.class})
 public class OssAutoConfiguration {
 
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public OssAutoConfiguration() {
+    }
 
     /**
      * OSS模板
+     *
      * @param properties OSS配置属性
      * @return OSS模板
      */

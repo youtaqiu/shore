@@ -24,11 +24,20 @@ import java.time.Duration;
 import java.util.function.Function;
 
 /**
+ * webClient configuration.
+ *
  * @author youta
  **/
 @AutoConfiguration(after = WebClientAutoConfiguration.class)
 @ConditionalOnClass(WebClient.class)
 public class WebClientConfiguration {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public WebClientConfiguration() {
+    }
 
     /**
      * webClient 配置
@@ -49,6 +58,14 @@ public class WebClientConfiguration {
     @Configuration
     @ConditionalOnClass(HttpClient.class)
     public static class ReactorClientConfiguration {
+
+        /**
+         * Default constructor.
+         * This constructor is used for serialization and other reflective operations.
+         */
+        public ReactorClientConfiguration() {
+        }
+
         /**
          * Reactor resource factory reactor resource factory.
          *

@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.util.StringUtils;
 
 /**
+ * R2dbc自动配置
+ *
  * @author youta
  **/
 @Configuration
@@ -18,6 +20,13 @@ import org.springframework.util.StringUtils;
 @EnableTransactionManagement
 @EnableR2dbcAuditing
 public class R2dbcAutoConfiguration {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public R2dbcAutoConfiguration() {
+    }
 
     /**
      * 审计

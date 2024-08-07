@@ -9,6 +9,8 @@ import java.util.Map;
 
 
 /**
+ * 对象存储配置
+ *
  * @author youta
  */
 @Getter
@@ -16,6 +18,12 @@ import java.util.Map;
 @ConfigurationProperties(OssProperties.PREFIX)
 public class OssProperties {
 
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public OssProperties() {
+    }
 
     /**
      * 配置前缀

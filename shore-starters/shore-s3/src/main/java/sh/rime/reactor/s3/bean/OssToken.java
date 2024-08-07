@@ -4,22 +4,29 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
 
 /**
+ * 对象存储服务Token.
+ *
  * @author youta
  **/
 @Data
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 public class OssToken implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public OssToken() {
+    }
 
     /**
      * 对象存储服务的URL

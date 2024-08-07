@@ -33,138 +33,163 @@ import java.util.Objects;
 @EnableConfigurationProperties(LoggingProperties.class)
 public class LoggingConfiguration {
 
-	/**
-	 * loggingStartedEventListener
-	 * @param loggingProperties loggingProperties
-	 * @return {@link LoggingStartedEventListener}
-	 */
-	@Bean
-	public LoggingStartedEventListener loggingStartedEventListener(LoggingProperties loggingProperties) {
-		return new LoggingStartedEventListener(loggingProperties);
-	}
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public LoggingConfiguration() {
+    }
 
-	/**
-	 * logbackLoggerContextListenerl
-	 * @param loggingAppenderObjectProvider loggingAppenderObjectProvider
-	 * @return {@link LogbackLoggerContextListener}
-	 */
-	@Bean
-	public LogbackLoggerContextListener logbackLoggerContextListener(ObjectProvider<ILoggingAppender> loggingAppenderObjectProvider) {
-		List<ILoggingAppender> loggingAppenderList = loggingAppenderObjectProvider.orderedStream().toList();
-		return new LogbackLoggerContextListener(loggingAppenderList);
-	}
+    /**
+     * loggingStartedEventListener
+     *
+     * @param loggingProperties loggingProperties
+     * @return {@link LoggingStartedEventListener}
+     */
+    @Bean
+    public LoggingStartedEventListener loggingStartedEventListener(LoggingProperties loggingProperties) {
+        return new LoggingStartedEventListener(loggingProperties);
+    }
 
-	/**
-	 * logging file config
-	 */
-	@AutoConfiguration
-	@ConditionalOnAppender(Appender.FILE)
-	public static class LoggingFileConfiguration {
+    /**
+     * logbackLoggerContextListenerl
+     *
+     * @param loggingAppenderObjectProvider loggingAppenderObjectProvider
+     * @return {@link LogbackLoggerContextListener}
+     */
+    @Bean
+    public LogbackLoggerContextListener logbackLoggerContextListener(ObjectProvider<ILoggingAppender> loggingAppenderObjectProvider) {
+        List<ILoggingAppender> loggingAppenderList = loggingAppenderObjectProvider.orderedStream().toList();
+        return new LogbackLoggerContextListener(loggingAppenderList);
+    }
 
-		/**
-		 * loggingFileAppender
-		 * @param environment environmente
-		 * @param properties properties
-		 * @return loggingFileAppender
-		 */
-		@Bean
-		public LoggingFileAppender loggingFileAppender(Environment environment,
-													   LoggingProperties properties) {
-			return new LoggingFileAppender(environment, properties);
-		}
-	}
+    /**
+     * logging file config
+     */
+    @AutoConfiguration
+    @ConditionalOnAppender(Appender.FILE)
+    public static class LoggingFileConfiguration {
+
+        /**
+         * Default constructor.
+         * This constructor is used for serialization and other reflective operations.
+         */
+        public LoggingFileConfiguration() {
+        }
+
+        /**
+         * loggingFileAppender
+         *
+         * @param environment environmente
+         * @param properties  properties
+         * @return loggingFileAppender
+         */
+        @Bean
+        public LoggingFileAppender loggingFileAppender(Environment environment,
+                                                       LoggingProperties properties) {
+            return new LoggingFileAppender(environment, properties);
+        }
+    }
 
 
-	/**
-	 * LoggingLokiConfiguration
-	 */
-	@AutoConfiguration
-	@ConditionalOnAppender(Appender.LOKI)
-	public static class LoggingLokiConfiguration {
+    /**
+     * LoggingLokiConfiguration
+     */
+    @AutoConfiguration
+    @ConditionalOnAppender(Appender.LOKI)
+    public static class LoggingLokiConfiguration {
 
-		/**
-		 * loggingLokiAppender
-		 * @param environment environment
-		 * @param properties properties
-		 * @return LoggingLokiAppender
-		 */
-		@Bean
-		public LoggingLokiAppender loggingLokiAppender(Environment environment,
-													   LoggingProperties properties) {
-			return new LoggingLokiAppender(environment, properties);
-		}
-	}
+        /**
+         * Default constructor.
+         * This constructor is used for serialization and other reflective operations.
+         */
+        public LoggingLokiConfiguration() {
+        }
 
-	/**
-	 * ConditionalOnAppender
-	 */
-	@Target({ElementType.TYPE, ElementType.METHOD})
-	@Retention(RetentionPolicy.RUNTIME)
-	@Documented
-	@Conditional(LoggingCondition.class)
-	private @interface ConditionalOnAppender {
+        /**
+         * loggingLokiAppender
+         *
+         * @param environment environment
+         * @param properties  properties
+         * @return LoggingLokiAppender
+         */
+        @Bean
+        public LoggingLokiAppender loggingLokiAppender(Environment environment,
+                                                       LoggingProperties properties) {
+            return new LoggingLokiAppender(environment, properties);
+        }
+    }
 
-		/**
-		 * Appender
-		 *
-		 * @return Appender
-		 */
-		Appender value();
+    /**
+     * ConditionalOnAppender
+     */
+    @Target({ElementType.TYPE, ElementType.METHOD})
+    @Retention(RetentionPolicy.RUNTIME)
+    @Documented
+    @Conditional(LoggingCondition.class)
+    private @interface ConditionalOnAppender {
 
-	}
+        /**
+         * Appender
+         *
+         * @return Appender
+         */
+        Appender value();
 
-	/**
-	 * LoggingCondition
-	 */
-	@Order(Ordered.HIGHEST_PRECEDENCE)
-	private static class LoggingCondition extends SpringBootCondition {
-		private static final String LOG_STASH_CLASS_NAME = "net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder";
-		private static final String LOKI_CLASS_NAME = "com.github.loki4j.logback.Loki4jAppender";
+    }
 
-		@Override
-		public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
-			Map<String, Object> attributes = metadata.getAnnotationAttributes(ConditionalOnAppender.class.getName());
-			Object value = Objects.requireNonNull(attributes).get("value");
-			Appender appender = Appender.valueOf(value.toString());
-			Environment environment = context.getEnvironment();
-			ClassLoader classLoader = context.getClassLoader();
-			Boolean fileEnabled = environment.getProperty(LoggingProperties.Files.PREFIX + ".enabled", Boolean.class, Boolean.TRUE);
-			Boolean lokiEnabled = environment.getProperty(LoggingProperties.Loki.PREFIX + ".enabled", Boolean.class, Boolean.FALSE);
-			if (Appender.LOKI == appender) {
-				if (!lokiEnabled) {
-					return ConditionOutcome.noMatch("Logging loki is not enabled.");
-				}
-				if (hasLokiDependencies(classLoader)) {
-					return ConditionOutcome.match();
-				}
-				throw new IllegalStateException("Logging loki is enabled, please add com.github.loki4j loki-logback-appender dependencies.");
-			} else if (Appender.FILE_JSON == appender) {
-				Boolean isUseJsonFormat = environment.getProperty(LoggingProperties.Files.PREFIX + ".use-json-format", Boolean.class, Boolean.FALSE);
-				// 没有开启文件或者没有开启 json 格式化
-				if (!fileEnabled || !isUseJsonFormat) {
-					return ConditionOutcome.noMatch("Logging json file is not enabled.");
-				}
-				if (hasLogStashDependencies(classLoader)) {
-					return ConditionOutcome.match();
-				}
-				throw new IllegalStateException("Logging file json format is enabled, please add logstash-logback-encoder dependencies.");
-			} else if (Appender.FILE == appender) {
-				if (!fileEnabled) {
-					return ConditionOutcome.noMatch("Logging logstash is not enabled.");
-				}
-				return ConditionOutcome.match();
-			} else {
-				return ConditionOutcome.match();
-			}
-		}
+    /**
+     * LoggingCondition
+     */
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    private static class LoggingCondition extends SpringBootCondition {
+        private static final String LOG_STASH_CLASS_NAME = "net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder";
+        private static final String LOKI_CLASS_NAME = "com.github.loki4j.logback.Loki4jAppender";
 
-		private static boolean hasLogStashDependencies(ClassLoader classLoader) {
-			return ClassUtils.isPresent(LOG_STASH_CLASS_NAME, classLoader);
-		}
+        @Override
+        public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
+            Map<String, Object> attributes = metadata.getAnnotationAttributes(ConditionalOnAppender.class.getName());
+            Object value = Objects.requireNonNull(attributes).get("value");
+            Appender appender = Appender.valueOf(value.toString());
+            Environment environment = context.getEnvironment();
+            ClassLoader classLoader = context.getClassLoader();
+            Boolean fileEnabled = environment.getProperty(LoggingProperties.Files.PREFIX + ".enabled", Boolean.class, Boolean.TRUE);
+            Boolean lokiEnabled = environment.getProperty(LoggingProperties.Loki.PREFIX + ".enabled", Boolean.class, Boolean.FALSE);
+            if (Appender.LOKI == appender) {
+                if (!lokiEnabled) {
+                    return ConditionOutcome.noMatch("Logging loki is not enabled.");
+                }
+                if (hasLokiDependencies(classLoader)) {
+                    return ConditionOutcome.match();
+                }
+                throw new IllegalStateException("Logging loki is enabled, please add com.github.loki4j loki-logback-appender dependencies.");
+            } else if (Appender.FILE_JSON == appender) {
+                Boolean isUseJsonFormat = environment.getProperty(LoggingProperties.Files.PREFIX + ".use-json-format", Boolean.class, Boolean.FALSE);
+                // 没有开启文件或者没有开启 json 格式化
+                if (!fileEnabled || !isUseJsonFormat) {
+                    return ConditionOutcome.noMatch("Logging json file is not enabled.");
+                }
+                if (hasLogStashDependencies(classLoader)) {
+                    return ConditionOutcome.match();
+                }
+                throw new IllegalStateException("Logging file json format is enabled, please add logstash-logback-encoder dependencies.");
+            } else if (Appender.FILE == appender) {
+                if (!fileEnabled) {
+                    return ConditionOutcome.noMatch("Logging logstash is not enabled.");
+                }
+                return ConditionOutcome.match();
+            } else {
+                return ConditionOutcome.match();
+            }
+        }
 
-		private static boolean hasLokiDependencies(ClassLoader classLoader) {
-			return ClassUtils.isPresent(LOKI_CLASS_NAME, classLoader);
-		}
-	}
+        private static boolean hasLogStashDependencies(ClassLoader classLoader) {
+            return ClassUtils.isPresent(LOG_STASH_CLASS_NAME, classLoader);
+        }
+
+        private static boolean hasLokiDependencies(ClassLoader classLoader) {
+            return ClassUtils.isPresent(LOKI_CLASS_NAME, classLoader);
+        }
+    }
 
 }

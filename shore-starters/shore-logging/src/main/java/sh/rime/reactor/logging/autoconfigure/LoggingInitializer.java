@@ -19,37 +19,44 @@ import java.util.Map;
 @Component
 public class LoggingInitializer implements EnvironmentPostProcessor, Ordered {
 
-	/**
-	 * 用于 spring boot admin 中展示日志
-	 */
-	public static final String LOGGING_FILE_PATH_KEY = "logging.file.path";
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public LoggingInitializer() {
+    }
 
-	/**
-	 * 用于 spring boot admin 中展示日志
-	 */
-	public static final String LOGGING_FILE_NAME_KEY = "logging.file.name";
+    /**
+     * 用于 spring boot admin 中展示日志
+     */
+    public static final String LOGGING_FILE_PATH_KEY = "logging.file.path";
 
-	/**
-	 * 用于 spring boot admin 中展示日志
-	 */
-	public static final String SHORE_LOGGING_PROPERTY_SOURCE_NAME = "shoreLoggingPropertySource";
+    /**
+     * 用于 spring boot admin 中展示日志
+     */
+    public static final String LOGGING_FILE_NAME_KEY = "logging.file.name";
 
-	@Override
-	public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-		// 读取系统配置的日志目录，默认为项目下 logs
-		String logBase = environment.getProperty(LOGGING_FILE_PATH_KEY, LoggingUtil.DEFAULT_LOG_DIR);
-		// 用于 spring boot admin 中展示日志
-		if (!environment.containsProperty(LOGGING_FILE_NAME_KEY)) {
-			Map<String, Object> map = new HashMap<>(2);
-			map.put(LOGGING_FILE_NAME_KEY, logBase + "/${spring.application.name}/" + LoggingUtil.LOG_FILE_ALL);
-			MapPropertySource propertySource = new MapPropertySource(SHORE_LOGGING_PROPERTY_SOURCE_NAME, map);
-			environment.getPropertySources().addLast(propertySource);
-		}
-	}
+    /**
+     * 用于 spring boot admin 中展示日志
+     */
+    public static final String SHORE_LOGGING_PROPERTY_SOURCE_NAME = "shoreLoggingPropertySource";
 
-	@Override
-	public int getOrder() {
-		return Ordered.LOWEST_PRECEDENCE;
-	}
+    @Override
+    public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
+        // 读取系统配置的日志目录，默认为项目下 logs
+        String logBase = environment.getProperty(LOGGING_FILE_PATH_KEY, LoggingUtil.DEFAULT_LOG_DIR);
+        // 用于 spring boot admin 中展示日志
+        if (!environment.containsProperty(LOGGING_FILE_NAME_KEY)) {
+            Map<String, Object> map = new HashMap<>(2);
+            map.put(LOGGING_FILE_NAME_KEY, logBase + "/${spring.application.name}/" + LoggingUtil.LOG_FILE_ALL);
+            MapPropertySource propertySource = new MapPropertySource(SHORE_LOGGING_PROPERTY_SOURCE_NAME, map);
+            environment.getPropertySources().addLast(propertySource);
+        }
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE;
+    }
 
 }

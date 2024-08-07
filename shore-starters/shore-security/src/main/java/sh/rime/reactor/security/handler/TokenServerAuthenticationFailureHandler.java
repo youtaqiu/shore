@@ -9,10 +9,19 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
+ * token server authentication failure handler.
+ *
  * @author youta
  **/
 @Component
 public class TokenServerAuthenticationFailureHandler implements ServerAuthenticationFailureHandler {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public TokenServerAuthenticationFailureHandler() {
+    }
 
     @Override
     public Mono<Void> onAuthenticationFailure(WebFilterExchange webFilterExchange, AuthenticationException exception) {

@@ -21,6 +21,8 @@ import java.time.Duration;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
 /**
+ * ElasticRestClientConfiguration is a class that represents the elastic rest client configuration.
+ *
  * @author youta
  **/
 @Configuration
@@ -30,6 +32,8 @@ public class ElasticRestClientConfiguration {
     private final ElasticProperties elasticProperties;
 
     /**
+     * Default constructor.
+     *
      * @param elasticProperties elasticProperties
      */
     public ElasticRestClientConfiguration(ElasticProperties elasticProperties) {

@@ -8,16 +8,24 @@ import lombok.experimental.SuperBuilder;
 import java.util.List;
 
 /**
+ * TokenInfo is a class that represents token information.
+ *
  * @author youta
  **/
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
-@NoArgsConstructor
 @Accessors(chain = true)
 @SuperBuilder
 public class TokenInfo {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public TokenInfo() {
+    }
 
     /**
      * 用户名

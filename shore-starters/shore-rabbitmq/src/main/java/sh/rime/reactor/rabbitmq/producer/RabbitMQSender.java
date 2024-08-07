@@ -5,7 +5,6 @@ import cn.hutool.core.util.StrUtil;
 import com.rabbitmq.client.AMQP;
 import sh.rime.reactor.rabbitmq.common.ExchangeType;
 import sh.rime.reactor.rabbitmq.message.QueueEvent;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -24,14 +23,25 @@ import static sh.rime.reactor.rabbitmq.common.RabbitParamConstant.*;
 import static reactor.rabbitmq.ResourcesSpecification.*;
 
 /**
+ * RabbitMQ sender.
+ *
  * @author youta
  **/
 @Slf4j
 @Component
-@AllArgsConstructor
 public class RabbitMQSender {
 
     private final Sender sender;
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     *
+     * @param sender the sender
+     */
+    public RabbitMQSender(Sender sender) {
+        this.sender = sender;
+    }
 
     /**
      * 发送消息

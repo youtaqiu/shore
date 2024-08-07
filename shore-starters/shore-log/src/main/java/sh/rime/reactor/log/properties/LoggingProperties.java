@@ -5,12 +5,21 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
+ * 日志配置
+ *
  * @author youta
  **/
 @Setter
 @Getter
 @ConfigurationProperties(LoggingProperties.PREFIX)
 public class LoggingProperties {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public LoggingProperties() {
+    }
 
     /**
      * 配置前缀

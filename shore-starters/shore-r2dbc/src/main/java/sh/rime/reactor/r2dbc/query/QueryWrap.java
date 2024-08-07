@@ -8,7 +8,6 @@ import sh.rime.reactor.r2dbc.page.IPageUtil;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.RowMetadata;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.lang.NonNull;
 import org.springframework.r2dbc.core.DatabaseClient;
@@ -21,12 +20,21 @@ import java.util.function.Function;
 
 
 /**
+ * 查询包装
+ *
+ * @param <T> 泛型
  * @author youta
  **/
-@NoArgsConstructor
 @AllArgsConstructor
 @SuppressWarnings("unused")
 public class QueryWrap<T> {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public QueryWrap() {
+    }
 
     /**
      * r2dbcEntityTemplate

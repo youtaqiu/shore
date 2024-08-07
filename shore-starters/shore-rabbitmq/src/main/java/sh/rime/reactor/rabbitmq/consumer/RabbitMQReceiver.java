@@ -22,6 +22,9 @@ import java.time.Duration;
 import static reactor.rabbitmq.ResourcesSpecification.queue;
 
 /**
+ * RabbitMQ receiver.
+ *
+ * @param <T> the type of the queue event
  * @author youta
  **/
 @Slf4j
@@ -43,6 +46,13 @@ public abstract class RabbitMQReceiver<T extends QueueEvent> {
 
     @Resource
     private RabbitMQProperties rabbitMQProperties;
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public RabbitMQReceiver() {
+    }
 
     @PostConstruct
     private void init() {

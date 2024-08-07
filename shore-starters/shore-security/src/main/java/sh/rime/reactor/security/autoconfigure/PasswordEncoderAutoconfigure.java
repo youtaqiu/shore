@@ -7,10 +7,18 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
+ * PasswordEncoderAutoconfigure is a class that configures password encoders.
  * @author youta
  **/
 @Configuration
 public class PasswordEncoderAutoconfigure {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public PasswordEncoderAutoconfigure() {
+    }
 
     /**
      * BCrypt密码编码

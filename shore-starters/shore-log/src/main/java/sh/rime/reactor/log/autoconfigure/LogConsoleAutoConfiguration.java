@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
+ * 控制台日志自动配置
+ *
  * @author youta
  */
 @EnableAsync
@@ -19,9 +21,16 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @ConditionalOnProperty(value = LoggingProperties.PREFIX + ".console", havingValue = "true", matchIfMissing = true)
 public class LogConsoleAutoConfiguration {
 
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public LogConsoleAutoConfiguration() {
+    }
 
     /**
      * 控制台日志处理器
+     *
      * @return 控制台日志处理器
      */
     @Bean

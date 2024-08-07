@@ -7,7 +7,6 @@ import sh.rime.reactor.core.properties.AuthProperties;
 import sh.rime.reactor.security.constants.TokenConstants;
 import sh.rime.reactor.security.domain.TokenAuthentication;
 import sh.rime.reactor.security.repository.AuthenticationRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContext;
@@ -21,16 +20,33 @@ import java.time.Duration;
 
 
 /**
+ * TokenServerSecurityContextRepository is a class that represents the token server security context repository.
+ *
  * @author youta
  **/
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class TokenServerSecurityContextRepository implements ServerSecurityContextRepository {
 
     private final AuthenticationRepository authenticationRepository;
     private final AuthenticationManager authenticationManager;
     private final AuthProperties properties;
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     *
+     * @param authenticationRepository the authentication repository
+     * @param authenticationManager    the authentication manager
+     * @param properties               the properties
+     */
+    public TokenServerSecurityContextRepository(AuthenticationRepository authenticationRepository,
+                                                AuthenticationManager authenticationManager,
+                                                AuthProperties properties) {
+        this.authenticationRepository = authenticationRepository;
+        this.authenticationManager = authenticationManager;
+        this.properties = properties;
+    }
 
     @Override
     public Mono<Void> save(ServerWebExchange exchange, SecurityContext context) {

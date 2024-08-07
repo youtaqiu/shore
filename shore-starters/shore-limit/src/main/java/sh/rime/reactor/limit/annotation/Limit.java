@@ -7,6 +7,8 @@ import java.lang.annotation.Target;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 限流注解
+ *
  * @author youta
  **/
 @Target({ElementType.METHOD, ElementType.TYPE})

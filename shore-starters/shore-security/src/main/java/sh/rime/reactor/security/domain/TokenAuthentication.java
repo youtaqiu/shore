@@ -9,6 +9,8 @@ import javax.security.auth.Subject;
 import java.util.Collection;
 
 /**
+ * TokenAuthentication is a class that represents token authentication information.
+ *
  * @author youta
  **/
 @Getter
@@ -42,6 +44,7 @@ public class TokenAuthentication extends AbstractAuthenticationToken {
 
     /**
      * 获取登录用户
+     *
      * @return loginUser
      */
     public LoginRequest getLoginUser() {
@@ -50,6 +53,7 @@ public class TokenAuthentication extends AbstractAuthenticationToken {
 
     /**
      * 设置登录用户
+     *
      * @param loginRequest loginUser
      * @return TokenAuthentication
      */
@@ -92,10 +96,10 @@ public class TokenAuthentication extends AbstractAuthenticationToken {
     /**
      * 构造器
      *
-     * @param principal   principal
-     * @param credentials credentials
-     * @param authorities authorities
-     * @param loginRequest   loginUser
+     * @param principal    principal
+     * @param credentials  credentials
+     * @param authorities  authorities
+     * @param loginRequest loginUser
      */
     public TokenAuthentication(Collection<? extends GrantedAuthority> authorities, Object principal, Object credentials, LoginRequest loginRequest) {
         super(authorities);

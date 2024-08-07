@@ -26,6 +26,13 @@ import java.util.TimeZone;
 public class JacksonConfiguration {
 
     /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public JacksonConfiguration() {
+    }
+
+    /**
      * serializing objectMapper
      *
      * @return ObjectMapper

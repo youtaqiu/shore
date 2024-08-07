@@ -9,7 +9,6 @@ import sh.rime.reactor.security.authentication.CustomAuthorizationManager;
 import sh.rime.reactor.security.authentication.PostLoginAuthConverter;
 import sh.rime.reactor.security.authentication.TokenServerSecurityContextRepository;
 import sh.rime.reactor.security.handler.*;
-import lombok.AllArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -43,7 +42,6 @@ import java.util.stream.Collectors;
  *
  * @author youta
  */
-@AllArgsConstructor
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
 @Configuration
@@ -72,28 +70,65 @@ public class WebSecurityAutoconfigure {
     protected final RequestMappingHandlerMapping requestMappingHandlerMapping;
 
     /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     *
+     * @param authenticationManager                   the authentication manager
+     * @param tokenServerSecurityContextRepository    the token server security context repository
+     * @param tokenServerAuthenticationSuccessHandler the token server authentication success handler
+     * @param tokenServerAuthenticationFailureHandler the token server authentication failure handler
+     * @param tokenServerLogoutSuccessHandler         the token server logout success handler
+     * @param authEntryPoint                          the auth entry point
+     * @param authAccessDeniedHandler                 the auth access denied handler
+     * @param customAuthorizationManager              the custom authorization manager
+     * @param postLoginAuthConverter                  the post login auth converter
+     * @param authProperties                          the auth properties
+     * @param requestMappingHandlerMapping            the request mapping handler mapping
+     */
+    public WebSecurityAutoconfigure(AuthenticationManager authenticationManager,
+                                    TokenServerSecurityContextRepository tokenServerSecurityContextRepository,
+                                    TokenServerAuthenticationSuccessHandler tokenServerAuthenticationSuccessHandler,
+                                    TokenServerAuthenticationFailureHandler tokenServerAuthenticationFailureHandler,
+                                    TokenServerLogoutSuccessHandler tokenServerLogoutSuccessHandler,
+                                    AuthEntryPoint authEntryPoint, AuthAccessDeniedHandler authAccessDeniedHandler,
+                                    CustomAuthorizationManager customAuthorizationManager,
+                                    PostLoginAuthConverter postLoginAuthConverter, AuthProperties authProperties,
+                                    RequestMappingHandlerMapping requestMappingHandlerMapping) {
+        this.authenticationManager = authenticationManager;
+        this.tokenServerSecurityContextRepository = tokenServerSecurityContextRepository;
+        this.tokenServerAuthenticationSuccessHandler = tokenServerAuthenticationSuccessHandler;
+        this.tokenServerAuthenticationFailureHandler = tokenServerAuthenticationFailureHandler;
+        this.tokenServerLogoutSuccessHandler = tokenServerLogoutSuccessHandler;
+        this.authEntryPoint = authEntryPoint;
+        this.authAccessDeniedHandler = authAccessDeniedHandler;
+        this.customAuthorizationManager = customAuthorizationManager;
+        this.postLoginAuthConverter = postLoginAuthConverter;
+        this.authProperties = authProperties;
+        this.requestMappingHandlerMapping = requestMappingHandlerMapping;
+    }
+
+    /**
      * 配置认证管理器
      *
-     * @param httpSecurity http
+     * @param http serverHttpSecurity
      * @return 认证管理器
      */
     @Bean
-    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity httpSecurity) {
+    SecurityWebFilterChain defaultSecurityFilterChain(ServerHttpSecurity http) {
         loadAnonymousUrls();
-        httpSecurity
+        http.authorizeExchange(authorizeRequests -> {
+                            if (!authProperties.getEnable()) {
+                                authorizeRequests.anyExchange().permitAll();
+                                return;
+                            }
+                            authorizeRequests
+                                    .pathMatchers(HttpMethod.OPTIONS).permitAll()
+                                    .anyExchange().access(customAuthorizationManager);
+                        }
+                )
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
-                .securityContextRepository(tokenServerSecurityContextRepository)
-                .authorizeExchange(exchange -> {
-                    if (!authProperties.getEnable()) {
-                        exchange.anyExchange().permitAll();
-                        return;
-                    }
-                    exchange
-                            .pathMatchers(HttpMethod.OPTIONS).permitAll()
-                            .anyExchange().access(customAuthorizationManager);
-                })
                 .exceptionHandling(exceptionHandlingSpec -> exceptionHandlingSpec
                         .accessDeniedHandler(authAccessDeniedHandler)
                         .authenticationEntryPoint(authEntryPoint)
@@ -101,8 +136,9 @@ public class WebSecurityAutoconfigure {
                 .addFilterAt(authenticationWebFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
                 .logout(logoutSpec -> logoutSpec.logoutUrl(authProperties.getLogoutPattern())
                         .logoutSuccessHandler(tokenServerLogoutSuccessHandler));
-        return httpSecurity.build();
+        return http.build();
     }
+
 
     private void loadAnonymousUrls() {
         RequestMappingHandlerMapping handlerMapping = SpringUtil.getBean("requestMappingHandlerMapping");

@@ -17,9 +17,18 @@ import reactor.core.publisher.Mono;
 import java.io.ByteArrayOutputStream;
 
 /**
+ * CacheBodyGlobalFilter is a WebFilter that caches the body content.
+ *
  * @author youta
  **/
 public class CacheBodyGlobalFilter implements WebFilter, Ordered {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public CacheBodyGlobalFilter() {
+    }
 
     @Override
     public int getOrder() {

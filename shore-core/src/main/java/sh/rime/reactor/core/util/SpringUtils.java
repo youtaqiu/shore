@@ -1,5 +1,6 @@
 package sh.rime.reactor.core.util;
 
+import lombok.Getter;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -16,21 +17,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Spring工具类.
+ *
  * @author youta
  **/
 @Configuration(proxyBeanMethods = false)
 public class SpringUtils implements ApplicationContextAware {
 
-    private static ApplicationContext context = null;
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public SpringUtils() {
+    }
 
     /**
      * 获取ApplicationContext.
-     *
-     * @return ApplicationContext
      */
-    public static ApplicationContext getContext() {
-        return context;
-    }
+    @Getter
+    private static ApplicationContext context = null;
 
     /**
      * 根据bean类型获取bean实例列表.

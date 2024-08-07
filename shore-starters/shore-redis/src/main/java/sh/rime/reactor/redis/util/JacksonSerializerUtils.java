@@ -13,6 +13,7 @@ import org.springframework.data.redis.serializer.RedisSerializer;
  * The type Jackson serializer utils.
  */
 @UtilityClass
+@SuppressWarnings("all")
 public class JacksonSerializerUtils {
 
     /**

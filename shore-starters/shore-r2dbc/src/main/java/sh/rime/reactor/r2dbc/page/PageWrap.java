@@ -19,6 +19,9 @@ import java.util.function.Function;
 import static org.springframework.data.relational.core.query.Query.query;
 
 /**
+ * 分页包装
+ *
+ * @param <T> 泛型
  * @author youta
  **/
 @AllArgsConstructor

@@ -2,7 +2,6 @@ package sh.rime.reactor.r2dbc.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.*;
 import org.springframework.data.relational.core.mapping.Column;
@@ -13,13 +12,20 @@ import java.time.LocalDateTime;
 /**
  * Base 实体
  *
+ * @param <ID> 主键类型
  * @author youta
  */
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @SuperBuilder
 public class BaseDomain<ID> implements Serializable {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public BaseDomain() {
+    }
 
     /**
      * 主键

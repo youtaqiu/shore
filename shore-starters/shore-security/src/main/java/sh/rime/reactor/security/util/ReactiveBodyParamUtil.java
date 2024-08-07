@@ -20,11 +20,20 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
+ * ReactiveBodyParamUtil is a utility class that provides methods for parsing body parameters.
+ *
  * @author youta
  **/
 public class ReactiveBodyParamUtil {
 
     private static final String EQ = "=";
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public ReactiveBodyParamUtil() {
+    }
 
     /**
      * 从request中获取body

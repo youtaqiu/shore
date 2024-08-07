@@ -5,11 +5,15 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import reactor.rabbitmq.RabbitFluxException;
 
 /**
+ * Queue exception.
+ *
  * @author youta
  **/
 public class QueueException extends RuntimeException {
 
     /**
+     * Default constructor.
+     *
      * @param message the exception message
      */
     public QueueException(String message) {
@@ -17,6 +21,8 @@ public class QueueException extends RuntimeException {
     }
 
     /**
+     * constructor.
+     *
      * @param exception the exception to wrap
      */
     public QueueException(RabbitFluxException exception) {
@@ -24,6 +30,8 @@ public class QueueException extends RuntimeException {
     }
 
     /**
+     * constructor.
+     *
      * @param exception the exception to wrap
      */
     public QueueException(JsonParseException exception) {
@@ -31,6 +39,8 @@ public class QueueException extends RuntimeException {
     }
 
     /**
+     * constructor.
+     *
      * @param exception the exception to wrap
      */
     public QueueException(JsonMappingException exception) {
@@ -38,6 +48,8 @@ public class QueueException extends RuntimeException {
     }
 
     /**
+     * constructor.
+     *
      * @param operation the operation that failed
      * @param throwable the exception to wrap
      */

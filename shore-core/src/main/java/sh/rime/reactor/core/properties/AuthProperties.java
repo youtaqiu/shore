@@ -14,11 +14,20 @@ import java.util.Set;
 
 
 /**
+ * auth properties.
+ *
  * @author youta
  **/
 @Getter
 @ConfigurationProperties("shore.security")
 public class AuthProperties {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public AuthProperties() {
+    }
 
     /**
      * 设置是否开启
@@ -106,6 +115,7 @@ public class AuthProperties {
 
     /**
      * 设置delete排除路径.
+     *
      * @param deleteExcludePatterns delete排除路径
      */
     public void setDeleteExcludePatterns(Set<String> deleteExcludePatterns) {

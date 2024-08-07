@@ -35,6 +35,7 @@ import java.util.function.Function;
 @JsonDeserialize(using = Pair.PairJsonDeserializer.class)
 public class Pair<K, V> implements Serializable, Cloneable {
 
+
     /**
      * The constant EMPTY.
      */
@@ -49,6 +50,15 @@ public class Pair<K, V> implements Serializable, Cloneable {
      * value
      */
     private final V value;
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public Pair() {
+        this.key = null;
+        this.value = null;
+    }
 
     /**
      * Get Key.

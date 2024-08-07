@@ -18,6 +18,13 @@ import org.springframework.util.ClassUtils;
 public class LoggingProperties {
 
     /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public LoggingProperties() {
+    }
+
+    /**
      * 日志输出方式
      */
     public static final String PREFIX = "shore.logging";
@@ -32,6 +39,14 @@ public class LoggingProperties {
     @Getter
     @Setter
     public static class Console {
+
+        /**
+         * Default constructor.
+         * This constructor is used for serialization and other reflective operations.
+         */
+        public Console() {
+        }
+
         /**
          * 是否启动完成后关闭控制台日志，适用于，正式环境
          */
@@ -44,6 +59,14 @@ public class LoggingProperties {
     @Getter
     @Setter
     public static class Files {
+
+        /**
+         * Default constructor.
+         * This constructor is used for serialization and other reflective operations.
+         */
+        public Files() {
+        }
+
         /**
          * 日志文件路径，默认： logs
          */
@@ -65,6 +88,12 @@ public class LoggingProperties {
     @Getter
     @Setter
     public static class Loki {
+        /**
+         * Default constructor.
+         * This constructor is used for serialization and other reflective operations.
+         */
+        public Loki() {
+        }
 
         /**
          * 日志文件路径，默认： logs
@@ -137,6 +166,7 @@ public class LoggingProperties {
      * 编码方式
      */
     public enum LokiEncoder {
+
         /**
          * Encoder
          */

@@ -14,9 +14,17 @@ import reactor.core.publisher.Mono;
  **/
 @Component
 public class AuthEntryPoint implements ServerAuthenticationEntryPoint {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public AuthEntryPoint() {
+    }
+
     @Override
     public Mono<Void> commence(ServerWebExchange exchange, AuthenticationException ex) {
         //抛出异常,交由全局异常处理器处理
-        throw new ServerException(401,"Authentication failed");
+        throw new ServerException(401, "Authentication failed");
     }
 }
