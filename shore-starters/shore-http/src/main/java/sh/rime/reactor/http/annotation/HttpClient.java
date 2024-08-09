@@ -1,7 +1,6 @@
 package sh.rime.reactor.http.annotation;
 
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.util.UriBuilderFactory;
 import sh.rime.reactor.http.core.*;

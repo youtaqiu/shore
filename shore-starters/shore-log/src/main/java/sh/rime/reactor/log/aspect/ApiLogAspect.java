@@ -120,7 +120,6 @@ public class ApiLogAspect {
                         return obj;
                     }
                     Object[] args = joinPoint.getArgs();
-                    String[] parameterNames = methodSignature.getParameterNames();
                     Map<String, Object> queryParamMap = Map.of();
                     MultiValueMap<String, String> queryParams = request.getQueryParams();
                     if (!queryParams.isEmpty()) {
@@ -148,16 +147,6 @@ public class ApiLogAspect {
         return message == null ? logContent : message;
     }
 
-    private Map<String, Object> buildParamMap(Object[] args, String[] parameterNames) {
-        Map<String, Object> params = new HashMap<>(args.length);
-        for (int i = 0; i < args.length; i++) {
-            if (args[i] instanceof ServerWebExchange) {
-                continue;
-            }
-            params.put(parameterNames[i], args[i]);
-        }
-        return params;
-    }
 
     private Map<String, Object> buildParamMap(MultiValueMap<String, String> parameterNames) {
         Map<String, Object> params = new HashMap<>(parameterNames.size());
