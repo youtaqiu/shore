@@ -25,7 +25,7 @@ public class LogbackLoggerContextListener extends ContextAwareBase implements Lo
      * @param appenderList the appender list
      */
     public LogbackLoggerContextListener(List<ILoggingAppender> appenderList) {
-        this.appenderList = appenderList;
+        this.appenderList = List.copyOf(appenderList);
     }
 
     @Override

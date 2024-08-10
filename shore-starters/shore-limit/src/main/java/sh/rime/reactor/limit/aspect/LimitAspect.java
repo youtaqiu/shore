@@ -71,6 +71,12 @@ public class LimitAspect {
 
     }
 
+    /**
+     * Result mono.
+     *
+     * @param point the point
+     * @return the mono
+     */
     private static Mono<?> result(ProceedingJoinPoint point) {
         try {
             Object result = point.proceed();

@@ -62,6 +62,11 @@ public class LoggingFileAppender implements ILoggingAppender {
         reload(context);
     }
 
+    /**
+     * 重新加载
+     *
+     * @param context context
+     */
     private void reload(LoggerContext context) {
         LoggingProperties.Files files = properties.getFiles();
         if (files.isEnabled() && !files.isUseJsonFormat()) {
@@ -83,6 +88,13 @@ public class LoggingFileAppender implements ILoggingAppender {
         setFileAppender(context, logFile, allFileAppender);
     }
 
+    /**
+     * setFileAppender
+     *
+     * @param context a {@link LoggerContext} object.
+     * @param logFile a {@link String} object.
+     * @param allFileAppender a {@link RollingFileAppender} object.
+     */
     static void setFileAppender(LoggerContext context, String logFile, RollingFileAppender<ILoggingEvent> allFileAppender) {
         allFileAppender.setName(LoggingUtil.FILE_APPENDER_NAME);
         allFileAppender.setFile(logFile);
@@ -111,6 +123,12 @@ public class LoggingFileAppender implements ILoggingAppender {
         context.getLogger(Logger.ROOT_LOGGER_NAME).addAppender(errorFileAppender);
     }
 
+    /**
+     * patternLayoutEncoder
+     *
+     * @param context a {@link LoggerContext} object.
+     * @return a {@link Encoder} object.
+     */
     private static Encoder<ILoggingEvent> patternLayoutEncoder(LoggerContext context) {
         final PatternLayoutEncoder encoder = new PatternLayoutEncoder();
         encoder.setContext(context);
@@ -121,6 +139,12 @@ public class LoggingFileAppender implements ILoggingAppender {
         return encoder;
     }
 
+    /**
+     * errorLevelFilter
+     *
+     * @param context a {@link LoggerContext} object.
+     * @return a {@link ThresholdFilter} object.
+     */
     private static ThresholdFilter errorLevelFilter(LoggerContext context) {
         final ThresholdFilter filter = new ThresholdFilter();
         filter.setContext(context);

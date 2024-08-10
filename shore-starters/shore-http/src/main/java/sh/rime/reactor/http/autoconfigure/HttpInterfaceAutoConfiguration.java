@@ -43,11 +43,22 @@ public class HttpInterfaceAutoConfiguration {
         return new LoadBalancerExchangeFilterFunctionsConsumer();
     }
 
+    /**
+     * Http exchange client bean factory initialization aot processor http exchange client bean factory initialization aot processor.
+     *
+     * @param applicationContext the application context
+     * @return the http exchange client bean factory initialization aot processor
+     */
     @Bean
     static HttpExchangeClientBeanFactoryInitializationAotProcessor httpExchangeClientBeanFactoryInitializationAotProcessor(GenericApplicationContext applicationContext) {
         return new HttpExchangeClientBeanFactoryInitializationAotProcessor(applicationContext);
     }
 
+    /**
+     * Http exchange client factory bean post processor http exchange client factory bean post processor.
+     *
+     * @return the http exchange client factory bean post processor
+     */
     @Bean
     static HttpExchangeClientFactoryBeanPostProcessor httpExchangeClientFactoryBeanPostProcessor() {
         return new HttpExchangeClientFactoryBeanPostProcessor();
@@ -75,6 +86,11 @@ public class HttpInterfaceAutoConfiguration {
             }
         }
 
+        /**
+         * Resolve http exchange client factory bean type if necessary.
+         *
+         * @param beanDefinition the bean definition
+         */
         private void resolveHttpExchangeClientFactoryBeanTypeIfNecessary(RootBeanDefinition beanDefinition) {
             if (!beanDefinition.hasBeanClass() || !HttpExchangeClientFactoryBean.class.isAssignableFrom(beanDefinition.getBeanClass())) {
                 return;
@@ -89,6 +105,12 @@ public class HttpInterfaceAutoConfiguration {
             }
         }
 
+        /**
+         * Get http exchange client interface.
+         *
+         * @param beanDefinition the bean definition
+         * @return the class
+         */
         private Class<?> getHttpExchangeClientInterface(RootBeanDefinition beanDefinition) {
             try {
                 return (Class<?>) beanDefinition.getPropertyValues().get("httpExchangeClientInterface");

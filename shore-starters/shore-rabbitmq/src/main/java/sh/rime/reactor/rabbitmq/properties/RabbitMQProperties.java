@@ -83,6 +83,12 @@ public class RabbitMQProperties {
         this.parsedAddresses = parseAddresses(addresses);
     }
 
+    /**
+     * parse addresses
+     *
+     * @param addresses addresses
+     * @return parsed addresses
+     */
     private Address[] parseAddresses(String addresses) {
         List<Address> parsedAddresses = new ArrayList<>();
         for (String address : StringUtils.commaDelimitedListToStringArray(addresses)) {

@@ -26,6 +26,7 @@ import static org.springframework.data.relational.core.query.Query.query;
  **/
 @AllArgsConstructor
 @NoArgsConstructor
+@SuppressWarnings("unused")
 public class PageWrap<T> {
 
     private R2dbcEntityTemplate template;
@@ -169,6 +170,12 @@ public class PageWrap<T> {
                         .build();
     }
 
+    /**
+     * 获取分页函数
+     *
+     * @param <M> M
+     * @return list
+     */
     private <M> Function<PageImpl<M>, PageResult<M>> pageR() {
         return page ->
                 PageResult.<M>builder()

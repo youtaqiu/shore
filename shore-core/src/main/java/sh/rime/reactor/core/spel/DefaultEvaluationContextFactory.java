@@ -46,6 +46,11 @@ class DefaultEvaluationContextFactory implements EvaluationContextFactory {
         return context;
     }
 
+    /**
+     * Evaluation context standard evaluation context.
+     *
+     * @return the standard evaluation context
+     */
     private StandardEvaluationContext evaluationContext() {
         StandardEvaluationContext context = new StandardEvaluationContext();
         context.addPropertyAccessor(new BeanExpressionContextAccessor());

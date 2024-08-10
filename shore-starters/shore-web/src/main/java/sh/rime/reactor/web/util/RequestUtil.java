@@ -13,6 +13,7 @@ import org.springframework.web.reactive.function.server.ServerRequest;
  * @author youta
  */
 @Slf4j
+@SuppressWarnings("unused")
 public class RequestUtil {
 
     /**
@@ -42,6 +43,12 @@ public class RequestUtil {
         return parseRequestUri0(request.requestPath());
     }
 
+    /**
+     * 解析请求路径.
+     *
+     * @param requestPath 请求路径
+     * @return 请求路径
+     */
     private static String parseRequestUri0(RequestPath requestPath) {
         String contextPath = StringUtils.trimToNull(requestPath.contextPath().value());
         String requestUri = requestPath.value();

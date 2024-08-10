@@ -100,7 +100,14 @@ public class ApiLogAspect {
 
     }
 
-
+    /**
+     * 记录日志
+     * @param joinPoint 切点
+     * @param zipData 数据
+     * @param apiLog 注解
+     * @param ex 异常
+     * @return 返回值
+     */
     private Mono<?> logMonoResult(ProceedingJoinPoint joinPoint,
                                   Mono<? extends Tuple2<ServerHttpRequest, Object>> zipData,
                                   Log apiLog, Throwable ex) {
@@ -140,14 +147,24 @@ public class ApiLogAspect {
                 });
     }
 
-
+    /**
+     * 解析日志内容
+     * @param logContent 日志内容
+     * @param args 参数
+     * @return 解析后的日志内容
+     */
     private String parseLogContent(String logContent, Object[] args) {
         Locale locale = LocaleContextHolder.getLocale();
         String message = messageSource.getMessage(logContent, args, logContent, locale);
         return message == null ? logContent : message;
     }
 
-
+    /**
+     * 构建参数
+     *
+     * @param parameterNames 参数名
+     * @return 参数
+     */
     private Map<String, Object> buildParamMap(MultiValueMap<String, String> parameterNames) {
         Map<String, Object> params = new HashMap<>(parameterNames.size());
         parameterNames.forEach((key, value) -> {

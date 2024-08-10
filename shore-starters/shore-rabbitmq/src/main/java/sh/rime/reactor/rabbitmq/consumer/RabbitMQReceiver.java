@@ -28,6 +28,7 @@ import static reactor.rabbitmq.ResourcesSpecification.queue;
  * @author youta
  **/
 @Slf4j
+@SuppressWarnings("unused")
 public abstract class RabbitMQReceiver<T extends QueueEvent> {
 
     /**
@@ -51,9 +52,12 @@ public abstract class RabbitMQReceiver<T extends QueueEvent> {
      * Default constructor.
      * This constructor is used for serialization and other reflective operations.
      */
-    public RabbitMQReceiver() {
+    protected RabbitMQReceiver() {
     }
 
+    /**
+     * 初始化
+     */
     @PostConstruct
     private void init() {
         var queue = getQueue();
@@ -88,12 +92,23 @@ public abstract class RabbitMQReceiver<T extends QueueEvent> {
      */
     public abstract Mono<Void> handle(T event);
 
+    /**
+     * 反序列化消息
+     *
+     * @param event 消息
+     * @return 反序列化结果
+     */
     private Mono<T> deserializeEvent(byte[] event) {
         return Mono.fromCallable(() -> objectMapper.readValue(event, getType()))
                 .onErrorMap(JsonParseException.class, QueueException::new)
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
+    /**
+     * 获取泛型类型
+     *
+     * @return 泛型类型
+     */
     @SuppressWarnings("unchecked")
     private Class<T> getType() {
         Type type = getClass().getGenericSuperclass();

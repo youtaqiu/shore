@@ -30,7 +30,7 @@ public abstract class QueueEvent implements Serializable {
      * Default constructor.
      * This constructor is used for serialization and other reflective operations.
      */
-    public QueueEvent() {
+    protected QueueEvent() {
     }
 
     /**

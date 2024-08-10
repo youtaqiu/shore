@@ -3,6 +3,7 @@ package sh.rime.reactor.rabbitmq.producer;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
 import com.rabbitmq.client.AMQP;
+import reactor.rabbitmq.OutboundMessageResult;
 import sh.rime.reactor.rabbitmq.common.ExchangeType;
 import sh.rime.reactor.rabbitmq.message.QueueEvent;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ import static reactor.rabbitmq.ResourcesSpecification.*;
  **/
 @Slf4j
 @Component
+@SuppressWarnings("unused")
 public class RabbitMQSender {
 
     private final Sender sender;
@@ -68,13 +70,7 @@ public class RabbitMQSender {
                 .then(sender.bind(binding(message.getExchange(), routingKey, message.getQueue())))
                 .thenMany(sender.sendWithPublishConfirms(Flux.just(outboundMessage)))
                 .doOnError(e -> log.error("RabbitMQ queue [{}] send failed", message.getQueue(), e))
-                .subscribe(outboundMessageResult -> {
-                    if (outboundMessageResult.isAck()) {
-                        log.info("RabbitMQ queue [{}] send success", message.getQueue());
-                    } else {
-                        log.error("RabbitMQ queue [{}] send failed", message.getQueue());
-                    }
-                });
+                .subscribe(outboundMessageResult -> consoleLog(message, outboundMessageResult));
     }
 
     /**
@@ -111,17 +107,29 @@ public class RabbitMQSender {
                 .then(sender.bind(binding(message.getExchange(), routingKey, message.getQueue())))
                 .thenMany(sender.sendWithPublishConfirms(Flux.just(outboundMessage)))
                 .doOnError(e -> log.error("RabbitMQ queue [{}] send failed", message.getQueue(), e))
-                .subscribe(
-                        r -> {
-                            if (r.isAck()) {
-                                log.info("RabbitMQ queue [{}] send success", message.getQueue());
-                            } else {
-                                log.error("RabbitMQ queue [{}] send failed", message.getQueue());
-                            }
-                        }
-                );
+                .subscribe(r -> consoleLog(message, r));
     }
 
+    /**
+     * console log
+     * @param message message
+     * @param r result
+     */
+    private static void consoleLog(QueueEvent message, OutboundMessageResult<?> r) {
+        if (r.isAck()) {
+            log.info("RabbitMQ queue [{}] send success", message.getQueue());
+        } else {
+            log.error("RabbitMQ queue [{}] send failed", message.getQueue());
+        }
+    }
+
+    /**
+     * get exchange
+     *
+     * @param exchange exchange
+     * @param queue    queue
+     * @return exchange
+     */
     private String getExchange(String exchange, String queue) {
         if (CharSequenceUtil.isEmpty(exchange)) {
             return queue + MESSAGE_DESTINATION_SUFFIX;

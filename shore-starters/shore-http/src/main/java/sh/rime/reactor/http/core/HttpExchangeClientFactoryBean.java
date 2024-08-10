@@ -61,14 +61,29 @@ public class HttpExchangeClientFactoryBean implements FactoryBean<Object>, Envir
         return createHttpServiceProxyFactory().createClient(httpExchangeClientInterface);
     }
 
+    /**
+     * create HttpServiceProxyFactory
+     *
+     * @return HttpServiceProxyFactory
+     */
     private HttpServiceProxyFactory createHttpServiceProxyFactory() {
         return HttpServiceProxyFactory.builderFor(createWebClientAdapter()).build();
     }
 
+    /**
+     * create WebClientAdapter
+     *
+     * @return WebClientAdapter
+     */
     private WebClientAdapter createWebClientAdapter() {
         return WebClientAdapter.create(createWebClient());
     }
 
+    /**
+     * create WebClient
+     *
+     * @return WebClient
+     */
     private WebClient createWebClient() {
         HttpClient httpClient = AnnotatedElementUtils.findMergedAnnotation(httpExchangeClientInterface, HttpClient.class);
         WebClientConfigure configure = new WebClientConfigure(httpClient, WebClient.builder(), applicationContext, environment);
@@ -87,6 +102,14 @@ public class HttpExchangeClientFactoryBean implements FactoryBean<Object>, Envir
                 .build();
     }
 
+    /**
+     * WebClientConfigure
+     *
+     * @param httpClient         {@link HttpClient}
+     * @param builder            {@link WebClient.Builder}
+     * @param applicationContext {@link ApplicationContext}
+     * @param environment        {@link Environment}
+     */
     private record WebClientConfigure(HttpClient httpClient,
                                       WebClient.Builder builder,
                                       ApplicationContext applicationContext,
@@ -119,11 +142,21 @@ public class HttpExchangeClientFactoryBean implements FactoryBean<Object>, Envir
             return baseUrl;
         }
 
+        /**
+         * baseUrl
+         *
+         * @return WebClientConfigure
+         */
         public WebClientConfigure baseUrl() {
             builder.baseUrl(convertBaseUrl(httpClient.baseUrl(), httpClient.serverName(), environment));
             return this;
         }
 
+        /**
+         * defaultUriVariables
+         *
+         * @return WebClientConfigure
+         */
         public WebClientConfigure defaultUriVariables() {
             Class<? extends DefaultUriVariablesSupplier> clazz = httpClient.defaultUriVariablesSupplier();
             DefaultUriVariablesSupplier supplier = null;
@@ -136,6 +169,11 @@ public class HttpExchangeClientFactoryBean implements FactoryBean<Object>, Envir
             return this;
         }
 
+        /**
+         * uriBuilderFactory
+         *
+         * @return WebClientConfigure
+         */
         public WebClientConfigure uriBuilderFactory() {
             Class<? extends UriBuilderFactory> clazz = httpClient.uriBuilderFactory();
             UriBuilderFactory uriBuilderFactory = null;
@@ -148,6 +186,11 @@ public class HttpExchangeClientFactoryBean implements FactoryBean<Object>, Envir
             return this;
         }
 
+        /**
+         * filter
+         *
+         * @return WebClientConfigure
+         */
         public WebClientConfigure filter() {
             Class<? extends ExchangeFilterFunction> clazz = httpClient.filter();
             ExchangeFilterFunction filterFunction = null;
@@ -160,6 +203,11 @@ public class HttpExchangeClientFactoryBean implements FactoryBean<Object>, Envir
             return this;
         }
 
+        /**
+         * filters
+         *
+         * @return WebClientConfigure
+         */
         public WebClientConfigure filters() {
             Class<? extends ExchangeFilterFunctionsConsumer> clazz = httpClient.filtersConsumer();
             ExchangeFilterFunctionsConsumer functionsConsumer = null;
@@ -168,7 +216,7 @@ public class HttpExchangeClientFactoryBean implements FactoryBean<Object>, Envir
             }
             if (Objects.nonNull(functionsConsumer)) {
                 boolean cloud = httpClient.cloud();
-                if (StringUtils.hasText(httpClient.serverName())){
+                if (StringUtils.hasText(httpClient.serverName())) {
                     cloud = true;
                 }
                 if (functionsConsumer instanceof LoadBalancerExchangeFilterFunctionsConsumer && !cloud) {
@@ -179,6 +227,11 @@ public class HttpExchangeClientFactoryBean implements FactoryBean<Object>, Envir
             return this;
         }
 
+        /**
+         * defaultHeader
+         *
+         * @return WebClientConfigure
+         */
         public WebClientConfigure defaultHeader() {
             String headerKey = httpClient.defaultHeaderKey();
             String[] headerValues = httpClient.defaultHeaderValues();
@@ -188,6 +241,11 @@ public class HttpExchangeClientFactoryBean implements FactoryBean<Object>, Envir
             return this;
         }
 
+        /**
+         * defaultHeaders
+         *
+         * @return WebClientConfigure
+         */
         public WebClientConfigure defaultHeaders() {
             Class<? extends HttpHeadersConsumer> clazz = httpClient.httpHeadersConsumer();
             HttpHeadersConsumer consumer = null;
@@ -200,6 +258,11 @@ public class HttpExchangeClientFactoryBean implements FactoryBean<Object>, Envir
             return this;
         }
 
+        /**
+         * defaultCookie
+         *
+         * @return WebClientConfigure
+         */
         public WebClientConfigure defaultCookie() {
             String cookieKey = httpClient.defaultCookieKey();
             String[] cookieValues = httpClient.defaultCookieValues();
@@ -209,6 +272,11 @@ public class HttpExchangeClientFactoryBean implements FactoryBean<Object>, Envir
             return this;
         }
 
+        /**
+         * defaultCookies
+         *
+         * @return WebClientConfigure
+         */
         public WebClientConfigure defaultCookies() {
             Class<? extends CookiesConsumer> clazz = httpClient.cookiesConsumer();
             CookiesConsumer consumer = null;
@@ -221,6 +289,11 @@ public class HttpExchangeClientFactoryBean implements FactoryBean<Object>, Envir
             return this;
         }
 
+        /**
+         * requestHeadersSpec
+         *
+         * @return WebClientConfigure
+         */
         public WebClientConfigure requestHeadersSpec() {
             Class<? extends RequestHeadersSpecConsumer> clazz = httpClient.requestHeadersSpecConsumer();
             RequestHeadersSpecConsumer consumer = null;
@@ -233,6 +306,11 @@ public class HttpExchangeClientFactoryBean implements FactoryBean<Object>, Envir
             return this;
         }
 
+        /**
+         * defaultStatusHandler
+         *
+         * @return WebClientConfigure
+         */
         public WebClientConfigure defaultStatusHandler() {
             Class<? extends DefaultStatusHandlerHolder> clazz = httpClient.defaultStatusHandlerHolder();
             DefaultStatusHandlerHolder defaultStatusHandlerHolder = null;
@@ -245,6 +323,11 @@ public class HttpExchangeClientFactoryBean implements FactoryBean<Object>, Envir
             return this;
         }
 
+        /**
+         * exchangeStrategies
+         *
+         * @return WebClientConfigure
+         */
         public WebClientConfigure exchangeStrategies() {
             Class<? extends ClientCodecConfigurerConsumer> clazz = httpClient.codecConfigurerConsumer();
             ClientCodecConfigurerConsumer consumer = null;
@@ -261,6 +344,11 @@ public class HttpExchangeClientFactoryBean implements FactoryBean<Object>, Envir
             return this;
         }
 
+        /**
+         * build WebClient
+         *
+         * @return WebClient
+         */
         public WebClient build() {
             return builder.build();
         }

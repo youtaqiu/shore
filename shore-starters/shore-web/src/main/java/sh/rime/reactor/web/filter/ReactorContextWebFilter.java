@@ -28,6 +28,11 @@ public class ReactorContextWebFilter implements WebFilter, Ordered {
     public ReactorContextWebFilter() {
     }
 
+    /**
+     * Get the order of the filter.
+     *
+     * @return the order of the filter
+     */
     public int getOrder() {
         return DEFAULT_ORDER;
     }

@@ -183,10 +183,22 @@ public class LoggingConfiguration {
             }
         }
 
+        /**
+         * 是否有 logstash 依赖
+         *
+         * @param classLoader 类加载器
+         * @return 是否有 logstash 依赖
+         */
         private static boolean hasLogStashDependencies(ClassLoader classLoader) {
             return ClassUtils.isPresent(LOG_STASH_CLASS_NAME, classLoader);
         }
 
+        /**
+         * 是否有 loki 依赖
+         *
+         * @param classLoader 类加载器
+         * @return 是否有 loki 依赖
+         */
         private static boolean hasLokiDependencies(ClassLoader classLoader) {
             return ClassUtils.isPresent(LOKI_CLASS_NAME, classLoader);
         }

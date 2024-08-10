@@ -54,6 +54,11 @@ public class LoggingLokiAppender implements ILoggingAppender {
         reload(context);
     }
 
+    /**
+     * 重新加载
+     *
+     * @param context context
+     */
     private void reload(LoggerContext context) {
         LoggingProperties.Loki loki = properties.getLoki();
         if (loki.isEnabled()) {
@@ -61,6 +66,12 @@ public class LoggingLokiAppender implements ILoggingAppender {
         }
     }
 
+    /**
+     * 添加LokiAppender
+     *
+     * @param context   context
+     * @param properties properties
+     */
     private void addLokiAppender(LoggerContext context, LoggingProperties.Loki properties) {
         Loki4jAppender lokiAppender = new Loki4jAppender();
         lokiAppender.setName(APPENDER_NAME);
@@ -85,6 +96,13 @@ public class LoggingLokiAppender implements ILoggingAppender {
         context.getLogger(Logger.ROOT_LOGGER_NAME).addAppender(lokiAppender);
     }
 
+    /**
+     * 获取格式化
+     *
+     * @param context    context
+     * @param properties properties
+     * @return Loki4jEncoder
+     */
     private Loki4jEncoder getFormat(LoggerContext context,
                                     LoggingProperties.Loki properties) {
         LoggingProperties.LokiEncoder encoder = properties.getEncoder();
@@ -113,6 +131,12 @@ public class LoggingLokiAppender implements ILoggingAppender {
         return loki4jEncoder;
     }
 
+    /**
+     * 获取HttpSender
+     *
+     * @param properties properties
+     * @return HttpSender
+     */
     private static HttpSender getSender(LoggingProperties.Loki properties) {
         LoggingProperties.HttpSender httpSenderType = getHttpSender(properties);
         AbstractHttpSender httpSender;
@@ -138,6 +162,13 @@ public class LoggingLokiAppender implements ILoggingAppender {
         return httpSender;
     }
 
+    /**
+     * 格式化标签
+     *
+     * @param context    context
+     * @param properties properties
+     * @return 格式化后的标签
+     */
     private String formatLabelPatternHandle(LoggerContext context, LoggingProperties.Loki properties) {
         String labelPattern = properties.getFormatLabelPattern();
         Assert.hasText(labelPattern, "ShoreLoggingProperties shore.logging.loki.format-label-pattern is blank.");
@@ -151,6 +182,12 @@ public class LoggingLokiAppender implements ILoggingAppender {
                 .replace("${HOSTNAME}", context.getProperty(CoreConstants.HOSTNAME_KEY));
     }
 
+    /**
+     * 获取HttpSender
+     *
+     * @param properties properties
+     * @return HttpSender
+     */
     private static LoggingProperties.HttpSender getHttpSender(LoggingProperties.Loki properties) {
         LoggingProperties.HttpSender httpSenderProp = properties.getHttpSender();
         if (httpSenderProp != null && httpSenderProp.isAvailable()) {

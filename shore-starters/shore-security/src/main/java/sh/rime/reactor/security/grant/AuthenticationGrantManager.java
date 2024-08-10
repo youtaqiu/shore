@@ -4,9 +4,7 @@ import sh.rime.reactor.commons.exception.ServerException;
 import sh.rime.reactor.core.util.OptionalBean;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 import static sh.rime.reactor.commons.enums.GrantType.PASSWORD;
@@ -27,7 +25,10 @@ public class AuthenticationGrantManager {
      * @param strategies the strategies
      */
     public AuthenticationGrantManager(List<AuthenticationGrant> strategies) {
-        this.strategies = strategies;
+        if (strategies == null) {
+            throw new IllegalArgumentException("Strategies list cannot be null");
+        }
+        this.strategies = List.copyOf(strategies);
     }
 
     /**

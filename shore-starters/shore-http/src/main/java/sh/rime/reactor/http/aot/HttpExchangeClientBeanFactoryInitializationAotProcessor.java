@@ -47,6 +47,11 @@ public class HttpExchangeClientBeanFactoryInitializationAotProcessor implements 
         this.httpExchangeClientBeanDefinitions = getHttpExchangeClientBeanDefinitions();
     }
 
+    /**
+     * get http exchange client bean definitions
+     *
+     * @return map of http exchange client bean definitions
+     */
     private Map<String, BeanDefinition> getHttpExchangeClientBeanDefinitions() {
         return context.getBeansOfType(HttpExchangeClientFactoryBean.class)
                 .keySet()
@@ -88,12 +93,24 @@ public class HttpExchangeClientBeanFactoryInitializationAotProcessor implements 
         };
     }
 
+    /**
+     * register method hints
+     *
+     * @param hints {@link ReflectionHints}
+     * @param clazz {@link Class}
+     */
     private void registerMethodHints(ReflectionHints hints, Class<?> clazz) {
         for (Method method : clazz.getDeclaredMethods()) {
             registerMethodHints(hints, method);
         }
     }
 
+    /**
+     * register method hints
+     *
+     * @param hints {@link ReflectionHints}
+     * @param method {@link Method}
+     */
     private void registerMethodHints(ReflectionHints hints, Method method) {
         for (Parameter parameter : method.getParameters()) {
             registerParameterTypeHints(hints, MethodParameter.forParameter(parameter));

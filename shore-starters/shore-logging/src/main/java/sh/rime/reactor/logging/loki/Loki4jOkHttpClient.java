@@ -36,6 +36,12 @@ public class Loki4jOkHttpClient implements Loki4jHttpClient {
         this.requestBuilder = requestBuilder(conf);
     }
 
+    /**
+     * OkHttpClient构建
+     *
+     * @param conf 配置
+     * @return OkHttpClient
+     */
     private static OkHttpClient okHttpClientBuilder(HttpConfig conf) {
         return new OkHttpClient.Builder()
                 .connectTimeout(conf.connectionTimeoutMs, TimeUnit.MICROSECONDS)
@@ -44,6 +50,12 @@ public class Loki4jOkHttpClient implements Loki4jHttpClient {
                 .build();
     }
 
+    /**
+     * Request构建
+     *
+     * @param conf 配置
+     * @return Request
+     */
     private static Request requestBuilder(HttpConfig conf) {
         Request.Builder request = new Request.Builder()
                 .url(conf.pushUrl)

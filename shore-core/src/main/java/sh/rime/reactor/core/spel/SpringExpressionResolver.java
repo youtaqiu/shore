@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author youta
  */
+@SuppressWarnings("unused")
 public class SpringExpressionResolver implements ExpressionResolver {
 
     private final ExpressionParser expressionParser;
@@ -74,6 +75,12 @@ public class SpringExpressionResolver implements ExpressionResolver {
         }
     }
 
+    /**
+     * Wrap if necessary string.
+     *
+     * @param expression the expression
+     * @return the string
+     */
     private String wrapIfNecessary(String expression) {
         if (!expression.contains("#")) {
             return expression;

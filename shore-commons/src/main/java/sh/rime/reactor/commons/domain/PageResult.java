@@ -23,6 +23,7 @@ import java.util.List;
 @NoArgsConstructor
 @Accessors(chain = true)
 @Builder
+@SuppressWarnings("unused")
 public class PageResult<T> implements Serializable {
 
 
@@ -69,7 +70,7 @@ public class PageResult<T> implements Serializable {
      */
     public PageResult(int total, List<T> list, int pages) {
         this.total = total;
-        this.list = list;
+        this.list = List.copyOf(list);
         this.pages = pages;
     }
 

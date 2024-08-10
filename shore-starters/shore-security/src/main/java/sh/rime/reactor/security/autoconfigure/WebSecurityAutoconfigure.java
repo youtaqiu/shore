@@ -51,6 +51,7 @@ import java.util.stream.Collectors;
         "sh.rime.reactor.security.handler",
         "sh.rime.reactor.security.repository"
 })
+@SuppressWarnings("all")
 public class WebSecurityAutoconfigure {
 
     private final AuthenticationManager authenticationManager;
@@ -139,7 +140,9 @@ public class WebSecurityAutoconfigure {
         return http.build();
     }
 
-
+    /**
+     * 加载匿名访问的url
+     */
     private void loadAnonymousUrls() {
         RequestMappingHandlerMapping handlerMapping = SpringUtil.getBean("requestMappingHandlerMapping");
         Map<RequestMappingInfo, HandlerMethod> handlerMethods = handlerMapping.getHandlerMethods();
@@ -160,6 +163,12 @@ public class WebSecurityAutoconfigure {
         }
     }
 
+    /**
+     * 设置路径
+     *
+     * @param method              请求方法
+     * @param requestMappingInfo 请求映射信息
+     */
     private void setPath(RequestMethodEnum method, RequestMappingInfo requestMappingInfo) {
         Set<PathPattern> patterns = requestMappingInfo.getPatternsCondition().getPatterns();
         if (patterns.isEmpty()) {
@@ -212,6 +221,11 @@ public class WebSecurityAutoconfigure {
 
     }
 
+    /**
+     * 配置认证过滤器
+     *
+     * @return 认证过滤器
+     */
     private AuthenticationWebFilter authenticationWebFilter() {
         AuthenticationWebFilter filter = new AuthenticationWebFilter(reactiveAuthenticationManager());
         filter.setSecurityContextRepository(tokenServerSecurityContextRepository);

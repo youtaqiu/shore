@@ -251,6 +251,13 @@ public class QueryWrap<T> {
                 .one();
     }
 
+    /**
+     * spec
+     *
+     * @param countSql countSql
+     * @param pairs    pairs
+     * @return spec
+     */
     private DatabaseClient.GenericExecuteSpec spec(String countSql, Pair<String, ?>[] pairs) {
         var client = this.template.getDatabaseClient();
         var spec = client.sql(countSql);

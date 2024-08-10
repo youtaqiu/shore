@@ -30,7 +30,7 @@ import java.util.Set;
  * @author rained
  **/
 @Slf4j
-//@SuppressWarnings("all")
+@SuppressWarnings("unused")
 public class ClassPathHttpExchangeClientScanner extends ClassPathBeanDefinitionScanner {
 
     private final ClassLoader classLoader;
@@ -102,6 +102,11 @@ public class ClassPathHttpExchangeClientScanner extends ClassPathBeanDefinitionS
         return false;
     }
 
+    /**
+     * process bean definitions
+     *
+     * @param beanDefinitions bean definitions
+     */
     private void processBeanDefinitions(Set<BeanDefinitionHolder> beanDefinitions) {
         AbstractBeanDefinition definition;
         BeanDefinitionRegistry registry = getRegistry();

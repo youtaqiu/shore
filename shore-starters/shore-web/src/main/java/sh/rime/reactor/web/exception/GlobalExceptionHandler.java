@@ -85,29 +85,33 @@ public class GlobalExceptionHandler {
 
             fail = Result.failed(500, DEFAULT_MSG);
         } else {
-            if (e instanceof MethodArgumentNotValidException validException) {
-                BindingResult bindingResult = validException.getBindingResult();
-                List<ObjectError> errors = bindingResult.getAllErrors();
-                StringBuffer errorMsg = new StringBuffer();
-                errors.stream()
-                        .map(this::getMethodArgumentNotValidExceptionDisplayMessage)
-                        .forEach(x -> errorMsg.append(x).append(";"));
-                if (errorMsg.toString().endsWith(";")) {
-                    errorMsg.deleteCharAt(errorMsg.length() - 1);
+            switch (e) {
+                case MethodArgumentNotValidException validException -> {
+                    BindingResult bindingResult = validException.getBindingResult();
+                    List<ObjectError> errors = bindingResult.getAllErrors();
+                    StringBuffer errorMsg = new StringBuffer();
+                    errors.stream()
+                            .map(this::getMethodArgumentNotValidExceptionDisplayMessage)
+                            .forEach(x -> errorMsg.append(x).append(";"));
+                    if (errorMsg.toString().endsWith(";")) {
+                        errorMsg.deleteCharAt(errorMsg.length() - 1);
+                    }
+                    return Result.failed(400, errorMsg.toString());
                 }
-                return Result.failed(400, errorMsg.toString());
-            }
-            if (e instanceof WebExchangeBindException bindException) {
-                List<FieldError> fieldErrors = bindException.getFieldErrors();
-                String message = String.format("%s", fieldErrors.stream()
-                        .map(FieldError::getDefaultMessage)
-                        .map(this::getArgumentNotValidExceptionMessage)
-                        .collect(Collectors.joining(";")));
-                return Result.failed(400, message);
-            }
-            if (e instanceof ResponseStatusException) {
-                String msg = "Invalid request address[%s %s]";
-                return Result.failed(404, String.format(msg, method, path));
+                case WebExchangeBindException bindException -> {
+                    List<FieldError> fieldErrors = bindException.getFieldErrors();
+                    String message = String.format("%s", fieldErrors.stream()
+                            .map(FieldError::getDefaultMessage)
+                            .map(this::getArgumentNotValidExceptionMessage)
+                            .collect(Collectors.joining(";")));
+                    return Result.failed(400, message);
+                }
+                case ResponseStatusException ignored -> {
+                    String msg = "Invalid request address[%s %s]";
+                    return Result.failed(404, String.format(msg, method, path));
+                }
+                default -> {
+                }
             }
             fail = serverException(e, fail);
             if (fail != null) {
@@ -129,6 +133,12 @@ public class GlobalExceptionHandler {
         return fail;
     }
 
+    /**
+     * 获取参数校验异常信息
+     *
+     * @param error 错误信息
+     * @return 参数校验异常信息
+     */
     private String getMethodArgumentNotValidExceptionDisplayMessage(ObjectError error) {
         String defaultMessage = error.getDefaultMessage();
         if (defaultMessage == null) {
@@ -141,6 +151,13 @@ public class GlobalExceptionHandler {
         }
     }
 
+    /**
+     * 服务端异常处理
+     *
+     * @param cause 异常
+     * @param fail  失败结果
+     * @return 失败结果
+     */
     private Result<Void> serverException(Throwable cause, Result<Void> fail) {
         if (cause instanceof ServerException exception) {
             Throwable remoteEx = exception.getCause();
@@ -153,6 +170,12 @@ public class GlobalExceptionHandler {
         return fail;
     }
 
+    /**
+     * 获取参数校验异常信息
+     *
+     * @param errorMessage 错误信息
+     * @return 参数校验异常信息
+     */
     private String getArgumentNotValidExceptionMessage(String errorMessage) {
         if (errorMessage == null) {
             return null;

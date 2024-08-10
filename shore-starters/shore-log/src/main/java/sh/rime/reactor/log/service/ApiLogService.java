@@ -85,6 +85,11 @@ public class ApiLogService {
         }
     }
 
+    /**
+     * 获取traceId
+     *
+     * @return traceId
+     */
     private String getTraceId() {
         Span span = Span.current();
         String traceId = "";

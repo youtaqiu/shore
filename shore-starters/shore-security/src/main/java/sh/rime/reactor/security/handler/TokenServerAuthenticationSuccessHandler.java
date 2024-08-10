@@ -65,6 +65,13 @@ public class TokenServerAuthenticationSuccessHandler implements ServerAuthentica
                 .flatMap(token -> ResponseUtils.build(webFilterExchange.getExchange().getResponse(), Result.ok(token)));
     }
 
+    /**
+     * Get token.
+     *
+     * @param authentication the authentication
+     * @param tokens         the tokens
+     * @return the token
+     */
     private Mono<TokenInfo> getToken(Authentication authentication, Tuple3<String, String, ClientInfo> tokens) {
         CurrentUser userDetails = (CurrentUser) authentication.getPrincipal();
         if (CharSequenceUtil.isEmpty(userDetails.getUserId())) {
@@ -88,8 +95,8 @@ public class TokenServerAuthenticationSuccessHandler implements ServerAuthentica
                 .defaultIfEmpty(new ArrayList<>())
                 .flatMap(tokensList -> {
                     if (tokensList.size() >= clientInfo.getConcurrentLoginCount()) {
-                        String firstToken = tokensList.get(0);
-                        tokensList.remove(0);
+                        String firstToken = tokensList.getFirst();
+                        tokensList.removeFirst();
                         tokensList.add(tokens._1);
                         return this.authenticationRepository.delete(TokenConstants.token(firstToken))
                                 .thenReturn(tokensList);

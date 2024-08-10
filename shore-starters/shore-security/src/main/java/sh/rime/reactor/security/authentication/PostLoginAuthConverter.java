@@ -54,6 +54,12 @@ public class PostLoginAuthConverter implements ServerAuthenticationConverter {
                 .flatMap(this::getTokenAuthentication);
     }
 
+    /**
+     * 获取token认证
+     *
+     * @param body {@link DataBuffer}
+     * @return {@link Authentication}
+     */
     private Mono<Authentication> getTokenAuthentication(@NonNull DataBuffer body) {
         try {
             var loginRequest = objectMapper.readValue(body.asInputStream(), LoginRequest.class);
