@@ -12,8 +12,12 @@ package sh.rime.reactor.commons.constants;
  *
  * @author youta
  */
+@SuppressWarnings("unused")
 public class CommonConstant {
 
+    /**
+     * 私有构造函数
+     */
     private CommonConstant() {
     }
 
