@@ -66,6 +66,7 @@ public class ApiLogAspect {
     public Object handler(ProceedingJoinPoint joinPoint, Log log) throws Throwable {
         Object result = null;
         Throwable ex = null;
+        Mono<?> monoResult = null;
         try {
             result = joinPoint.proceed();
         } catch (Throwable e) {
@@ -73,39 +74,41 @@ public class ApiLogAspect {
             throw e;
         } finally {
             long start = System.currentTimeMillis();
-            if (result instanceof Mono<?> monoResult) {
-                return logMonoResult(joinPoint, ReactiveContextHolder.getExchange()
+            if (result instanceof Mono<?> monoResultTemp) {
+                monoResult = logMonoResult(joinPoint, ReactiveContextHolder.getExchange()
                         .map(ServerWebExchange::getRequest)
-                        .zipWith(monoResult), log, null);
+                        .zipWith(monoResultTemp), log, null);
+
             } else if (result instanceof Flux<?> fluxResult) {
-                return logMonoResult(joinPoint, ReactiveContextHolder.getExchange()
+                monoResult = logMonoResult(joinPoint, ReactiveContextHolder.getExchange()
                         .map(ServerWebExchange::getRequest)
                         .zipWith(fluxResult.collectList()), log, null);
             } else {
                 Mono<Object> mono;
                 if (ex != null) {
                     mono = Mono.just("");
-                    return logMonoResult(joinPoint, ReactiveContextHolder.getExchange()
+                    monoResult = logMonoResult(joinPoint, ReactiveContextHolder.getExchange()
                             .map(ServerWebExchange::getRequest)
                             .zipWith(mono), log, ex)
                             .then(Mono.error(ex));
                 } else {
                     mono = Mono.justOrEmpty(result);
-                    return logMonoResult(joinPoint, ReactiveContextHolder.getExchange()
+                    monoResult = logMonoResult(joinPoint, ReactiveContextHolder.getExchange()
                             .map(ServerWebExchange::getRequest)
                             .zipWith(mono), log, ex);
                 }
             }
         }
-
+        return monoResult;
     }
 
     /**
      * 记录日志
+     *
      * @param joinPoint 切点
-     * @param zipData 数据
-     * @param apiLog 注解
-     * @param ex 异常
+     * @param zipData   数据
+     * @param apiLog    注解
+     * @param ex        异常
      * @return 返回值
      */
     private Mono<?> logMonoResult(ProceedingJoinPoint joinPoint,
@@ -149,8 +152,9 @@ public class ApiLogAspect {
 
     /**
      * 解析日志内容
+     *
      * @param logContent 日志内容
-     * @param args 参数
+     * @param args       参数
      * @return 解析后的日志内容
      */
     private String parseLogContent(String logContent, Object[] args) {
