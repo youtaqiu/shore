@@ -68,6 +68,12 @@ public enum TimeUnitMessageKey {
     @Getter
     private final String key;
 
+    /**
+     * 构造函数.
+     *
+     * @param timeUnit 时间单位
+     * @param key      语言包key
+     */
     TimeUnitMessageKey(TimeUnit timeUnit, String key) {
         this.timeUnit = timeUnit;
         this.key = key;

@@ -17,6 +17,7 @@ import java.util.function.Supplier;
  * @param <T> The type of data that this class can handle.
  * @author youta
  */
+@SuppressWarnings("unused")
 public class OptionalBean<T> implements Serializable {
 
     @Serial
@@ -29,6 +30,9 @@ public class OptionalBean<T> implements Serializable {
      */
     private final T value;
 
+    /**
+     * 空值
+     */
     private OptionalBean() {
         this.value = null;
     }
@@ -128,9 +132,8 @@ public class OptionalBean<T> implements Serializable {
      * @param exceptionEnum 异常枚举
      * @param <X>           X
      * @return T
-     * @throws X Throwable
      */
-    public <X extends Throwable> T orElseThrow(ServerFailure exceptionEnum) throws X {
+    public <X extends Throwable> T orElseThrow(ServerFailure exceptionEnum) {
         if (value != null) {
             return value;
         } else {

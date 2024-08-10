@@ -25,8 +25,8 @@ public class AuthenticationGrantManager {
      * @param strategies the strategies
      */
     public AuthenticationGrantManager(List<AuthenticationGrant> strategies) {
-        if (strategies == null) {
-            throw new IllegalArgumentException("Strategies list cannot be null");
+        if (Objects.isNull(strategies) || strategies.isEmpty()) {
+            strategies = Collections.emptyList();
         }
         this.strategies = List.copyOf(strategies);
     }

@@ -8,6 +8,7 @@ package sh.rime.reactor.commons.constants;
  *
  * @author youta
  */
+@SuppressWarnings("unused")
 public class Keys {
 
     /**
@@ -45,7 +46,9 @@ public class Keys {
      */
     public static final String HTTP_MESSAGE_NOT_READABLE = "Required request body is missing";
 
-
+    /**
+     * 私有构造函数
+     */
     private Keys() {
     }
 

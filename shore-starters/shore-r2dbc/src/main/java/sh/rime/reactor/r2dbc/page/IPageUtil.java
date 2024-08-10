@@ -10,6 +10,9 @@ import org.springframework.data.domain.PageRequest;
  **/
 public class IPageUtil {
 
+    /**
+     * 私有构造函数
+     */
     private IPageUtil() {
     }
 
