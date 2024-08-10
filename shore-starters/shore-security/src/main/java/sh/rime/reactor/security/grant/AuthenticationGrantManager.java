@@ -1,5 +1,6 @@
 package sh.rime.reactor.security.grant;
 
+import jakarta.annotation.Resource;
 import sh.rime.reactor.commons.exception.ServerException;
 import sh.rime.reactor.core.util.OptionalBean;
 import org.springframework.stereotype.Service;
@@ -25,16 +26,14 @@ public class AuthenticationGrantManager {
      * @param strategies the strategies
      */
     public AuthenticationGrantManager(List<AuthenticationGrant> strategies) {
-        if (Objects.isNull(strategies) || strategies.isEmpty()) {
-            strategies = Collections.emptyList();
-        }
         this.strategies = List.copyOf(strategies);
     }
 
     /**
      * 授权策略
      */
-    private final List<AuthenticationGrant> strategies;
+    @Resource
+    private List<AuthenticationGrant> strategies;
 
     /**
      * 初始化授权
