@@ -7,9 +7,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
+import org.springframework.test.util.ReflectionTestUtils;
 
-
-import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -27,13 +26,12 @@ class SpringUtilsTest {
     private Environment environment;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
-        Field contextField = SpringUtils.class.getDeclaredField("context");
-        contextField.setAccessible(true);
-        contextField.set(null, applicationContext);
+        ReflectionTestUtils.setField(SpringUtils.class, "context", applicationContext);
         when(applicationContext.getEnvironment()).thenReturn(environment);
     }
+
 
     @Test
     void testGetBean() {
