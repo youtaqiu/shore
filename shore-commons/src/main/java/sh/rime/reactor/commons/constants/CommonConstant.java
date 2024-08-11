@@ -13,7 +13,7 @@ package sh.rime.reactor.commons.constants;
  * @author youta
  */
 @SuppressWarnings("unused")
-public class CommonConstant {
+public final class CommonConstant {
 
     /**
      * 私有构造函数

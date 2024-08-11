@@ -27,12 +27,13 @@ public class LoggingFileAppender implements ILoggingAppender {
     private final LoggingProperties properties;
     private final String logAllFile;
     private final String logErrorFile;
-    private final static char SLASH = '/';
+    private static final char SLASH = '/';
 
     /**
      * 构造器
+     *
      * @param environment environment
-     * @param properties properties
+     * @param properties  properties
      */
     public LoggingFileAppender(Environment environment,
                                LoggingProperties properties) {
@@ -91,8 +92,8 @@ public class LoggingFileAppender implements ILoggingAppender {
     /**
      * setFileAppender
      *
-     * @param context a {@link LoggerContext} object.
-     * @param logFile a {@link String} object.
+     * @param context         a {@link LoggerContext} object.
+     * @param logFile         a {@link String} object.
      * @param allFileAppender a {@link RollingFileAppender} object.
      */
     static void setFileAppender(LoggerContext context, String logFile, RollingFileAppender<ILoggingEvent> allFileAppender) {

@@ -8,7 +8,7 @@ import org.springframework.data.domain.PageRequest;
  *
  * @author youta
  **/
-public class IPageUtil {
+public final class IPageUtil {
 
     /**
      * 私有构造函数

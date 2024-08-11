@@ -51,7 +51,7 @@ public class JacksonConfiguration {
     }
 
     /**
-     * jackson objectMapper customizer
+     * jackson objectMapper customizer.
      *
      * @return Jackson2ObjectMapperBuilderCustomizer
      */

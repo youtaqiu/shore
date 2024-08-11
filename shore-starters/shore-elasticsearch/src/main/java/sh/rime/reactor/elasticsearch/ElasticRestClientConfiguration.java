@@ -41,22 +41,22 @@ public class ElasticRestClientConfiguration {
     }
 
     /**
-     * restClientBuilder
+     * restClientBuilder.
      *
      * @return RestClientBuilder
      */
     @Bean
     public RestClientBuilder restClientBuilder() {
-        HttpHost[] hosts = elasticProperties
+        final HttpHost[] hosts = elasticProperties
                 .getUris()
                 .stream()
                 .map(HttpHost::create)
                 .toArray(HttpHost[]::new);
-        CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(elasticProperties.getUsername(), elasticProperties.getPassword()));
-        Header[] defaultHeaders = new Header[]{
-                new BasicHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-        };
+        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        credentialsProvider.setCredentials(AuthScope.ANY,
+                new UsernamePasswordCredentials(elasticProperties.getUsername(), elasticProperties.getPassword()));
+        final Header[] defaultHeaders = new Header[]{
+                new BasicHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)};
         return RestClient.builder(hosts)
                 .setDefaultHeaders(defaultHeaders)
                 .setHttpClientConfigCallback(httpClientBuilder ->
@@ -67,7 +67,8 @@ public class ElasticRestClientConfiguration {
                                 .setMaxConnTotal(100)
                                 .addInterceptorLast(
                                         (HttpResponseInterceptor)
-                                                (response, context) -> response.addHeader("X-Elastic-Product", "Elasticsearch"))
+                                                (response, context) -> response.addHeader("X-Elastic-Product",
+                                                        "Elasticsearch"))
                 ).setRequestConfigCallback(builder -> {
                     builder.setConnectTimeout(-1);
                     builder.setSocketTimeout(60000);

@@ -9,7 +9,7 @@ package sh.rime.reactor.commons.constants;
  * @author youta
  */
 @SuppressWarnings("unused")
-public class Keys {
+public final class Keys {
 
     /**
      * 默认错误.

@@ -54,9 +54,9 @@ public class PasswordAuthenticationGrant implements AuthenticationGrant {
         return userDetailService
                 .loadByUsername(request.getUsername())
                 .switchIfEmpty(Mono.defer(() -> R.error(SecurityExceptionEnum.USERNAME_NOT_FOUND)))
-                .filter(user -> userDetailService.customMatcher() ?
-                        userDetailService.matches(user, request.getPassword(), request.getType()) :
-                        passwordEncoder.matches(request.getPassword(), user.getPassword()))
+                .filter(user -> userDetailService.customMatcher()
+                        ? userDetailService.matches(user, request.getPassword(), request.getType())
+                        : passwordEncoder.matches(request.getPassword(), user.getPassword()))
                 .switchIfEmpty(Mono.defer(() -> R.error(SecurityExceptionEnum.PASSWORD_NOT_MATCH)));
     }
 

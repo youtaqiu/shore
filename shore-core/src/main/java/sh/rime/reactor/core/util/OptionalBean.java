@@ -18,7 +18,7 @@ import java.util.function.Supplier;
  * @author youta
  */
 @SuppressWarnings("unused")
-public class OptionalBean<T> implements Serializable {
+public final class OptionalBean<T> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1905122041950251207L;
@@ -156,8 +156,10 @@ public class OptionalBean<T> implements Serializable {
      * @param consumer consumer
      */
     public void ifPresent(Consumer<? super T> consumer) {
-        if (value != null)
+        if (value != null) {
             consumer.accept(value);
+        }
+
     }
 
     /**

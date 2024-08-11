@@ -16,14 +16,15 @@ import java.util.Map;
  *
  * @author youta
  */
-public class $ extends Assert {
+@SuppressWarnings("unused")
+public class Asserts extends Assert {
 
 
     /**
      * Default constructor.
      * This constructor is used for serialization and other reflective operations.
      */
-    public $() {
+    public Asserts() {
     }
 
     /**

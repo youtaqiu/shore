@@ -75,15 +75,14 @@ public class GlobalExceptionHandler {
     public Result<?> build(Throwable e, String method, String path) {
         log.debug("request failed", e);
         ResponseStatus responseStatus = AnnotationUtils.findAnnotation(e.getClass(), ResponseStatus.class);
-        Result<Void> fail = null;
-        String DEFAULT_MSG = "The system is busy. Please try again later.";
+        Result<Void> fail = Result.failed();
+        String defaultMsg = "The system is busy. Please try again later.";
         if (responseStatus != null) {
             int errorCode = responseStatus.value().value();
             String message = responseStatus.reason();
             fail = Result.failed(errorCode, message);
         } else if (StrUtil.isBlank(e.getMessage())) {
-
-            fail = Result.failed(500, DEFAULT_MSG);
+            fail = Result.failed(500, defaultMsg);
         } else {
             switch (e) {
                 case MethodArgumentNotValidException validException -> {
@@ -124,7 +123,7 @@ public class GlobalExceptionHandler {
                 return fail;
             }
             log.error("request failed", e);
-            fail = Result.failed(500, DEFAULT_MSG);
+            fail = Result.failed(500, defaultMsg);
             fail.setException(e.getLocalizedMessage());
         }
         if (!globalExceptionProperties.getEnable()) {

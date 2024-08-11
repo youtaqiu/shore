@@ -1,4 +1,4 @@
-name: CI
+name: Project CI
 
 on:
   pull_request:
@@ -57,6 +57,12 @@ jobs:
         with:
           name: test-reports-${{ matrix.os }}
           path: '**/build/reports/tests/'
+      - name: Install DeepSource CLI
+        run: curl https://deepsource.io/cli | sh
+      - name: Set DEEPSOURCE_DSN environment variable
+        run: echo "DEEPSOURCE_DSN=https://sampledsn@deepsource.io" >> $GITHUB_ENV
+
+
   version:
     runs-on: macos-latest
     if: github.repository_owner == 'youtaqiu' && github.ref == 'refs/heads/main'

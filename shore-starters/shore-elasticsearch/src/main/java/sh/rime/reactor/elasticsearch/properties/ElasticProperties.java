@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.List;
 
 /**
- * ElasticSearch配置属性
+ * ElasticSearch配置属性.
  *
  * @author youta
  */
@@ -23,8 +23,18 @@ public class ElasticProperties {
     public ElasticProperties() {
     }
 
-    private List<String> uris;
+    /**
+     * The username.
+     */
     private String username;
+
+    /**
+     * The password.
+     */
     private String password;
 
+    /**
+     * The uris.
+     */
+    private List<String> uris;
 }

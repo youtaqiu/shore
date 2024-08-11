@@ -17,14 +17,14 @@ import java.time.format.DateTimeFormatter;
 
 
 /**
- * java 8 时间默认序列化
+ * java 8 时间默认序列化.
  *
  * @author youta
  */
 public class JavaTimeModule extends SimpleModule {
 
     /**
-     * java 8 时间默认序列化
+     * java 8 时间默认序列化.
      */
     public JavaTimeModule() {
         super(PackageVersion.VERSION);

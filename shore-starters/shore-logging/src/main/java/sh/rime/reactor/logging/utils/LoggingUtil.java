@@ -144,17 +144,17 @@ public class LoggingUtil {
             return bool;
         } else if (object instanceof CharSequence cs) {
             String value = cs.toString();
-            if (TRUE.equalsIgnoreCase(value) ||
-                    Y.equalsIgnoreCase(value) ||
-                    YES.equalsIgnoreCase(value) ||
-                    ON.equalsIgnoreCase(value) ||
-                    ONE.equalsIgnoreCase(value)) {
+            if (TRUE.equalsIgnoreCase(value)
+                    || Y.equalsIgnoreCase(value)
+                    || YES.equalsIgnoreCase(value)
+                    || ON.equalsIgnoreCase(value)
+                    || ONE.equalsIgnoreCase(value)) {
                 return true;
-            } else if (FALSE.equalsIgnoreCase(value) ||
-                    N.equalsIgnoreCase(value) ||
-                    NO.equalsIgnoreCase(value) ||
-                    OFF.equalsIgnoreCase(value) ||
-                    ZERO.equalsIgnoreCase(value)) {
+            } else if (FALSE.equalsIgnoreCase(value)
+                    || N.equalsIgnoreCase(value)
+                    || NO.equalsIgnoreCase(value)
+                    || OFF.equalsIgnoreCase(value)
+                    || ZERO.equalsIgnoreCase(value)) {
                 return false;
             }
         }

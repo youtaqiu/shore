@@ -13,7 +13,6 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.lang.NonNull;
 import org.springframework.util.StringUtils;
-import sh.rime.reactor.http.annotation.HttpClient;
 
 import java.util.List;
 

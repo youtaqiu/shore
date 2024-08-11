@@ -19,12 +19,13 @@ import static org.springframework.data.relational.core.query.Query.query;
  *
  * @author youta
  **/
+@SuppressWarnings("unused")
 public interface DbUtils {
 
     /**
      * 忽略的属性
      */
-    List<String> ignoreDescriptors = List.of("class");
+    List<String> IGNORE_DESCRIPTORS = List.of("class");
 
     /**
      * 更新
@@ -42,7 +43,7 @@ public interface DbUtils {
             try {
                 String name = descriptor.getName();
 
-                if (ignoreDescriptors.contains(name)) {
+                if (IGNORE_DESCRIPTORS.contains(name)) {
                     continue;
                 }
                 Object invoke = descriptor.getReadMethod().invoke(entity);
@@ -52,8 +53,8 @@ public interface DbUtils {
                 if ("id".equals(name)) {
                     query = query(Criteria.where(name).is(invoke));
                 } else {
-                    update = update == null ? Update.update(name, invoke) :
-                            update.set(name, invoke);
+                    update = update == null ? Update.update(name, invoke)
+                            : update.set(name, invoke);
                 }
             } catch (IllegalAccessException | InvocationTargetException e) {
                 return Mono.error(new ServerException("Can not generate valid Sql statement"));

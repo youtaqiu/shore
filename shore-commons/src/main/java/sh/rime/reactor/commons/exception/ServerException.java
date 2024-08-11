@@ -20,7 +20,7 @@ public class ServerException extends RuntimeException {
     @Serial
     private static final long serialVersionUID = 1L;
 
-   /**
+    /**
      * The default error message.
      */
     public static final String DEFAULT_MSG;
@@ -35,14 +35,14 @@ public class ServerException extends RuntimeException {
     }
 
     /**
-     * 构造一个应用基础异常
+     * 构造一个应用基础异常.
      */
     public ServerException() {
         this(500);
     }
 
     /**
-     * 构造一个应用基础异常
+     * 构造一个应用基础异常.
      *
      * @param errorCode 错误码
      */
@@ -52,7 +52,7 @@ public class ServerException extends RuntimeException {
     }
 
     /**
-     * 构造一个应用基础异常
+     * 构造一个应用基础异常.
      *
      * @param message            异常信息
      * @param cause              导致的原因
@@ -65,7 +65,7 @@ public class ServerException extends RuntimeException {
     }
 
     /**
-     * 构造一个应用基础异常
+     * 构造一个应用基础异常.
      *
      * @param message            异常信息
      * @param cause              导致的原因
@@ -80,7 +80,7 @@ public class ServerException extends RuntimeException {
     }
 
     /**
-     * 构造一个应用基础异常
+     * 构造一个应用基础异常.
      *
      * @param message 异常信息
      * @param cause   导致的原因
@@ -90,7 +90,7 @@ public class ServerException extends RuntimeException {
     }
 
     /**
-     * 构造一个应用基础异常
+     * 构造一个应用基础异常.
      *
      * @param message   异常信息
      * @param cause     导致的原因
@@ -102,7 +102,7 @@ public class ServerException extends RuntimeException {
     }
 
     /**
-     * 构造一个应用基础异常
+     * 构造一个应用基础异常.
      *
      * @param message 异常信息
      */
@@ -111,7 +111,7 @@ public class ServerException extends RuntimeException {
     }
 
     /**
-     * 构造一个应用基础异常
+     * 构造一个应用基础异常.
      *
      * @param message   异常信息
      * @param errorCode 错误码
@@ -123,7 +123,7 @@ public class ServerException extends RuntimeException {
 
 
     /**
-     * 构造一个应用基础异常
+     * 构造一个应用基础异常.
      *
      * @param message   异常信息
      * @param errorCode 错误码
@@ -134,7 +134,7 @@ public class ServerException extends RuntimeException {
     }
 
     /**
-     * 构造一个应用基础异常
+     * 构造一个应用基础异常.
      *
      * @param failure 异常枚举
      * @param args    参数
@@ -145,7 +145,7 @@ public class ServerException extends RuntimeException {
     }
 
     /**
-     * 构造一个应用基础异常
+     * 构造一个应用基础异常.
      *
      * @param cause 导致的原因
      */
@@ -154,7 +154,7 @@ public class ServerException extends RuntimeException {
     }
 
     /**
-     * 构造一个应用基础异常
+     * 构造一个应用基础异常.
      *
      * @param cause     导致的原因
      * @param errorCode 错误码

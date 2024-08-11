@@ -34,8 +34,8 @@ public class SimpleLogHandler implements LogHandler {
                                  @Nullable Object queryParams,
                                  @Nullable Object operationParam,
                                  @Nullable Object result, @Nullable Throwable ex) {
-        var logStr = "logContent: {}, requestMethod: {}, requestUri: {}, requestId: {}, ip: {}, " +
-                "traceId: {}, clientId: {}, queryParams: {}, operationParam: {}, result: {}";
+        var logStr = "logContent: {}, requestMethod: {}, requestUri: {}, requestId: {}, ip: {}, "
+                + "traceId: {}, clientId: {}, queryParams: {}, operationParam: {}, result: {}";
         if (ex == null) {
             log.info(logStr, logContent, requestMethod, requestUri,
                     requestId, ip, traceId, clientId, JSONUtil.toJsonStr(queryParams),

@@ -1,6 +1,7 @@
 package sh.rime.reactor.commons.bean;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Getter;
 import sh.rime.reactor.commons.constants.CommonConstant;
 import sh.rime.reactor.commons.exception.ServerException;
 import sh.rime.reactor.commons.exception.ServerFailure;
@@ -14,30 +15,37 @@ import java.util.List;
 
 /**
  * R is a utility class for creating Mono responses in a reactive Spring application.
- * It provides various static methods for creating successful or failed responses, with optional data, status codes, and messages.
+ * It provides various static methods for creating successful or failed responses, with optional data,
+ * status codes, and messages.
  * The class also includes methods for creating responses from Mono or Flux instances.
- * Each response is an instance of the R class, which includes fields for the status code, message, and data of the response.
+ * Each response is an instance of the R class, which includes fields for the status code, message,
+ * and data of the response.
  * The R class implements Serializable, allowing its instances to be serialized for transmission over the network.
  *
  * @param <T> The type of data that this class can handle.
  * @author youta
  */
+@Getter
 @ToString
+@SuppressWarnings("unused")
 public class R<T> implements Serializable {
 
     /**
-     * 响应编码
+     * 响应编码.
+     * get code
      */
     @Schema(description = "返回码")
     private Integer code;
     /**
-     * 响应信息
+     * 响应信息.
+     * get message
      */
     @Schema(description = "返回描述")
     private String message;
 
     /**
-     * 承载数据
+     * 承载数据.
+     * get data
      */
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @Schema(description = "数据载体")
@@ -51,7 +59,7 @@ public class R<T> implements Serializable {
     }
 
     /**
-     * 响应成功
+     * 响应成功.
      *
      * @param monoBody 响应体
      * @param <T>      响应体类型
@@ -62,7 +70,7 @@ public class R<T> implements Serializable {
     }
 
     /**
-     * 响应成功
+     * 响应成功.
      *
      * @param fluxBody 响应体
      * @param <T>      响应体类型
@@ -73,7 +81,7 @@ public class R<T> implements Serializable {
     }
 
     /**
-     * 响应成功
+     * 响应成功.
      *
      * @param monoBody 响应体
      * @param msg      响应信息
@@ -85,7 +93,7 @@ public class R<T> implements Serializable {
     }
 
     /**
-     * 响应成功
+     * 响应成功.
      *
      * @param fluxBody 响应体
      * @param msg      响应信息
@@ -97,7 +105,7 @@ public class R<T> implements Serializable {
     }
 
     /**
-     * 响应成功
+     * 响应成功.
      *
      * @param monoBody 响应体
      * @param code     响应编码
@@ -110,7 +118,7 @@ public class R<T> implements Serializable {
     }
 
     /**
-     * 响应成功
+     * 响应成功.
      *
      * @param fluxBody 响应体
      * @param code     响应编码
@@ -123,18 +131,65 @@ public class R<T> implements Serializable {
     }
 
     /**
-     * 响应失败
+     * build error mono
      *
-     * @param monoBody 响应体
-     * @param <T>      响应体类型
-     * @return 响应体
+     * @param <T> type
+     * @return mono
      */
-    public static <T> Mono<R<T>> failed(Mono<T> monoBody) {
-        return monoResponseCreate(monoBody, CommonConstant.ERROR_CODE, ServerException.DEFAULT_MSG);
+    public static <T> Mono<R<T>> ok() {
+        return responseCreate(CommonConstant.SUCCESS_CODE, CommonConstant.SUCCESS_MSG);
     }
 
     /**
-     * 响应异常
+     * build error mono
+     *
+     * @param data data
+     * @param <T>  type
+     * @return mono
+     */
+    public static <T> Mono<R<T>> ok(T data) {
+        return responseCreate(data, CommonConstant.SUCCESS_CODE, CommonConstant.SUCCESS_MSG);
+    }
+
+    /**
+     * build error mono
+     *
+     * @param data data
+     * @param msg  msg
+     * @param <T>  type
+     * @return mono
+     */
+    public static <T> Mono<R<T>> ok(T data, String msg) {
+        return responseCreate(data, CommonConstant.SUCCESS_CODE, msg);
+    }
+
+    /**
+     * build error mono
+     *
+     * @param code code
+     * @param msg  msg
+     * @param <T>  type
+     * @return mono
+     */
+    public static <T> Mono<R<T>> ok(int code, String msg) {
+        return responseCreate(code, msg);
+    }
+
+    /**
+     * build error mono
+     *
+     * @param data data
+     * @param code code
+     * @param msg  msg
+     * @param <T>  type
+     * @return mono
+     */
+    public static <T> Mono<R<T>> ok(T data, int code, String msg) {
+        return responseCreate(data, code, msg);
+    }
+
+    /**
+     * 响应异常.
      *
      * @param throwable 异常
      * @param <T>       响应体类型
@@ -145,7 +200,7 @@ public class R<T> implements Serializable {
     }
 
     /**
-     * build error mono
+     * build error mono.
      *
      * @param throwable error
      * @param <T>       type
@@ -156,7 +211,7 @@ public class R<T> implements Serializable {
     }
 
     /**
-     * build error mono
+     * build error mono.
      *
      * @param failure error
      * @param <T>     type
@@ -167,7 +222,19 @@ public class R<T> implements Serializable {
     }
 
     /**
-     * build error mono
+     * 响应失败.
+     *
+     * @param monoBody 响应体
+     * @param <T>      响应体类型
+     * @return 响应体
+     */
+    public static <T> Mono<R<T>> failed(Mono<T> monoBody) {
+        return monoResponseCreate(monoBody, CommonConstant.ERROR_CODE, ServerException.DEFAULT_MSG);
+    }
+
+
+    /**
+     * build error mono.
      *
      * @param fluxBody flux
      * @param <T>      type
@@ -227,15 +294,6 @@ public class R<T> implements Serializable {
         return fluxResponseCreate(fluxBody, code, msg);
     }
 
-    /**
-     * build error mono
-     *
-     * @param <T> type
-     * @return mono
-     */
-    public static <T> Mono<R<T>> ok() {
-        return responseCreate(CommonConstant.SUCCESS_CODE, CommonConstant.SUCCESS_MSG);
-    }
 
     /**
      * build error mono
@@ -247,53 +305,6 @@ public class R<T> implements Serializable {
         return responseCreate(CommonConstant.ERROR_CODE, ServerException.DEFAULT_MSG);
     }
 
-    /**
-     * build error mono
-     *
-     * @param data data
-     * @param <T>  type
-     * @return mono
-     */
-    public static <T> Mono<R<T>> ok(T data) {
-        return responseCreate(data, CommonConstant.SUCCESS_CODE, CommonConstant.SUCCESS_MSG);
-    }
-
-    /**
-     * build error mono
-     *
-     * @param data data
-     * @param msg  msg
-     * @param <T>  type
-     * @return mono
-     */
-    public static <T> Mono<R<T>> ok(T data, String msg) {
-        return responseCreate(data, CommonConstant.SUCCESS_CODE, msg);
-    }
-
-    /**
-     * build error mono
-     *
-     * @param code code
-     * @param msg  msg
-     * @param <T>  type
-     * @return mono
-     */
-    public static <T> Mono<R<T>> ok(int code, String msg) {
-        return responseCreate(code, msg);
-    }
-
-    /**
-     * build error mono
-     *
-     * @param data data
-     * @param code code
-     * @param msg  msg
-     * @param <T>  type
-     * @return mono
-     */
-    public static <T> Mono<R<T>> ok(T data, int code, String msg) {
-        return responseCreate(data, code, msg);
-    }
 
     /**
      * build error mono
@@ -463,33 +474,6 @@ public class R<T> implements Serializable {
         return r;
     }
 
-
-    /**
-     * get message
-     *
-     * @return message
-     */
-    public String getMessage() {
-        return message;
-    }
-
-    /**
-     * get code
-     *
-     * @return code
-     */
-    public Integer getCode() {
-        return code;
-    }
-
-    /**
-     * get data
-     *
-     * @return data
-     */
-    public T getData() {
-        return data;
-    }
 
     /**
      * set message

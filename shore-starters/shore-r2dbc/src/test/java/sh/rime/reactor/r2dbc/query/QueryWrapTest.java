@@ -96,11 +96,11 @@ class QueryWrapTest {
                 .page();
         StepVerifier.create(pageResultMono)
                 .expectNextMatches(pageResult ->
-                        pageResult.getCurrent() == 1 &&
-                                pageResult.getSize() == 10 &&
-                                pageResult.getTotal() == 3 &&
-                                pageResult.getPages() == 1 &&
-                                pageResult.getList().size() == 3)
+                        pageResult.getCurrent() == 1
+                                && pageResult.getSize() == 10
+                                && pageResult.getTotal() == 3
+                                && pageResult.getPages() == 1
+                                && pageResult.getList().size() == 3)
                 .verifyComplete();
     }
 }

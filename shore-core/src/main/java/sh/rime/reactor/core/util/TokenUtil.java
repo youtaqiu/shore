@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @SuppressWarnings("unused")
 @Slf4j
-public class TokenUtil {
+public final class TokenUtil {
 
     /**
      * 私有构造函数

@@ -19,8 +19,7 @@ public enum SecurityExceptionEnum implements ServerFailure {
     /**
      * password not match
      */
-    PASSWORD_NOT_MATCH(1002, "Password not match"),
-    ;
+    PASSWORD_NOT_MATCH(1002, "Password not match");
 
 
     private final int code;

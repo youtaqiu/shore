@@ -17,6 +17,8 @@ allprojects {
 
 configure(gradleModuleProjects) {
     apply plugin: "sh.rime.module"
+    apply plugin: 'jacoco'
+    apply plugin: 'checkstyle'
 
     dependencies {
         management platform(project(":shore-bom"))
@@ -40,6 +42,15 @@ configure(gradleModuleProjects) {
             }
         }
     }
+
+    jacocoTestReport {
+        reports {
+            xml.required = true
+            html.required = false
+        }
+    }
+
+    check.dependsOn jacocoTestReport
 }
 
 configure(allprojects) {

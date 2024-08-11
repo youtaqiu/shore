@@ -1,5 +1,7 @@
 package sh.rime.reactor.redis.util;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
@@ -7,8 +9,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
+ * The type Jackson serializer utils test.
+ *
  * @author youta
  **/
+@SuppressWarnings("unused")
 class JacksonSerializerUtilsTest {
 
 
@@ -26,35 +31,27 @@ class JacksonSerializerUtilsTest {
         assertEquals(user.getAge(), deserializedUser.getAge());
     }
 
+    /**
+     * The type User demo.
+     */
+    @Setter
+    @Getter
     static class UserDemo {
         private String name;
         private int age;
 
-        public UserDemo() {
+        /**
+         * Default constructor.
+         * This constructor is used for serialization and other reflective operations.
+         */
+        UserDemo() {
         }
 
-        public UserDemo(String name, int age) {
+        UserDemo(String name, int age) {
             this.name = name;
             this.age = age;
         }
 
-        // getters and setters
-
-        public String getName() {
-            return name;
-        }
-
-        public int getAge() {
-            return age;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public void setAge(int age) {
-            this.age = age;
-        }
     }
 
 }

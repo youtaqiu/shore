@@ -90,14 +90,15 @@ public class RabbitMQProperties {
      * @return parsed addresses
      */
     private Address[] parseAddresses(String addresses) {
-        List<Address> parsedAddresses = new ArrayList<>();
+        List<Address> parsedAddressList = new ArrayList<>();
         for (String address : StringUtils.commaDelimitedListToStringArray(addresses)) {
             String[] parts = address.split(StrPool.COLON);
             if (parts.length != 2) {
                 throw new IllegalArgumentException("Invalid address: " + address);
             }
-            parsedAddresses.add(new Address(parts[0], Integer.parseInt(parts[1])));
+            parsedAddressList.add(new Address(parts[0], Integer.parseInt(parts[1])));
         }
-        return parsedAddresses.toArray(new Address[0]);
+        return parsedAddressList.toArray(new Address[0]);
     }
+
 }

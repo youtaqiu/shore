@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
  *
  * @author youta
  */
+@SuppressWarnings("unused")
 public class BeanUtil extends org.springframework.beans.BeanUtils {
 
     /**
@@ -100,7 +101,9 @@ public class BeanUtil extends org.springframework.beans.BeanUtils {
         Set<String> emptyNames = new HashSet<>();
         for (java.beans.PropertyDescriptor pd : pds) {
             Object srcValue = src.getPropertyValue(pd.getName());
-            if (srcValue == null) emptyNames.add(pd.getName());
+            if (srcValue == null) {
+                emptyNames.add(pd.getName());
+            }
         }
         String[] result = new String[emptyNames.size()];
         return emptyNames.toArray(result);
@@ -118,7 +121,7 @@ public class BeanUtil extends org.springframework.beans.BeanUtils {
     /**
      * JacksonHolder
      */
-    private static class JacksonHolder {
+    private static final class JacksonHolder {
         private static final ObjectMapper INSTANCE = new JacksonObjectMapper();
     }
 

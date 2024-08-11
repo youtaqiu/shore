@@ -40,7 +40,7 @@ public class JacksonConfiguration {
     @Bean
     @Primary
     public ObjectMapper serializingObjectMapper() {
-        ObjectMapper objectMapper;
+        final ObjectMapper objectMapper;
         objectMapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .locale(Locale.CHINA)
@@ -51,7 +51,7 @@ public class JacksonConfiguration {
     }
 
     /**
-     * jackson objectMapper customizer
+     * jackson objectMapper customizer.
      *
      * @return Jackson2ObjectMapperBuilderCustomizer
      */

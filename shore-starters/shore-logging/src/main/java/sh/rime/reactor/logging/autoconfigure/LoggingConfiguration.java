@@ -142,7 +142,7 @@ public class LoggingConfiguration {
      * LoggingCondition
      */
     @Order(Ordered.HIGHEST_PRECEDENCE)
-    private static class LoggingCondition extends SpringBootCondition {
+    private static final class LoggingCondition extends SpringBootCondition {
         private static final String LOG_STASH_CLASS_NAME = "net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder";
         private static final String LOKI_CLASS_NAME = "com.github.loki4j.logback.Loki4jAppender";
 
@@ -155,6 +155,7 @@ public class LoggingConfiguration {
             ClassLoader classLoader = context.getClassLoader();
             Boolean fileEnabled = environment.getProperty(LoggingProperties.Files.PREFIX + ".enabled", Boolean.class, Boolean.TRUE);
             Boolean lokiEnabled = environment.getProperty(LoggingProperties.Loki.PREFIX + ".enabled", Boolean.class, Boolean.FALSE);
+            ConditionOutcome conditionOutcome;
             if (Appender.LOKI == appender) {
                 if (!lokiEnabled) {
                     return ConditionOutcome.noMatch("Logging loki is not enabled.");
@@ -175,12 +176,14 @@ public class LoggingConfiguration {
                 throw new IllegalStateException("Logging file json format is enabled, please add logstash-logback-encoder dependencies.");
             } else if (Appender.FILE == appender) {
                 if (!fileEnabled) {
-                    return ConditionOutcome.noMatch("Logging logstash is not enabled.");
+                    conditionOutcome = ConditionOutcome.noMatch("Logging logstash is not enabled.");
+                } else {
+                    conditionOutcome = ConditionOutcome.match();
                 }
-                return ConditionOutcome.match();
             } else {
-                return ConditionOutcome.match();
+                conditionOutcome = ConditionOutcome.match();
             }
+            return conditionOutcome;
         }
 
         /**

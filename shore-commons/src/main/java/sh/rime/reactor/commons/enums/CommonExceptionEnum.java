@@ -77,8 +77,7 @@ public enum CommonExceptionEnum implements ServerFailure {
     /**
      * 登录令牌缓存失败
      */
-    LOGIN_TOKEN_CACHE_ERROR(1003, "Login failed"),
-    ;
+    LOGIN_TOKEN_CACHE_ERROR(1003, "Login failed");
 
     private final int code;
 

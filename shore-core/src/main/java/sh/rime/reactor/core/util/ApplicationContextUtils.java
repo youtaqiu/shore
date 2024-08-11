@@ -1,6 +1,5 @@
 package sh.rime.reactor.core.util;
 
-import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 
@@ -9,17 +8,24 @@ import org.springframework.context.ApplicationContext;
  *
  * @author rained
  **/
-@UtilityClass
 @Slf4j
 @SuppressWarnings("all")
-public class ApplicationContextUtils {
+public final class ApplicationContextUtils {
+
+    /**
+     * Instantiates a new Application context utils.
+     */
+    private ApplicationContextUtils() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
 
     /**
      * Get bean from ApplicationContext or create instance by reflect.
+     *
      * @param context the context
-     * @param clazz the clazz
+     * @param clazz   the clazz
+     * @param <T>     the type parameter
      * @return the bean or reflect
-     * @param <T> the type parameter
      */
     @SuppressWarnings("unchecked")
     public static <T> T getBeanOrReflect(ApplicationContext context, Class<T> clazz) {

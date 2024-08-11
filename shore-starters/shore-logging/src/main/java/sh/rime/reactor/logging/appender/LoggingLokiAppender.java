@@ -69,7 +69,7 @@ public class LoggingLokiAppender implements ILoggingAppender {
     /**
      * 添加LokiAppender
      *
-     * @param context   context
+     * @param context    context
      * @param properties properties
      */
     private void addLokiAppender(LoggerContext context, LoggingProperties.Loki properties) {
@@ -106,8 +106,8 @@ public class LoggingLokiAppender implements ILoggingAppender {
     private Loki4jEncoder getFormat(LoggerContext context,
                                     LoggingProperties.Loki properties) {
         LoggingProperties.LokiEncoder encoder = properties.getEncoder();
-        AbstractLoki4jEncoder loki4jEncoder = LoggingProperties.LokiEncoder.ProtoBuf == encoder ?
-                new ProtobufEncoder() : new JsonEncoder();
+        AbstractLoki4jEncoder loki4jEncoder = LoggingProperties.LokiEncoder.ProtoBuf == encoder
+                ? new ProtobufEncoder() : new JsonEncoder();
         // label config
         AbstractLoki4jEncoder.LabelCfg labelCfg = new AbstractLoki4jEncoder.LabelCfg();
         labelCfg.setPattern(formatLabelPatternHandle(context, properties));
