@@ -123,6 +123,8 @@ public class WebSecurityAutoconfigure {
                                 return;
                             }
                             authorizeRequests
+                                    .pathMatchers(HttpMethod.GET, authProperties.getGetExcludePatterns()
+                                            .toArray(new String[0])).permitAll()
                                     .pathMatchers(HttpMethod.OPTIONS).permitAll()
                                     .anyExchange().access(customAuthorizationManager);
                         }
@@ -166,7 +168,7 @@ public class WebSecurityAutoconfigure {
     /**
      * 设置路径
      *
-     * @param method              请求方法
+     * @param method             请求方法
      * @param requestMappingInfo 请求映射信息
      */
     private void setPath(RequestMethodEnum method, RequestMappingInfo requestMappingInfo) {
