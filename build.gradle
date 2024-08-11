@@ -45,7 +45,6 @@ configure(modules) {
     }
 
     jacocoTestReport {
-        executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
         reports {
             xml.required = true
             csv.required = false
