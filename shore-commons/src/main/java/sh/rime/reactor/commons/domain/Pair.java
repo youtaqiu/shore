@@ -213,14 +213,28 @@ public class Pair<K, V> implements Serializable, Cloneable {
             super(Pair.class);
         }
 
+
         @Override
         public Pair<Object, Object> deserialize(JsonParser p, DeserializationContext context) throws IOException {
-            p.nextToken();
-            String name = p.currentName();
-            JsonNode valueNode = context.readTree(p).get(name);
+            JsonNode node = p.getCodec().readTree(p);
+
+            // Ensure that the JSON contains the "key" and "value" nodes
+            if (!node.has("key") || !node.has("value")) {
+                throw new JsonMappingException(p, "Missing 'key' or 'value' fields in JSON");
+            }
+
+            // Deserialize the key
+            JsonNode keyNode = node.get("key");
+            Object key = keyDeserializer.deserializeKey(keyNode.asText(), context);
+
+            // Deserialize the value
+            JsonNode valueNode = node.get("value");
             ObjectMapper mapper = (ObjectMapper) p.getCodec();
-            return Pair.of(keyDeserializer.deserializeKey(name, context), mapper.convertValue(valueNode, valueType));
+            Object value = mapper.convertValue(valueNode, valueType);
+
+            return Pair.of(key, value);
         }
+
 
         @Override
         public JsonDeserializer<?> createContextual(DeserializationContext context, BeanProperty property) throws JsonMappingException {
