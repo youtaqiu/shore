@@ -19,4 +19,11 @@ public @interface Log {
      * @return 操作内容
      */
     String value();
+
+    /**
+     * 是否记录
+     *
+     * @return 是否记录
+     */
+    boolean enable() default true;
 }

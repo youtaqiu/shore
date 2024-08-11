@@ -8,17 +8,18 @@ plugins {
 
 ext {
     bom = Set.of(project(":shore-bom"))
-    gradleModuleProjects = (subprojects.findAll { it.buildFile.exists() } - (bom))
+    modules = (subprojects.findAll { it.buildFile.exists() } - (bom))
 }
 
 allprojects {
     group = 'sh.rime.reactor'
 }
 
-configure(gradleModuleProjects) {
+configure(modules) {
     apply plugin: "sh.rime.module"
     apply plugin: 'jacoco'
     apply plugin: 'checkstyle'
+    apply plugin: 'maven-publish'
 
     dependencies {
         management platform(project(":shore-bom"))
@@ -52,21 +53,7 @@ configure(gradleModuleProjects) {
         }
     }
 
-    check.dependsOn jacocoTestReport
-}
-
-configure(allprojects) {
-    repositories {
-        maven { url "https://mirrors.cloud.tencent.com/nexus/repository/maven-public/" }
-        maven { url "https://repo.spring.io/release" }
-        maven { url "https://plugins.gradle.org/m2/" }
-    }
-}
-
-subprojects {
-    apply plugin: 'maven-publish'
-
-    publishing {
+        publishing {
         publications {
             mavenJava(MavenPublication) {
                 pom {
@@ -107,14 +94,14 @@ subprojects {
     jreleaser {
         deploy {
             maven {
-                mavenCentral {
+                mavenCentral(({
                     sonatype {
                         active = 'ALWAYS'
                         url = 'https://central.sonatype.com/api/v1/publisher'
                         var file = layout.buildDirectory.dir('staging-deploy')
                         stagingRepository(file.get().toString())
                     }
-                }
+                } as Closure<Void>))
             }
         }
     }
@@ -130,6 +117,17 @@ subprojects {
             println "JReleaser deployment completed."
         }
     }
+}
+
+configure(allprojects) {
+    repositories {
+        maven { url "https://mirrors.cloud.tencent.com/nexus/repository/maven-public/" }
+        maven { url "https://repo.spring.io/release" }
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+}
+
+subprojects {
 }
 
 

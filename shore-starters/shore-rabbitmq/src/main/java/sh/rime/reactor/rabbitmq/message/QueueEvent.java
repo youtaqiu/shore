@@ -78,7 +78,7 @@ public abstract class QueueEvent implements Serializable {
         try {
             return new ObjectMapper().writeValueAsBytes(this);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 

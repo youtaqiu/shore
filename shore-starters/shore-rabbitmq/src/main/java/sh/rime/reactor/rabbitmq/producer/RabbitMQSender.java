@@ -82,7 +82,7 @@ public class RabbitMQSender {
      */
     public Disposable send(QueueEvent message, int seconds) {
         if (seconds < 0) {
-            throw new RuntimeException("seconds must be greater than 0");
+            throw new IllegalArgumentException("seconds must be greater than 0");
         }
         Map<String, Object> map = new HashMap<>();
         map.put(DELAY_HEADER, seconds * 1000);

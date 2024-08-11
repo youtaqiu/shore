@@ -88,7 +88,7 @@ public class Loki4jOkHttpClient implements Loki4jHttpClient {
             String body = response.body() != null ? response.body().string() : "";
             return new LokiResponse(response.code(), body);
         } catch (IOException e) {
-            throw new RuntimeException("Error while sending batch to Loki", e);
+            throw new IllegalStateException("Error while sending batch to Loki", e);
         }
     }
 

@@ -5,7 +5,6 @@ import sh.rime.reactor.core.util.OptionalBean;
 import sh.rime.reactor.log.annotation.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.lang.Nullable;
 import reactor.core.publisher.Mono;
 
 /**
@@ -25,17 +24,24 @@ public class SimpleLogHandler implements LogHandler {
 
     @Override
     public boolean accept(MethodSignature methodSignature, Log log) {
-        return true;
+        return log.enable();
     }
 
     @Override
-    public Mono<Boolean> handler(String logContent, String requestMethod, String requestUri,
-                                 String requestId, String traceId, String clientId, String ip,
-                                 @Nullable Object queryParams,
-                                 @Nullable Object operationParam,
-                                 @Nullable Object result, @Nullable Throwable ex) {
+    public Mono<Boolean> handler(LogDomain logDomain) {
         var logStr = "logContent: {}, requestMethod: {}, requestUri: {}, requestId: {}, ip: {}, "
                 + "traceId: {}, clientId: {}, queryParams: {}, operationParam: {}, result: {}";
+        Throwable ex = logDomain.getEx();
+        var logContent = logDomain.getLogContent();
+        var requestMethod = logDomain.getRequestMethod();
+        var requestUri = logDomain.getRequestUri();
+        var requestId = logDomain.getRequestId();
+        var ip = logDomain.getIp();
+        var traceId = logDomain.getTraceId();
+        var clientId = logDomain.getClientId();
+        var queryParams = logDomain.getQueryParams();
+        var operationParam = logDomain.getOperationParam();
+        var result = logDomain.getResult();
         if (ex == null) {
             log.info(logStr, logContent, requestMethod, requestUri,
                     requestId, ip, traceId, clientId, JSONUtil.toJsonStr(queryParams),

@@ -5,6 +5,7 @@ import org.springframework.util.MultiValueMap;
 import sh.rime.reactor.core.context.ReactiveContextHolder;
 import sh.rime.reactor.core.util.ReactiveAddrUtil;
 import sh.rime.reactor.log.annotation.Log;
+import sh.rime.reactor.log.handler.LogDomain;
 import sh.rime.reactor.log.service.ApiLogService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -144,8 +145,19 @@ public class ApiLogAspect {
                     }
                     String formattedLogContent = parseLogContent(logContent, args);
                     String remoteAddr = ReactiveAddrUtil.getRemoteAddr(request);
-                    this.apiLogService.log(formattedLogContent, method, uri, queryParamMap, params, requestId, clientId,
-                            remoteAddr, obj, ex, methodSignature, apiLog);
+                    LogDomain logDomain = LogDomain.builder()
+                            .logContent(formattedLogContent)
+                            .requestMethod(method)
+                            .requestUri(uri)
+                            .requestId(requestId)
+                            .clientId(clientId)
+                            .ip(remoteAddr)
+                            .queryParams(queryParamMap)
+                            .operationParam(params)
+                            .result(obj)
+                            .ex(ex)
+                            .build();
+                    this.apiLogService.log(logDomain, methodSignature, apiLog);
                     return obj;
                 });
     }

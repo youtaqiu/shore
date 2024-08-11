@@ -32,7 +32,7 @@ public class WebSocketMappingHandlerMapping extends SimpleUrlHandlerMapping {
                 .getBeansWithAnnotation(WebSocketMapping.class);
         beanMap.values().forEach(bean -> {
             if (!(bean instanceof WebSocketHandler)) {
-                throw new RuntimeException(
+                throw new IllegalArgumentException(
                         String.format("Controller [%s] doesn't implement WebSocketHandler interface.",
                                 bean.getClass().getName()));
             }
