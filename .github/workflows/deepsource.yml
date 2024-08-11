@@ -13,6 +13,12 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'liberica'
+          java-version: '21'
+
       - name: Run tests
         run: ./gradlew test
 
@@ -25,5 +31,6 @@ jobs:
           ./bin/deepsource report --analyzer test-coverage --key java --value-file target/site/jacoco/jacoco.xml
         env:
           DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }}
+
 
 
