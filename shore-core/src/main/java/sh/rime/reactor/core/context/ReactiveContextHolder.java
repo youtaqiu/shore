@@ -28,7 +28,9 @@ public class ReactiveContextHolder {
      * @return 上下文
      */
     public static Mono<ServerWebExchange> getExchange() {
-        return Mono.deferContextual(ctx -> Mono.justOrEmpty(ctx.get(CONTEXT_KEY)));
+        return Mono.deferContextual(ctx -> ctx.hasKey(CONTEXT_KEY)
+                ? Mono.justOrEmpty(ctx.get(CONTEXT_KEY))
+                : Mono.empty());
     }
 
 }
