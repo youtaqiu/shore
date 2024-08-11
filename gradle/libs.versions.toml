@@ -2,7 +2,7 @@
 springBoot = "3.3.2"
 springCloud = "2023.0.3"
 hutool = "5.8.30"
-slf4jApi = "2.0.12"
+slf4jApi = "2.0.16"
 logstash = "8.0"
 loki4j = "1.5.2"
 jjwt = "0.12.6"
