@@ -3,7 +3,6 @@ package sh.rime.reactor.core.util;
 import sh.rime.reactor.commons.exception.ServerException;
 import sh.rime.reactor.commons.exception.ServerFailure;
 import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -17,7 +16,7 @@ import java.util.Map;
  * @author youta
  */
 @SuppressWarnings("unused")
-public class Asserts extends Assert {
+public class Asserts {
 
 
     /**

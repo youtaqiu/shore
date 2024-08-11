@@ -1,11 +1,13 @@
 package sh.rime.reactor.core.util;
 
+import cn.hutool.core.text.StrPool;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.util.StringUtils;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Objects;
@@ -41,7 +43,8 @@ public final class ReactiveAddrUtil {
         Map<String, String> headers = request.getHeaders().toSingleValueMap();
         String ip = getIpFromHeaders(headers);
         if (ip == null) {
-            ip = Objects.requireNonNull(request.getRemoteAddress()).getAddress().getHostAddress();
+            InetSocketAddress remoteAddress = request.getRemoteAddress();
+            ip = Objects.requireNonNull(remoteAddress).getAddress().getHostAddress();
             if (LOCAL_IP.equals(ip) || LOCAL_IP_STR.equals(ip)) {
                 ip = getLocalAddr();
             }
@@ -58,15 +61,15 @@ public final class ReactiveAddrUtil {
      * @return ip
      */
     private static String getIpFromHeaders(Map<String, String> headers) {
-        String[] headerKeys = {"X-Forwarded-For", "Proxy-Client-IP", "WL-Proxy-Client-IP", "HTTP_CLIENT_IP", "HTTP_X_FORWARDED_FOR"};
-        for (String key : headerKeys) {
-            String ip = headers.get(key);
-            if (isEmpty(ip)) {
-                return ip;
-            }
+    String[] headerKeys = {"X-Forwarded-For", "Proxy-Client-IP", "WL-Proxy-Client-IP", "HTTP_CLIENT_IP", "HTTP_X_FORWARDED_FOR"};
+    for (String key : headerKeys) {
+        String ip = headers.get(key);
+        if (StringUtils.hasLength(ip) && !UNKNOWN_STR.equalsIgnoreCase(ip)) {
+            return ip;
         }
-        return null;
     }
+    return null;
+}
 
     /**
      * extract first not empty ip.
@@ -75,25 +78,16 @@ public final class ReactiveAddrUtil {
      * @return ip
      */
     private static String extractFirstNonEmptyIp(String ip) {
-        String[] ips = ip.split(",");
-        for (String strIp : ips) {
-            if (isEmpty(strIp)) {
-                return strIp;
-            }
+    String[] ips = ip.split(StrPool.COMMA);
+    for (String strIp : ips) {
+        String trimmedIp = strIp.trim();
+        if (StringUtils.hasLength(trimmedIp) && !UNKNOWN_STR.equalsIgnoreCase(trimmedIp)) {
+            return trimmedIp;
         }
-        return ip;
     }
+    return ip;
+}
 
-
-    /**
-     * 判断ip是否为空.
-     *
-     * @param ip ip
-     * @return boolean
-     */
-    private static boolean isEmpty(String ip) {
-        return StringUtils.hasLength(ip) && !UNKNOWN_STR.equalsIgnoreCase(ip);
-    }
 
     /**
      * 获取本机的IP地址.
