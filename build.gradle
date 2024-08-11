@@ -19,7 +19,6 @@ configure(modules) {
     apply plugin: "sh.rime.module"
     apply plugin: 'jacoco'
     apply plugin: 'checkstyle'
-    apply plugin: 'maven-publish'
 
     dependencies {
         management platform(project(":shore-bom"))
@@ -32,28 +31,32 @@ configure(modules) {
     }
 
     test {
-        systemProperties(System.getProperties())
-        def skipExclude = systemProperties.get("exclude") as Boolean
-        if (skipExclude) {
-            try (def reader = new FileReader("./exclude.txt")
-                 def bufferedReader = new BufferedReader(reader)) {
-                def lines = bufferedReader.readLines()
-                        .stream().map { it.replaceAll("\\.", "/") + ".class" }.toList()
-                exclude(lines)
-            }
-        }
         finalizedBy jacocoTestReport
+        useJUnitPlatform()
+        testLogging {
+            minGranularity = 3
+            events "passed", "skipped", "failed"
+        }
+    }
+
+    jacoco {
+        toolVersion = "0.8.12"
     }
 
     jacocoTestReport {
-        dependsOn test
         reports {
             xml.required = true
+            csv.required = false
             html.required = true
         }
     }
 
-        publishing {
+}
+
+
+subprojects {
+    apply plugin: 'maven-publish'
+    publishing {
         publications {
             mavenJava(MavenPublication) {
                 pom {
@@ -125,9 +128,6 @@ configure(allprojects) {
         maven { url "https://repo.spring.io/release" }
         maven { url "https://plugins.gradle.org/m2/" }
     }
-}
-
-subprojects {
 }
 
 
