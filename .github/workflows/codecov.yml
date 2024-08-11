@@ -11,6 +11,8 @@ jobs:
         with:
           distribution: 'oracle'
           java-version: 21
+      - name: Test with Gradle
+        run: ./gradlew build
       - name: Install dependencies, run tests, and collect coverage
         run: gradle build
       - name: Upload coverage to Codecov
