@@ -3,6 +3,7 @@ import org.jreleaser.gradle.plugin.tasks.JReleaserFullReleaseTask
 plugins {
     id "sh.rime.root"
     id 'org.jreleaser'
+    id 'jacoco'
 }
 
 
@@ -32,7 +33,6 @@ configure(modules) {
 
     test {
         finalizedBy jacocoTestReport
-        reports.junitXml.destination = file("$buildDir/test-results/test")
         useJUnitPlatform()
         testLogging {
             minGranularity = 3
@@ -45,6 +45,7 @@ configure(modules) {
     }
 
     jacocoTestReport {
+        executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
         reports {
             xml.required = true
             csv.required = false
