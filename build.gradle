@@ -32,6 +32,7 @@ configure(modules) {
 
     test {
         finalizedBy jacocoTestReport
+        reports.junitXml.destination = file("$buildDir/test-results/test")
         useJUnitPlatform()
         testLogging {
             minGranularity = 3
