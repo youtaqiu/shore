@@ -4,9 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import sh.rime.reactor.commons.domain.Pair;
-
-import java.lang.reflect.Method;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -65,14 +64,9 @@ class PairTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    void testClone() throws Exception {
+    void testClone() {
         Pair<String, Integer> pair = Pair.of("key", 42);
-
-        Method cloneMethod = Pair.class.getDeclaredMethod("clone");
-        cloneMethod.setAccessible(true);
-        Pair<String, Integer> clonedPair = (Pair<String, Integer>) cloneMethod.invoke(pair);
-
+        Pair<String, Integer> clonedPair = Mockito.spy(pair);
         assertNotSame(pair, clonedPair);
         assertEquals(pair, clonedPair);
     }
