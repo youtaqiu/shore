@@ -41,12 +41,14 @@ configure(gradleModuleProjects) {
                 exclude(lines)
             }
         }
+        finalizedBy jacocoTestReport
     }
 
     jacocoTestReport {
+        dependsOn test
         reports {
             xml.required = true
-            html.required = false
+            html.required = true
         }
     }
 
@@ -63,6 +65,7 @@ configure(allprojects) {
 
 subprojects {
     apply plugin: 'maven-publish'
+
     publishing {
         publications {
             mavenJava(MavenPublication) {
