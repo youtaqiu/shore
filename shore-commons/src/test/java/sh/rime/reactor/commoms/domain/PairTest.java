@@ -48,7 +48,7 @@ class PairTest {
         // Correct JSON format: key is a String, value is an Integer
         String json = "{\"key\":\"key\",\"value\":42}";
         // Using TypeReference to specify the type parameters of Pair
-        Pair<String, Integer> pair = objectMapper.readValue(json, new TypeReference<Pair<String, Integer>>() {
+        Pair<String, Integer> pair = objectMapper.readValue(json, new TypeReference<>() {
         });
         assertNotNull(pair);
         assertEquals("key", pair.key());

@@ -84,6 +84,8 @@ public class Pair<K, V> implements Serializable, Cloneable {
      * @return the map
      */
     public Map<K, V> toMap() {
+        assert key != null;
+        assert value != null;
         return Map.of(key, value);
     }
 
@@ -93,6 +95,8 @@ public class Pair<K, V> implements Serializable, Cloneable {
      * @return the map . entry
      */
     public Map.Entry<K, V> toEntry() {
+        assert key != null;
+        assert value != null;
         return Map.entry(key, value);
     }
 
