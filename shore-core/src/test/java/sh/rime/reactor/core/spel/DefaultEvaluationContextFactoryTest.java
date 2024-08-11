@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * Default evaluation context factory unit test.
  * @author rained
  **/
-@SuppressWarnings("unused")
 class DefaultEvaluationContextFactoryTest {
 
     private DefaultEvaluationContextFactory factory;
