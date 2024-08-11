@@ -41,7 +41,9 @@ public class AuthProperties {
     /**
      * 排除路径.
      */
+    @Getter
     private final Set<String> excludePatterns = new HashSet<>();
+
     /**
      * 设置get排除路径.
      * getExcludePatterns get排除路径
@@ -161,7 +163,7 @@ public class AuthProperties {
      */
     @PostConstruct
     public void initIgnoreUrl() {
-        Collections.addAll(getExcludePatterns, ENDPOINTS);
+        Collections.addAll(excludePatterns, ENDPOINTS);
     }
 
 

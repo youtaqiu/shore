@@ -1,6 +1,5 @@
 package sh.rime.reactor.core.util;
 
-import cn.hutool.core.util.StrUtil;
 import sh.rime.reactor.commons.constants.Constants;
 import sh.rime.reactor.commons.exception.TokenException;
 import lombok.extern.slf4j.Slf4j;
@@ -33,8 +32,10 @@ public final class TokenUtil {
      * @return String
      */
     public static String getToken(String auth) {
-        if ((auth != null) && (auth.length() > AUTH_LENGTH)) {
-            String headStr = StrUtil.trim(auth);
+        if (!auth.startsWith(Constants.TOKEN_TYPE)) {
+            throw new TokenException("Invalid token type");
+        }
+        if ((auth.length() > AUTH_LENGTH)) {
             return auth.substring(AUTH_LENGTH);
         }
         throw new TokenException();
