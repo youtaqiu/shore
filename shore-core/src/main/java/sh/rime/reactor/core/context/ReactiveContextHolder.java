@@ -8,13 +8,13 @@ import reactor.core.publisher.Mono;
  *
  * @author youta
  **/
-public class ReactiveContextHolder {
+public final class ReactiveContextHolder {
 
     /**
-     * Default constructor.
-     * This constructor is used for serialization and other reflective operations.
+     * Private constructor to prevent instantiation.
      */
-    public ReactiveContextHolder() {
+    private ReactiveContextHolder() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 
     /**
