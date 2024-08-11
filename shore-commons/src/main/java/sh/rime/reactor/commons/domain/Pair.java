@@ -33,6 +33,7 @@ import java.util.function.Function;
 @RequiredArgsConstructor(staticName = "of")
 @JsonSerialize(using = Pair.PairJsonSerializer.class)
 @JsonDeserialize(using = Pair.PairJsonDeserializer.class)
+@SuppressWarnings("unused")
 public class Pair<K, V> implements Serializable, Cloneable {
 
 
