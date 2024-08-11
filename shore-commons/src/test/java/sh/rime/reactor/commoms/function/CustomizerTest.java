@@ -9,12 +9,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Customizer unit test.
+ *
  * @author rained
  **/
-public class CustomizerTest {
+class CustomizerTest {
 
     @Test
-    public void testCustomizeKeyword() {
+    void testCustomizeKeyword() {
         Search search = new Search();
 
         Customizer<Search> setName = p -> p.setKeyword("John Doe");
@@ -24,7 +25,7 @@ public class CustomizerTest {
     }
 
     @Test
-    public void testCustomizeSize() {
+    void testCustomizeSize() {
         Search search = new Search();
 
         Customizer<Search> setSize = p -> p.setSize(30);
@@ -34,7 +35,7 @@ public class CustomizerTest {
     }
 
     @Test
-    public void testMultipleCustomizers() {
+    void testMultipleCustomizers() {
         Search search = new Search();
 
         // 定义多个Customizer
