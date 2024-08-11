@@ -36,5 +36,11 @@ class TokenUtilTest {
         String authHeader = "";
         assertThrows(TokenException.class, () -> TokenUtil.getToken(authHeader));
     }
+
+    @Test
+    void testAuthTypeLength() {
+        assertEquals(7, TokenUtil.AUTH_LENGTH);
+    }
+
 }
 
