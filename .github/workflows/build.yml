@@ -57,10 +57,10 @@ jobs:
         with:
           name: test-reports-${{ matrix.os }}
           path: '**/build/reports/tests/'
-      - name: Install DeepSource CLI
-        run: curl https://deepsource.io/cli | sh
-      - name: Set DEEPSOURCE_DSN environment variable
-        run: echo "DEEPSOURCE_DSN=https://sampledsn@deepsource.io" >> $GITHUB_ENV
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
 
   version:
