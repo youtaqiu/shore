@@ -149,26 +149,16 @@ class QueryWrapTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     void testOne() {
         // Arrange
-        R2dbcEntityTemplate template = Mockito.mock(R2dbcEntityTemplate.class);
-        DatabaseClient databaseClient = Mockito.mock(DatabaseClient.class);
-        DatabaseClient.GenericExecuteSpec genericExecuteSpec = Mockito.mock(DatabaseClient.GenericExecuteSpec.class);
-        RowsFetchSpec<UserDemo> rowsFetchSpec = Mockito.mock(RowsFetchSpec.class);
-        BiFunction<Row, RowMetadata, UserDemo> rowFunction = Mockito.mock(BiFunction.class);
+        Result queryResult = getResult();
 
-
-        when(template.getDatabaseClient()).thenReturn(databaseClient);
-        when(databaseClient.sql(anyString())).thenReturn(genericExecuteSpec);
-        when(genericExecuteSpec.bind(anyString(), any())).thenReturn(genericExecuteSpec);
-        when(genericExecuteSpec.map(rowFunction)).thenReturn(rowsFetchSpec);
-        when(rowsFetchSpec.one()).thenReturn(Mono.just(new UserDemo()));
+        when(queryResult.rowsFetchSpec.one()).thenReturn(Mono.just(new UserDemo()));
 
         QueryWrap<UserDemo> queryWrap = QueryWrap.<UserDemo>build()
-                .template(template)
+                .template(queryResult.template)
                 .sql("SELECT * FROM user")
-                .row(rowFunction);
+                .row(queryResult.rowFunction);
 
         // Act
         Mono<UserDemo> result = queryWrap.one();
@@ -180,9 +170,27 @@ class QueryWrapTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     void testFirst() {
         // Arrange
+        Result queryResult = getResult();
+        when(queryResult.rowsFetchSpec().first()).thenReturn(Mono.just(new UserDemo()));
+
+        QueryWrap<UserDemo> queryWrap = QueryWrap.<UserDemo>build()
+                .template(queryResult.template())
+                .sql("SELECT * FROM user")
+                .row(queryResult.rowFunction());
+
+        // Act
+        Mono<UserDemo> result = queryWrap.first();
+
+        // Assert
+        StepVerifier.create(result)
+                .expectNextMatches(Objects::nonNull)
+                .verifyComplete();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Result getResult() {
         R2dbcEntityTemplate template = Mockito.mock(R2dbcEntityTemplate.class);
         DatabaseClient databaseClient = Mockito.mock(DatabaseClient.class);
         DatabaseClient.GenericExecuteSpec genericExecuteSpec = Mockito.mock(DatabaseClient.GenericExecuteSpec.class);
@@ -193,20 +201,11 @@ class QueryWrapTest {
         when(databaseClient.sql(anyString())).thenReturn(genericExecuteSpec);
         when(genericExecuteSpec.bind(anyString(), any())).thenReturn(genericExecuteSpec);
         when(genericExecuteSpec.map(rowFunction)).thenReturn(rowsFetchSpec);
-        when(rowsFetchSpec.first()).thenReturn(Mono.just(new UserDemo()));
+        return new Result(template, rowsFetchSpec, rowFunction);
+    }
 
-        QueryWrap<UserDemo> queryWrap = QueryWrap.<UserDemo>build()
-                .template(template)
-                .sql("SELECT * FROM user")
-                .row(rowFunction);
-
-        // Act
-        Mono<UserDemo> result = queryWrap.first();
-
-        // Assert
-        StepVerifier.create(result)
-                .expectNextMatches(Objects::nonNull)
-                .verifyComplete();
+    private record Result(R2dbcEntityTemplate template, RowsFetchSpec<UserDemo> rowsFetchSpec,
+                          BiFunction<Row, RowMetadata, UserDemo> rowFunction) {
     }
 
     @Test
@@ -233,6 +232,7 @@ class QueryWrapTest {
     }
 
     @Test
+    @SuppressWarnings("rawtypes")
     void testSpecWhenPairsIsNotNull() {
         // Arrange
         R2dbcEntityTemplate template = Mockito.mock(R2dbcEntityTemplate.class);
@@ -243,8 +243,8 @@ class QueryWrapTest {
         when(databaseClient.sql(anyString())).thenReturn(genericExecuteSpec);
         when(genericExecuteSpec.bind(anyString(), any())).thenReturn(genericExecuteSpec);
 
-        Pair<String, Object> pair1 =  Pair.of("key1", "value1");
-        Pair<String, Object> pair2 =  Pair.of("key2", 123);
+        Pair<String, Object> pair1 = Pair.of("key1", "value1");
+        Pair<String, Object> pair2 = Pair.of("key2", 123);
 
         QueryWrap<Object> queryWrap = new QueryWrap<>();
         queryWrap.template(template);
