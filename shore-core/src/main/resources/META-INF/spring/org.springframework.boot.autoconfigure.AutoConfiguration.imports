@@ -1,3 +1,2 @@
-sh.rime.reactor.core.util.SpringUtils
 sh.rime.reactor.core.autoconfigure.WebClientConfiguration
 sh.rime.reactor.core.autoconfigure.JacksonConfiguration

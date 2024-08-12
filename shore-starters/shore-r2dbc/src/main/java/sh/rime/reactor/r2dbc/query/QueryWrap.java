@@ -276,7 +276,7 @@ public class QueryWrap<T> {
      */
     @NonNull
     private String pageSql(@NonNull String sql) {
-        if (sql.contains("limit")) {
+        if (sql.toLowerCase().contains("limit")) {
             throw new ServerException("sql error");
         }
         var limitSql = " limit :limit offset :offset";

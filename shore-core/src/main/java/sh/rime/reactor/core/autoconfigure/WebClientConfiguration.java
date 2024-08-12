@@ -19,7 +19,6 @@ import reactor.netty.http.client.HttpClient;
 import reactor.netty.tcp.DefaultSslContextSpec;
 import reactor.netty.transport.logging.AdvancedByteBufFormat;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.function.Function;
 
@@ -88,9 +87,8 @@ public class WebClientConfiguration {
         @ConditionalOnClass(ReactorResourceFactory.class)
         public WebClientCustomizer shoreWebClientCustomizer(ReactorResourceFactory reactorResourceFactory) {
             Function<HttpClient, HttpClient> function = httpClient ->
-                    httpClient.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 3_000)
-                            .wiretap(WebClient.class.getName(), LogLevel.DEBUG,
-                                    AdvancedByteBufFormat.TEXTUAL, StandardCharsets.UTF_8)
+                    httpClient.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 3000)
+                            .wiretap(WebClient.class.getName(), LogLevel.DEBUG, AdvancedByteBufFormat.TEXTUAL)
                             .responseTimeout(Duration.ofSeconds(15))
                             .secure(sslContextSpec -> sslContextSpec.sslContext(
                                     DefaultSslContextSpec.forClient().configure(builder ->
@@ -98,6 +96,7 @@ public class WebClientConfiguration {
                             .doOnConnected(connection ->
                                     connection.addHandlerLast(new ReadTimeoutHandler(20))
                                             .addHandlerLast(new WriteTimeoutHandler(20)));
+
             ReactorClientHttpConnector connector = new ReactorClientHttpConnector(reactorResourceFactory, function);
             return webClientBuilder -> webClientBuilder.clientConnector(connector);
         }

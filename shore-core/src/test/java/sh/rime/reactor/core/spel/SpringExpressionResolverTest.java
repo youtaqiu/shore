@@ -32,7 +32,7 @@ class SpringExpressionResolverTest {
 
     @Test
     void testExpressionWithVariables() {
-        ((StandardEvaluationContext) context).setVariable("value", 3);
+        context.setVariable("value", 3);
         String expression = "#value * 2";
         Integer result = resolver.evaluate(expression, context, Integer.class);
         assertEquals(6, result);
@@ -55,9 +55,7 @@ class SpringExpressionResolverTest {
     void testInvalidExpression() {
         String expression = "invalid + 1";
 
-        assertThrows(ExpressionException.class, () -> {
-            resolver.evaluate(expression, context, Integer.class);
-        });
+        assertThrows(ExpressionException.class, () -> resolver.evaluate(expression, context, Integer.class));
     }
 
 }
