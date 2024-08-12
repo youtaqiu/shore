@@ -1,6 +1,8 @@
 package sh.rime.reactor.core.util;
 
+import cn.hutool.core.util.IdUtil;
 import org.junit.jupiter.api.Test;
+import sh.rime.reactor.commons.constants.Constants;
 import sh.rime.reactor.commons.exception.TokenException;
 
 import java.util.Optional;
@@ -17,15 +19,16 @@ class TokenUtilTest {
 
     @Test
     void testGetTokenSuccess() {
-
-        String authHeader = Optional.ofNullable(System.getenv("TOKEN")).orElse("Bearer 123");
+        var authStr = IdUtil.fastSimpleUUID();
+        String authHeader = Constants.TOKEN_TYPE.concat(authStr);
         String token = TokenUtil.getToken(authHeader);
-        assertEquals("123", token);
+        assertEquals(authStr, token);
     }
 
     @Test
     void testGetTokenWithInvalidLength() {
-        String authHeader = Optional.ofNullable(System.getenv("TOKEN")).orElse("Bear 123");
+        var authStr = IdUtil.fastSimpleUUID();
+        String authHeader = "Bear ".concat(authStr);
         assertThrows(TokenException.class, () -> TokenUtil.getToken(authHeader));
     }
 
