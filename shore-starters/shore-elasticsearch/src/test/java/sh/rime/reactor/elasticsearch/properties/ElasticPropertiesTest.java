@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,7 +41,7 @@ class ElasticPropertiesTest {
 
     @Test
     void testSetAndGetPassword() {
-        String password = "elastic_password";
+        String password = Optional.ofNullable(System.getenv("ELASTIC_PASSWORD")).orElse("changeme");
         elasticProperties.setPassword(password);
         assertEquals(password, elasticProperties.getPassword(), "Password should match the value set");
     }
