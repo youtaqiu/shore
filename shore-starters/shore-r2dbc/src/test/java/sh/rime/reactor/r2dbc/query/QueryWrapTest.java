@@ -232,7 +232,6 @@ class QueryWrapTest {
     }
 
     @Test
-    @SuppressWarnings("rawtypes")
     void testSpecWhenPairsIsNotNull() {
         // Arrange
         R2dbcEntityTemplate template = Mockito.mock(R2dbcEntityTemplate.class);
