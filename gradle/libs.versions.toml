@@ -1,7 +1,7 @@
 [versions]
 springBoot = "3.3.2"
 springCloud = "2023.0.3"
-hutool = "5.8.30"
+hutool = "5.8.31"
 slf4jApi = "2.0.16"
 logstash = "8.0"
 loki4j = "1.5.2"
@@ -12,14 +12,14 @@ vavr = "0.10.4"
 redisson = "3.34.1"
 spotbugsAnnotations = "4.8.6"
 swaggerAnnotations = "2.2.22"
-mapstruct = "1.5.5.Final"
+mapstruct = "1.6.0"
 mapstructSpring = "1.1.1"
 jreleaserhVersion = "1.13.1"
 qualityVersion = "5.0.0"
-opentelemetry = "2.6.0"
+opentelemetry = "2.7.0"
 reactorRabbitmq = "1.5.6"
 swaggerV3Annotations = "2.2.22"
-awsSdk = "1.12.767"
+awsSdk = "1.12.769"
 
 [libraries]
 r2dbc-mysql = { group = "io.asyncer", name = "r2dbc-mysql", version.ref = "r2dbcMysql" }
