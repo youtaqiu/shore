@@ -18,7 +18,7 @@ jreleaserhVersion = "1.13.1"
 qualityVersion = "5.0.0"
 opentelemetry = "2.7.0"
 reactorRabbitmq = "1.5.6"
-swaggerV3Annotations = "2.2.22"
+swaggerV3Annotations = "2.2.23"
 awsSdk = "1.12.770"
 
 [libraries]
