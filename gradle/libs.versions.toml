@@ -19,7 +19,7 @@ qualityVersion = "5.0.0"
 opentelemetry = "2.7.0"
 reactorRabbitmq = "1.5.6"
 swaggerV3Annotations = "2.2.23"
-awsSdk = "1.12.771"
+awsSdk = "1.12.772"
 
 [libraries]
 r2dbc-mysql = { group = "io.asyncer", name = "r2dbc-mysql", version.ref = "r2dbcMysql" }
