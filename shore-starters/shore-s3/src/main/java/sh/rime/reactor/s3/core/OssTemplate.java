@@ -71,7 +71,8 @@ public class OssTemplate implements InitializingBean {
      * @return bucket列表
      */
     public List<Bucket> getAllBuckets() {
-        return amazonS3.listBuckets();
+         ListBucketsPaginatedRequest request = new ListBucketsPaginatedRequest();
+        return amazonS3.listBuckets(request).getBuckets();
     }
 
     /**
@@ -81,7 +82,7 @@ public class OssTemplate implements InitializingBean {
      * @return bucket
      */
     public Optional<Bucket> getBucket(String bucketName) {
-        return amazonS3.listBuckets().stream().filter(b -> b.getName().equals(bucketName)).findFirst();
+        return this.getAllBuckets().stream().filter(b -> b.getName().equals(bucketName)).findFirst();
     }
 
     /**
