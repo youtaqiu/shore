@@ -121,6 +121,32 @@ public class LoggingConfiguration {
     }
 
     /**
+     * LoggingOpenTelemetryConfiguration
+     */
+    @AutoConfiguration
+    @ConditionalOnAppender(Appender.OPEN_TELEMETRY)
+    public static class LoggingOpenTelemetryConfiguration {
+
+        /**
+         * Default constructor.
+         * This constructor is used for serialization and other reflective operations.
+         */
+        public LoggingOpenTelemetryConfiguration() {
+        }
+
+        /**
+         * loggingLokiAppender
+         *
+         * @param properties properties
+         * @return LoggingLokiAppender
+         */
+        @Bean
+        public LoggingOpenTelemetryAppender loggingLokiAppender(LoggingProperties properties) {
+            return new LoggingOpenTelemetryAppender(properties);
+        }
+    }
+
+    /**
      * ConditionalOnAppender
      */
     @Target({ElementType.TYPE, ElementType.METHOD})
@@ -143,8 +169,8 @@ public class LoggingConfiguration {
      */
     @Order(Ordered.HIGHEST_PRECEDENCE)
     private static final class LoggingCondition extends SpringBootCondition {
-        private static final String LOG_STASH_CLASS_NAME = "net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder";
         private static final String LOKI_CLASS_NAME = "com.github.loki4j.logback.Loki4jAppender";
+        private static final String OPEN_TELEMETRY_CLASS_NAME = "io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender";
 
         @Override
         public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
@@ -155,6 +181,7 @@ public class LoggingConfiguration {
             ClassLoader classLoader = context.getClassLoader();
             Boolean fileEnabled = environment.getProperty(LoggingProperties.Files.PREFIX + ".enabled", Boolean.class, Boolean.TRUE);
             Boolean lokiEnabled = environment.getProperty(LoggingProperties.Loki.PREFIX + ".enabled", Boolean.class, Boolean.FALSE);
+            Boolean openTelemetryEnabled = environment.getProperty(LoggingProperties.OpenTelemetry.PREFIX + ".enabled", Boolean.class, Boolean.FALSE);
             ConditionOutcome conditionOutcome;
             if (Appender.LOKI == appender) {
                 if (!lokiEnabled) {
@@ -164,16 +191,14 @@ public class LoggingConfiguration {
                     return ConditionOutcome.match();
                 }
                 throw new IllegalStateException("Logging loki is enabled, please add com.github.loki4j loki-logback-appender dependencies.");
-            } else if (Appender.FILE_JSON == appender) {
-                Boolean isUseJsonFormat = environment.getProperty(LoggingProperties.Files.PREFIX + ".use-json-format", Boolean.class, Boolean.FALSE);
-                // 没有开启文件或者没有开启 json 格式化
-                if (!fileEnabled || !isUseJsonFormat) {
-                    return ConditionOutcome.noMatch("Logging json file is not enabled.");
+            } else if (Appender.OPEN_TELEMETRY == appender) {
+                if (!openTelemetryEnabled) {
+                    conditionOutcome = ConditionOutcome.noMatch("Logging openTelemetry is not enabled.");
                 }
-                if (hasLogStashDependencies(classLoader)) {
+                if (hasOpenTelemetryDependencies(classLoader)) {
                     return ConditionOutcome.match();
                 }
-                throw new IllegalStateException("Logging file json format is enabled, please add logstash-logback-encoder dependencies.");
+                throw new IllegalStateException("Logging openTelemetry is enabled, please add io.opentelemetry.instrumentation opentelemetry-logback-appender-1.0 dependencies.");
             } else if (Appender.FILE == appender) {
                 if (!fileEnabled) {
                     conditionOutcome = ConditionOutcome.noMatch("Logging logstash is not enabled.");
@@ -186,15 +211,6 @@ public class LoggingConfiguration {
             return conditionOutcome;
         }
 
-        /**
-         * 是否有 logstash 依赖
-         *
-         * @param classLoader 类加载器
-         * @return 是否有 logstash 依赖
-         */
-        private static boolean hasLogStashDependencies(ClassLoader classLoader) {
-            return ClassUtils.isPresent(LOG_STASH_CLASS_NAME, classLoader);
-        }
 
         /**
          * 是否有 loki 依赖
@@ -204,6 +220,16 @@ public class LoggingConfiguration {
          */
         private static boolean hasLokiDependencies(ClassLoader classLoader) {
             return ClassUtils.isPresent(LOKI_CLASS_NAME, classLoader);
+        }
+
+        /**
+         * 是否有 openTelemetry 依赖
+         *
+         * @param classLoader 类加载器
+         * @return 是否有 loki 依赖
+         */
+        private static boolean hasOpenTelemetryDependencies(ClassLoader classLoader) {
+            return ClassUtils.isPresent(OPEN_TELEMETRY_CLASS_NAME, classLoader);
         }
     }
 

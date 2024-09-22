@@ -34,7 +34,6 @@ public class LoggingStartedEventListener {
     @Order
     @EventListener(WebServerInitializedEvent.class)
     public void afterStart() {
-        // 1. 关闭控制台
         LoggingProperties.Console console = properties.getConsole();
         if (console.isCloseAfterStart()) {
             LoggingUtil.detachAppender(LoggingUtil.CONSOLE_APPENDER_NAME);

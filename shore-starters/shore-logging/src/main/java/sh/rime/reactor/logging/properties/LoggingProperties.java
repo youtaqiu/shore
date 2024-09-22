@@ -32,6 +32,7 @@ public class LoggingProperties {
     private final Console console = new Console();
     private final Files files = new Files();
     private final Loki loki = new Loki();
+    private final OpenTelemetry otel = new OpenTelemetry();
 
     /**
      * 日志输出方式
@@ -52,6 +53,31 @@ public class LoggingProperties {
          */
         private boolean closeAfterStart = false;
     }
+
+    /**
+     * 日志输出方式
+     */
+    @Getter
+    @Setter
+    public static class OpenTelemetry {
+
+        /**
+         * Default constructor.
+         * This constructor is used for serialization and other reflective operations.
+         */
+        public OpenTelemetry() {
+        }
+
+        /**
+         * 前缀
+         */
+        public static final String PREFIX = LoggingProperties.PREFIX + ".otel";
+        /**
+         * 是否开启 OpenTelemetry 日志收集
+         */
+        private boolean enabled = false;
+    }
+
 
     /**
      * 文件日志配置

@@ -16,12 +16,12 @@ public enum Appender {
 	 */
 	FILE,
 	/**
-	 * json 文件
-	 */
-	FILE_JSON,
-	/**
 	 * loki
 	 */
-	LOKI
+	LOKI,
+	/**
+	 * OpenTelemetry
+	 */
+	OPEN_TELEMETRY
 
 }

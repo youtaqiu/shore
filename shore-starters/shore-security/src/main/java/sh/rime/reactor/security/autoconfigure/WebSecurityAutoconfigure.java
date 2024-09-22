@@ -1,6 +1,7 @@
 package sh.rime.reactor.security.autoconfigure;
 
 import cn.hutool.extra.spring.SpringUtil;
+import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
 import sh.rime.reactor.commons.annotation.Anonymous;
 import sh.rime.reactor.commons.annotation.RequestMethodEnum;
 import sh.rime.reactor.core.properties.AuthProperties;
@@ -8,6 +9,7 @@ import sh.rime.reactor.security.authentication.AuthenticationManager;
 import sh.rime.reactor.security.authentication.CustomAuthorizationManager;
 import sh.rime.reactor.security.authentication.PostLoginAuthConverter;
 import sh.rime.reactor.security.authentication.TokenServerSecurityContextRepository;
+import sh.rime.reactor.security.domain.CurrentUser;
 import sh.rime.reactor.security.handler.*;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -46,6 +48,7 @@ import java.util.stream.Collectors;
 @EnableReactiveMethodSecurity
 @Configuration
 @EnableConfigurationProperties(AuthProperties.class)
+@RegisterReflectionForBinding(CurrentUser.class)
 @ComponentScan(basePackages = {"sh.rime.reactor.security.authentication",
         "sh.rime.reactor.security.grant",
         "sh.rime.reactor.security.handler",
