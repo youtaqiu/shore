@@ -42,24 +42,14 @@ public class LoggingLokiAppender implements ILoggingAppender {
         this.start(context);
     }
 
-    @Override
-    public void start(LoggerContext context) {
-        log.info("Loki logging start.");
-        reload(context);
-    }
-
-    @Override
-    public void reset(LoggerContext context) {
-        log.info("Loki logging reset.");
-        reload(context);
-    }
 
     /**
      * 重新加载
      *
      * @param context context
      */
-    private void reload(LoggerContext context) {
+    @Override
+    public void reload(LoggerContext context) {
         LoggingProperties.Loki loki = properties.getLoki();
         if (loki.isEnabled()) {
             addLokiAppender(context, loki);

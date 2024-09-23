@@ -28,24 +28,13 @@ public class LoggingOpenTelemetryAppender implements ILoggingAppender {
         this.start(context);
     }
 
-    @Override
-    public void start(LoggerContext context) {
-        log.info("OpenTelemetry logging start.");
-        reload(context);
-    }
-
-    @Override
-    public void reset(LoggerContext context) {
-        log.info("OpenTelemetry logging reset.");
-        reload(context);
-    }
-
     /**
      * 重新加载
      *
      * @param context context
      */
-    private void reload(LoggerContext context) {
+    @Override
+    public void reload(LoggerContext context) {
         LoggingProperties.OpenTelemetry openTelemetry = properties.getOtel();
         if (openTelemetry.isEnabled()) {
             addOpenTelemetryAppender(context);
