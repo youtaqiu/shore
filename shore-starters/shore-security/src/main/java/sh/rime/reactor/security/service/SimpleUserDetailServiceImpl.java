@@ -5,9 +5,7 @@ import org.springframework.util.Assert;
 import sh.rime.reactor.security.domain.CurrentUser;
 import reactor.core.publisher.Mono;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -26,7 +24,7 @@ public class SimpleUserDetailServiceImpl implements UserDetailService {
      * @param users a {@link Map} of users to use.
      */
     public SimpleUserDetailServiceImpl(Map<String, CurrentUser> users) {
-        this.users = users;
+        this.users = Map.copyOf(users);
     }
 
     /**
@@ -59,6 +57,12 @@ public class SimpleUserDetailServiceImpl implements UserDetailService {
         return (result != null) ? Mono.just(result) : Mono.empty();
     }
 
+    /**
+     * 获取key
+     *
+     * @param username 用户名
+     * @return key
+     */
     private String getKey(String username) {
         return username.toLowerCase();
     }
