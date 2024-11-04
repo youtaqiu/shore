@@ -126,7 +126,7 @@ public class WebSecurityAutoconfigure {
                                 return;
                             }
                             authorizeRequests
-                                    .pathMatchers(HttpMethod.GET, authProperties.getGetExcludePatterns()
+                                    .pathMatchers(HttpMethod.GET, authProperties.getExcludePatterns()
                                             .toArray(new String[0])).permitAll()
                                     .pathMatchers(HttpMethod.OPTIONS).permitAll()
                                     .anyExchange().access(customAuthorizationManager);
