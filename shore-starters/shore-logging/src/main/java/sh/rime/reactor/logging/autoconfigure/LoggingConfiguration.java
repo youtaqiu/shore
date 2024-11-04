@@ -193,7 +193,7 @@ public class LoggingConfiguration {
                 throw new IllegalStateException("Logging loki is enabled, please add com.github.loki4j loki-logback-appender dependencies.");
             } else if (Appender.OPEN_TELEMETRY == appender) {
                 if (!openTelemetryEnabled) {
-                    conditionOutcome = ConditionOutcome.noMatch("Logging openTelemetry is not enabled.");
+                    return ConditionOutcome.noMatch("Logging openTelemetry is not enabled.");
                 }
                 if (hasOpenTelemetryDependencies(classLoader)) {
                     return ConditionOutcome.match();
