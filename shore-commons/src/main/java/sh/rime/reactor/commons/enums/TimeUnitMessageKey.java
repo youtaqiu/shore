@@ -2,8 +2,8 @@ package sh.rime.reactor.commons.enums;
 
 import lombok.Getter;
 
+import java.time.temporal.ChronoUnit;
 import java.util.EnumMap;
-import java.util.concurrent.TimeUnit;
 
 /**
  * TimeUnitMessageKey is an enum that maps java.util.concurrent.TimeUnit values to corresponding message keys.
@@ -18,39 +18,39 @@ public enum TimeUnitMessageKey {
     /**
      * 纳秒.
      */
-    NANOSECONDS(TimeUnit.NANOSECONDS, "nanoSeconds"),
+    NANOSECONDS(ChronoUnit.NANOS, "nanoSeconds"),
 
     /**
      * 微秒.
      */
-    MICROSECONDS(TimeUnit.MICROSECONDS, "microSeconds"),
+    MICROSECONDS(ChronoUnit.MICROS, "microSeconds"),
 
     /**
      * 毫秒.
      */
-    MILLISECONDS(TimeUnit.MILLISECONDS, "milliSeconds"),
+    MILLISECONDS(ChronoUnit.MILLIS, "milliSeconds"),
 
     /**
      * 秒.
      */
-    SECONDS(TimeUnit.SECONDS, "seconds"),
+    SECONDS(ChronoUnit.SECONDS, "seconds"),
 
     /**
      * 分.
      */
-    MINUTES(TimeUnit.MINUTES, "minutes"),
+    MINUTES(ChronoUnit.MINUTES, "minutes"),
 
     /**
      * 小时.
      */
-    HOURS(TimeUnit.HOURS, "hours"),
+    HOURS(ChronoUnit.HOURS, "hours"),
 
     /**
      * 天.
      */
-    DAYS(TimeUnit.DAYS, "days");
+    DAYS(ChronoUnit.DAYS, "days");
 
-    private static final EnumMap<TimeUnit, String> KEY_MAP = new EnumMap<>(TimeUnit.class);
+    private static final EnumMap<ChronoUnit, String> KEY_MAP = new EnumMap<>(ChronoUnit.class);
 
     static {
         for (TimeUnitMessageKey value : TimeUnitMessageKey.values()) {
@@ -58,7 +58,7 @@ public enum TimeUnitMessageKey {
         }
     }
 
-    private final TimeUnit timeUnit;
+    private final ChronoUnit timeUnit;
 
     /**
      * -- GETTER --
@@ -74,7 +74,7 @@ public enum TimeUnitMessageKey {
      * @param timeUnit 时间单位
      * @param key      语言包key
      */
-    TimeUnitMessageKey(TimeUnit timeUnit, String key) {
+    TimeUnitMessageKey(ChronoUnit timeUnit, String key) {
         this.timeUnit = timeUnit;
         this.key = key;
     }
@@ -85,7 +85,7 @@ public enum TimeUnitMessageKey {
      * @param timeUnit 时间单位
      * @return 语言包key
      */
-    public static String getKey(TimeUnit timeUnit) {
+    public static String getKey(ChronoUnit timeUnit) {
         return KEY_MAP.get(timeUnit);
     }
 

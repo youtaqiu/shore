@@ -4,7 +4,7 @@ package sh.rime.reactor.commoms.enums;
 import org.junit.jupiter.api.Test;
 import sh.rime.reactor.commons.enums.TimeUnitMessageKey;
 
-import java.util.concurrent.TimeUnit;
+import java.time.temporal.ChronoUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,13 +17,13 @@ class TimeUnitMessageKeyTest {
 
     @Test
     void testGetKey() {
-        assertEquals("nanoSeconds", TimeUnitMessageKey.getKey(TimeUnit.NANOSECONDS));
-        assertEquals("microSeconds", TimeUnitMessageKey.getKey(TimeUnit.MICROSECONDS));
-        assertEquals("milliSeconds", TimeUnitMessageKey.getKey(TimeUnit.MILLISECONDS));
-        assertEquals("seconds", TimeUnitMessageKey.getKey(TimeUnit.SECONDS));
-        assertEquals("minutes", TimeUnitMessageKey.getKey(TimeUnit.MINUTES));
-        assertEquals("hours", TimeUnitMessageKey.getKey(TimeUnit.HOURS));
-        assertEquals("days", TimeUnitMessageKey.getKey(TimeUnit.DAYS));
+        assertEquals("nanoSeconds", TimeUnitMessageKey.getKey(ChronoUnit.NANOS));
+        assertEquals("microSeconds", TimeUnitMessageKey.getKey(ChronoUnit.MICROS));
+        assertEquals("milliSeconds", TimeUnitMessageKey.getKey(ChronoUnit.MILLIS));
+        assertEquals("seconds", TimeUnitMessageKey.getKey(ChronoUnit.SECONDS));
+        assertEquals("minutes", TimeUnitMessageKey.getKey(ChronoUnit.MINUTES));
+        assertEquals("hours", TimeUnitMessageKey.getKey(ChronoUnit.HOURS));
+        assertEquals("days", TimeUnitMessageKey.getKey(ChronoUnit.DAYS));
     }
 
     @Test

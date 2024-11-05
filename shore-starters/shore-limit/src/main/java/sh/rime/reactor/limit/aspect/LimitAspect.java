@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono;
 
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
-import java.util.concurrent.TimeUnit;
+import java.time.temporal.ChronoUnit;
 
 /**
  * 限流切面
@@ -104,7 +104,7 @@ public class LimitAspect {
      * @param timeUnit 分布式锁注解
      * @return 加锁时间单位显示名称
      */
-    protected String getTimeUnitName(TimeUnit timeUnit) {
+    protected String getTimeUnitName(ChronoUnit timeUnit) {
         try {
             return TimeUnitMessageKey.getKey(timeUnit);
         } catch (NoSuchMessageException ignore) {

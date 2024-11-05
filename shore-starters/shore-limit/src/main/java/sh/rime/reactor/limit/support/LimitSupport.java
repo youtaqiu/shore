@@ -10,7 +10,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.lang.reflect.Method;
-import java.util.concurrent.TimeUnit;
+import java.time.temporal.ChronoUnit;
 
 /**
  * 限流支持
@@ -52,7 +52,7 @@ public class LimitSupport {
                     String key = limit.key();
                     int rate = limit.rate();
                     long expire = limit.expire();
-                    TimeUnit rateIntervalUnit = limit.unit();
+                    ChronoUnit rateIntervalUnit = limit.unit();
                     String spELKey = resolver.evaluate(key, method, args);
                     String realIP = null;
                     if (limit.restrictIp()) {
