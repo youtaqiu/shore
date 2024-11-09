@@ -1,33 +1,32 @@
 package sh.rime.reactor.s3.core;
 
 import cn.hutool.core.date.DateUtil;
-import com.amazonaws.ClientConfiguration;
-import com.amazonaws.HttpMethod;
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.*;
-import com.amazonaws.services.securitytoken.AWSSecurityTokenService;
-import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder;
-import com.amazonaws.services.securitytoken.model.Credentials;
-import com.amazonaws.services.securitytoken.model.GetSessionTokenRequest;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 import sh.rime.reactor.core.util.BeanUtil;
 import sh.rime.reactor.s3.bean.OssToken;
 import sh.rime.reactor.s3.bean.ResourcePathConfig;
 import sh.rime.reactor.s3.props.OssProperties;
-import org.springframework.beans.factory.InitializingBean;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.awscore.AwsRequestOverrideConfiguration;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3Configuration;
+import software.amazon.awssdk.services.s3.model.*;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
+import software.amazon.awssdk.services.sts.StsClient;
+import software.amazon.awssdk.services.sts.model.Credentials;
+import software.amazon.awssdk.services.sts.model.GetSessionTokenRequest;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 import java.time.Duration;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,12 +36,14 @@ import java.util.Optional;
  * @author youta
  **/
 @SuppressWarnings("unused")
+@Slf4j
 public class OssTemplate implements InitializingBean {
 
     private final OssProperties ossProperties;
 
-    private AmazonS3 amazonS3;
-    private AWSSecurityTokenService awsSecurityTokenService;
+    private S3Client s3Client;
+    private StsClient stsClient;
+    private S3Presigner s3Presigner;
 
     /**
      * Default constructor.
@@ -60,9 +61,9 @@ public class OssTemplate implements InitializingBean {
      * @param bucketName bucket名称
      */
     public void createBucket(String bucketName) {
-        if (!amazonS3.doesBucketExistV2(bucketName)) {
-            amazonS3.createBucket((bucketName));
-        }
+        s3Client.createBucket(CreateBucketRequest.builder()
+                .bucket(bucketName)
+                .build());
     }
 
     /**
@@ -71,8 +72,7 @@ public class OssTemplate implements InitializingBean {
      * @return bucket列表
      */
     public List<Bucket> getAllBuckets() {
-         ListBucketsPaginatedRequest request = new ListBucketsPaginatedRequest();
-        return amazonS3.listBuckets(request).getBuckets();
+        return s3Client.listBuckets().buckets();
     }
 
     /**
@@ -82,7 +82,10 @@ public class OssTemplate implements InitializingBean {
      * @return bucket
      */
     public Optional<Bucket> getBucket(String bucketName) {
-        return this.getAllBuckets().stream().filter(b -> b.getName().equals(bucketName)).findFirst();
+        return this.getAllBuckets()
+                .stream()
+                .filter(b -> b.name().equals(bucketName))
+                .findFirst();
     }
 
     /**
@@ -91,7 +94,9 @@ public class OssTemplate implements InitializingBean {
      * @param bucketName bucket名称
      */
     public void removeBucket(String bucketName) {
-        amazonS3.deleteBucket(bucketName);
+        s3Client.deleteBucket(DeleteBucketRequest.builder()
+                .bucket(bucketName)
+                .build());
     }
 
     /**
@@ -101,34 +106,14 @@ public class OssTemplate implements InitializingBean {
      * @param prefix     前缀
      * @return 文件列表
      */
-    public List<S3ObjectSummary> getAllObjectsByPrefix(String bucketName, String prefix) {
-        ObjectListing objectListing = amazonS3.listObjects(bucketName, prefix);
-        return new ArrayList<>(objectListing.getObjectSummaries());
+    public List<S3Object> getAllObjectsByPrefix(String bucketName, String prefix) {
+        return s3Client.listObjects(ListObjectsRequest.builder()
+                        .bucket(bucketName)
+                        .prefix(prefix)
+                        .build())
+                .contents();
     }
 
-    /**
-     * 获取文件外链，只用于下载
-     *
-     * @param bucketName bucket名称
-     * @param objectName 文件名称
-     * @param minutes    过期时间，单位分钟,请注意该值必须小于7天
-     * @return url
-     */
-    public String getObjectURL(String bucketName, String objectName, int minutes) {
-        return getObjectURL(bucketName, objectName, Duration.ofMinutes(minutes));
-    }
-
-    /**
-     * 获取文件外链，只用于下载
-     *
-     * @param bucketName bucket名称
-     * @param objectName 文件名称
-     * @param expires    过期时间,请注意该值必须小于7天
-     * @return url
-     */
-    public String getObjectURL(String bucketName, String objectName, Duration expires) {
-        return getObjectURL(bucketName, objectName, expires, HttpMethod.GET);
-    }
 
     /**
      * 获取文件上传外链，只用于上传
@@ -151,7 +136,7 @@ public class OssTemplate implements InitializingBean {
      * @return url
      */
     public String getPutObjectURL(String bucketName, String objectName, Duration expires) {
-        return getObjectURL(bucketName, objectName, expires, HttpMethod.PUT);
+        return putObjectURL(bucketName, objectName, expires);
     }
 
     /**
@@ -160,32 +145,58 @@ public class OssTemplate implements InitializingBean {
      * @param bucketName bucket名称
      * @param objectName 文件名称
      * @param minutes    过期时间，单位分钟,请注意该值必须小于7天
-     * @param method     文件操作方法：GET（下载）、PUT（上传）
      * @return url
      * HttpMethod method)
      */
-    public String getObjectURL(String bucketName, String objectName, int minutes, HttpMethod method) {
-        return getObjectURL(bucketName, objectName, Duration.ofMinutes(minutes), method);
+    public String getObjectURL(String bucketName, String objectName, int minutes) {
+        return getObjectURL(bucketName, objectName, Duration.ofMinutes(minutes));
     }
 
     /**
-     * 获取文件外链
+     * 获取文件外链(下载)
      *
      * @param bucketName bucket名称
      * @param objectName 文件名称
      * @param expires    过期时间，请注意该值必须小于7天
-     * @param method     文件操作方法：GET（下载）、PUT（上传）
      * @return url
-     * HttpMethod method)
      */
-    public String getObjectURL(String bucketName, String objectName, Duration expires, HttpMethod method) {
+    public String getObjectURL(String bucketName, String objectName, Duration expires) {
         // Set the pre-signed URL to expire after `expires`.
-        Date expiration = Date.from(Instant.now().plus(expires));
+        GetObjectRequest objectRequest = GetObjectRequest.builder()
+                .bucket(bucketName)
+                .key(objectName)
+                .build();
 
-        // Generate the pre-signed URL.
-        URL url = amazonS3.generatePresignedUrl(
-                new GeneratePresignedUrlRequest(bucketName, objectName).withMethod(method).withExpiration(expiration));
-        return url.toString();
+        GetObjectPresignRequest preSignRequest = GetObjectPresignRequest.builder()
+                .signatureDuration(expires)
+                .getObjectRequest(objectRequest)
+                .build();
+        return s3Presigner.presignGetObject(preSignRequest)
+                .url()
+                .toString();
+    }
+
+    /**
+     * 获取文件外链(上传)
+     *
+     * @param bucketName bucket名称
+     * @param objectName 文件名称
+     * @param expires    过期时间，请注意该值必须小于7天
+     * @return url
+     */
+    public String putObjectURL(String bucketName, String objectName, Duration expires) {
+        PutObjectRequest objectRequest = PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(objectName)
+                .build();
+
+        PutObjectPresignRequest preSignRequest = PutObjectPresignRequest.builder()
+                .signatureDuration(expires)
+                .putObjectRequest(objectRequest)
+                .build();
+        return s3Presigner.presignPutObject(preSignRequest)
+                .url()
+                .toString();
     }
 
     /**
@@ -196,8 +207,7 @@ public class OssTemplate implements InitializingBean {
      * @return url
      */
     public String getObjectURL(String bucketName, String objectName) {
-        URL url = amazonS3.getUrl(bucketName, objectName);
-        return url.toString();
+        return this.getObjectURL(bucketName, objectName, Duration.ofDays(7));
     }
 
     /**
@@ -207,8 +217,12 @@ public class OssTemplate implements InitializingBean {
      * @param objectName 文件名称
      * @return 二进制流
      */
-    public S3Object getObject(String bucketName, String objectName) {
-        return amazonS3.getObject(bucketName, objectName);
+    public GetObjectResponse getObject(String bucketName, String objectName) {
+        return s3Client.getObject(GetObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(objectName)
+                        .build())
+                .response();
     }
 
     /**
@@ -248,17 +262,15 @@ public class OssTemplate implements InitializingBean {
      * @return PutObjectResult PutObjectResult
      */
     @SuppressWarnings("all")
-    public PutObjectResult putObject(String bucketName, String objectName, InputStream stream, long size,
-                                     String contextType) {
-        ObjectMetadata objectMetadata = new ObjectMetadata();
-        objectMetadata.setContentLength(size);
-        objectMetadata.setContentType(contextType);
-        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, objectName, stream, objectMetadata);
-        // Setting the read limit value to one byte greater than the size of stream will
-        // reliably avoid a ResetException
-        putObjectRequest.getRequestClientOptions().setReadLimit((int) size + 1);
-        return amazonS3.putObject(putObjectRequest);
-
+    public PutObjectResponse putObject(String bucketName, String objectName, InputStream stream, long size,
+                                       String contextType) {
+        return s3Client.putObject(PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(objectName)
+                .overrideConfiguration(AwsRequestOverrideConfiguration.builder()
+                        .putHeader("Content-Length", String.valueOf(size + 1))
+                        .build())
+                .build(), RequestBody.fromInputStream(stream, size));
     }
 
     /**
@@ -268,8 +280,12 @@ public class OssTemplate implements InitializingBean {
      * @param objectName 文件名称
      * @return S3Object
      */
-    public S3Object getObjectInfo(String bucketName, String objectName) {
-        return amazonS3.getObject(bucketName, objectName);
+    public GetObjectResponse getObjectInfo(String bucketName, String objectName) {
+        return s3Client.getObject(GetObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(objectName)
+                        .build())
+                .response();
     }
 
     /**
@@ -279,7 +295,10 @@ public class OssTemplate implements InitializingBean {
      * @param objectName 文件名称
      */
     public void removeObject(String bucketName, String objectName) {
-        amazonS3.deleteObject(bucketName, objectName);
+        s3Client.deleteObject(DeleteObjectRequest.builder()
+                .bucket(bucketName)
+                .key(objectName)
+                .build());
     }
 
 
@@ -289,14 +308,16 @@ public class OssTemplate implements InitializingBean {
      * @return OssToken
      */
     public OssToken getCredentials() {
-        Credentials credentials = awsSecurityTokenService.getSessionToken(new GetSessionTokenRequest()
-                        .withDurationSeconds(ossProperties.getDurationSeconds()))
-                .getCredentials();
+        GetSessionTokenRequest request = GetSessionTokenRequest.builder()
+                .durationSeconds(ossProperties.getDurationSeconds())
+                .build();
+        Credentials credentials = stsClient.getSessionToken(request).credentials();
+        LocalDateTime localDateTime = DateUtil.toLocalDateTime(credentials.expiration());
         return OssToken.builder()
-                .accessKeyId(credentials.getAccessKeyId())
-                .accessKeySecret(credentials.getSecretAccessKey())
-                .expiration(DateUtil.formatDateTime(credentials.getExpiration()))
-                .stsToken(credentials.getSessionToken())
+                .accessKeyId(credentials.accessKeyId())
+                .accessKeySecret(credentials.secretAccessKey())
+                .expiration(DateUtil.formatLocalDateTime(localDateTime))
+                .stsToken(credentials.sessionToken())
                 .region(ossProperties.getRegion())
                 .build();
     }
@@ -318,23 +339,29 @@ public class OssTemplate implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        ClientConfiguration clientConfiguration = new ClientConfiguration();
-        AWSCredentials awsCredentials = new BasicAWSCredentials(ossProperties.getAccessKey(),
+        var credentials = AwsBasicCredentials.create(ossProperties.getAccessKey(),
                 ossProperties.getSecretKey());
-        AWSCredentialsProvider awsCredentialsProvider = new AWSStaticCredentialsProvider(awsCredentials);
-        this.amazonS3 = AmazonS3ClientBuilder.standard()
-                .withCredentials(awsCredentialsProvider)
-                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(ossProperties.getEndpoint(),
-                        ossProperties.getRegion()))
-                .disableChunkedEncoding()
-                .withPathStyleAccessEnabled(ossProperties.getPathStyleAccess())
+        var credentialsProvider = StaticCredentialsProvider.create(credentials);
+        this.s3Client = S3Client.builder()
+                .region(Region.of(ossProperties.getRegion()))
+                .endpointOverride(URI.create(ossProperties.getEndpoint()))
+                .credentialsProvider(credentialsProvider)
+                .serviceConfiguration(S3Configuration.builder()
+                        .pathStyleAccessEnabled(true)
+                        .build())
                 .build();
-
-        this.awsSecurityTokenService = AWSSecurityTokenServiceClientBuilder.standard()
-                .withCredentials(new AWSStaticCredentialsProvider(
-                        new BasicAWSCredentials(ossProperties.getAccessKey(), ossProperties.getSecretKey())))
-                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(ossProperties.getEndpoint(),
-                        ossProperties.getRegion()))
+        this.s3Presigner = S3Presigner.builder()
+                .region(Region.of(ossProperties.getRegion()))
+                .endpointOverride(URI.create(ossProperties.getEndpoint()))
+                .credentialsProvider(credentialsProvider)
+                .serviceConfiguration(S3Configuration.builder()
+                        .pathStyleAccessEnabled(true)
+                        .build())
+                .build();
+        this.stsClient = StsClient.builder()
+                .credentialsProvider(credentialsProvider)
+                .region(Region.of(ossProperties.getRegion()))
+                .endpointOverride(URI.create(ossProperties.getEndpoint()))
                 .build();
     }
 

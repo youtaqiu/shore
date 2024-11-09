@@ -131,7 +131,7 @@ class QueryWrapTest {
         Pair<String, Object> pair2 = Pair.of("key2", "value2");
 
         // Act
-        queryWrap = queryWrap.bind(pair1, pair2);
+        queryWrap.bind(pair1, pair2);
 
         assertNotNull(queryWrap);
     }
@@ -143,7 +143,7 @@ class QueryWrapTest {
         String sql = "SELECT * FROM user";
 
         // Act
-        queryWrap = queryWrap.sql(sql);
+        queryWrap.sql(sql);
 
         assertNotNull(queryWrap);
     }
@@ -228,6 +228,7 @@ class QueryWrapTest {
         String pageSql = ReflectionTestUtils.invokeMethod(queryWrap, "pageSql", sqlWithoutLimit);
 
         // Assert
+        assert pageSql != null;
         Assert.isTrue(pageSql.equals(sqlWithoutLimit + " limit :limit offset :offset"), "SQL modification failed");
     }
 
