@@ -3,13 +3,12 @@ package sh.rime.reactor.limit.provider;
 import cn.hutool.core.util.StrUtil;
 import sh.rime.reactor.commons.exception.ServerException;
 import org.redisson.api.RRateLimiterReactive;
-import org.redisson.api.RateIntervalUnit;
 import org.redisson.api.RateType;
 import org.redisson.api.RedissonReactiveClient;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
+import java.time.temporal.ChronoUnit;
 
 /**
  * Redisson限流提供者
@@ -32,16 +31,15 @@ public class RedissonLimitProvider implements LimitProvider {
 
 
     @Override
-    public Mono<Boolean> tryAcquire(String key, int rate, long expire, TimeUnit unit) {
+    public Mono<Boolean> tryAcquire(String key, int rate, long expire, ChronoUnit unit) {
         if (StrUtil.isEmpty(key)) {
             throw new ServerException("Limit key is null or empty");
         }
-        RateIntervalUnit intervalUnit = RateIntervalUnit.valueOf(unit.name());
         RRateLimiterReactive rateLimiter = this.redissonReactiveClient.getRateLimiter(key);
         return rateLimiter
-                .trySetRate(RateType.OVERALL, rate, expire, intervalUnit)
+                .trySetRate(RateType.OVERALL, rate, Duration.of(expire, unit))
                 .switchIfEmpty(Mono.error(new ServerException("Unsupported TimeUnit")))
                 .flatMap(x -> rateLimiter.tryAcquire(1))
-                .flatMap(acquired -> rateLimiter.expire(Duration.ofMillis(unit.toMillis(expire))).thenReturn(acquired));
+                .flatMap(acquired -> rateLimiter.expire(Duration.of(expire, unit)).thenReturn(acquired));
     }
 }

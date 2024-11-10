@@ -4,7 +4,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.concurrent.TimeUnit;
+import java.time.temporal.ChronoUnit;
 
 /**
  * 限流注解
@@ -32,9 +32,9 @@ public @interface Limit {
     /**
      * 单位(默认秒)
      *
-     * @return TimeUnit time unit
+     * @return ChronoUnit time unit
      */
-    TimeUnit unit() default TimeUnit.SECONDS;
+    ChronoUnit unit() default ChronoUnit.SECONDS;
 
     /**
      * 单位时间产生的令牌个数

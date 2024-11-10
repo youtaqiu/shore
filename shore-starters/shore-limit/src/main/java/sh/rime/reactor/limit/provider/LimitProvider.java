@@ -2,7 +2,7 @@ package sh.rime.reactor.limit.provider;
 
 import reactor.core.publisher.Mono;
 
-import java.util.concurrent.TimeUnit;
+import java.time.temporal.ChronoUnit;
 
 /**
  * 限流提供者
@@ -20,6 +20,6 @@ public interface LimitProvider {
      * @param unit   单位
      * @return boolean
      */
-    Mono<Boolean> tryAcquire(String key, int rate, long expire, TimeUnit unit);
+    Mono<Boolean> tryAcquire(String key, int rate, long expire, ChronoUnit unit);
 
 }
