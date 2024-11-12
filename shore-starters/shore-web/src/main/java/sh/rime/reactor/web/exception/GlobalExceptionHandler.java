@@ -1,9 +1,6 @@
 package sh.rime.reactor.web.exception;
 
 import cn.hutool.core.util.StrUtil;
-import sh.rime.reactor.commons.bean.Result;
-import sh.rime.reactor.commons.exception.ServerException;
-import sh.rime.reactor.web.properties.GlobalExceptionProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -18,6 +15,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
+import sh.rime.reactor.commons.bean.Result;
+import sh.rime.reactor.commons.exception.ServerException;
+import sh.rime.reactor.web.properties.GlobalExceptionProperties;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -61,7 +61,12 @@ public class GlobalExceptionHandler {
         ServerHttpRequest request = serverWebExchange.getRequest();
         String method = request.getMethod().name();
         String path = request.getPath().value();
-        return ResponseEntity.status(200).body(build(e, method, path));
+        Result<?> result = build(e, method, path);
+        int httpCode = globalExceptionProperties.getHttpCode();
+        if (result.getCode() < 500) {
+            httpCode = result.getCode();
+        }
+        return ResponseEntity.status(httpCode).body(result);
     }
 
     /**
@@ -118,7 +123,7 @@ public class GlobalExceptionHandler {
             }
             Throwable cause = e.getCause();
 
-            fail = serverException(cause, fail);
+            fail = serverException(cause, null);
             if (fail != null) {
                 return fail;
             }

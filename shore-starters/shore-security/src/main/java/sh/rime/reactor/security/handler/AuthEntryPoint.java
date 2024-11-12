@@ -1,11 +1,12 @@
 package sh.rime.reactor.security.handler;
 
-import sh.rime.reactor.commons.exception.ServerException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+import sh.rime.reactor.commons.bean.Result;
+import sh.rime.reactor.security.util.ResponseUtils;
 
 /**
  * 身份认证失败.
@@ -24,7 +25,7 @@ public class AuthEntryPoint implements ServerAuthenticationEntryPoint {
 
     @Override
     public Mono<Void> commence(ServerWebExchange exchange, AuthenticationException ex) {
-        //抛出异常,交由全局异常处理器处理
-        throw new ServerException(401, "Authentication failed");
+        Result<Void> result = Result.failed(401, "Authentication failed");
+        return ResponseUtils.build(exchange.getResponse(), result);
     }
 }

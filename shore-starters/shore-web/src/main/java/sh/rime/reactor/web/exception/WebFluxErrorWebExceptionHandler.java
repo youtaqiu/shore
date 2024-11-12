@@ -55,7 +55,11 @@ public class WebFluxErrorWebExceptionHandler extends DefaultErrorWebExceptionHan
         String requestPath = RequestUtil.parseRequestUri(request);
         Throwable error = getError(request);
         Result<?> fail = globalExceptionHandler.build(error, requestMethod, requestPath);
-        return ServerResponse.status(globalExceptionProperties.getHttpCode()).contentType(MediaType.APPLICATION_JSON)
+        int httpCode = globalExceptionProperties.getHttpCode();
+        if (fail.getCode() < 500) {
+            httpCode = fail.getCode();
+        }
+        return ServerResponse.status(httpCode).contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(fail));
     }
 
