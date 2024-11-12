@@ -149,6 +149,9 @@ public class WebSecurityAutoconfigure {
      * 加载匿名访问的url
      */
     private void loadAnonymousUrls() {
+        if (SpringUtil.getApplicationContext() == null) {
+            return;
+        }
         RequestMappingHandlerMapping handlerMapping = SpringUtil.getBean("requestMappingHandlerMapping");
         Map<RequestMappingInfo, HandlerMethod> handlerMethods = handlerMapping.getHandlerMethods();
         for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethods.entrySet()) {
