@@ -26,6 +26,6 @@ public class AuthAccessDeniedHandler implements ServerAccessDeniedHandler {
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, AccessDeniedException denied) {
         Result<Void> result = Result.failed(403, "Access denied");
-        return ResponseUtils.build(exchange.getResponse(), result);
+        return ResponseUtils.build(exchange.getResponse(), result, 403);
     }
 }

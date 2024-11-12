@@ -35,4 +35,21 @@ public class ResponseUtils {
                         response.bufferFactory()
                                 .wrap(JSONUtil.toJsonStr(data).getBytes(StandardCharsets.UTF_8))));
     }
+
+    /**
+     * 构建响应
+     *
+     * @param response 响应
+     * @param data     数据
+     * @param status   状态码
+     * @return Mono
+     */
+    public static Mono<Void> build(ServerHttpResponse response, Object data, int status) {
+        response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+        response.setStatusCode(org.springframework.http.HttpStatus.valueOf(status));
+        return response.writeWith(
+                Mono.just(
+                        response.bufferFactory()
+                                .wrap(JSONUtil.toJsonStr(data).getBytes(StandardCharsets.UTF_8))));
+    }
 }

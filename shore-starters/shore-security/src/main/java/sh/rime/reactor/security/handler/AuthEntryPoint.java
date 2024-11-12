@@ -26,6 +26,6 @@ public class AuthEntryPoint implements ServerAuthenticationEntryPoint {
     @Override
     public Mono<Void> commence(ServerWebExchange exchange, AuthenticationException ex) {
         Result<Void> result = Result.failed(401, "Authentication failed");
-        return ResponseUtils.build(exchange.getResponse(), result);
+        return ResponseUtils.build(exchange.getResponse(), result, 401);
     }
 }
