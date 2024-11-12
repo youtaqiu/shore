@@ -20,6 +20,7 @@ import java.lang.annotation.Target;
 @WebFluxTest
 @ExtendWith(SpringExtension.class)
 @Import({ShoreSecurityTestAutoconfigure.class})
+@SuppressWarnings("unused")
 public @interface ShoreWebFluxTest {
 
     /**
