@@ -2,10 +2,7 @@ description "shore test starter"
 
 dependencies {
     optional project(":shore-starters:shore-security")
-    optional 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.mockito:mockito-core'
-    testImplementation 'org.springframework.boot:spring-boot-test-autoconfigure'
-    testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation 'io.projectreactor:reactor-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    api 'org.springframework.boot:spring-boot-starter-test'
+    api 'org.springframework.security:spring-security-test'
+    api 'io.projectreactor:reactor-test'
 }
