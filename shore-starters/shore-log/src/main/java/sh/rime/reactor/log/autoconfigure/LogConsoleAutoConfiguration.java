@@ -26,6 +26,8 @@ public class LogConsoleAutoConfiguration {
      * This constructor is used for serialization and other reflective operations.
      */
     public LogConsoleAutoConfiguration() {
+        // This constructor is intentionally empty.
+        // Further initialization logic can be added here if needed in the future.
     }
 
     /**

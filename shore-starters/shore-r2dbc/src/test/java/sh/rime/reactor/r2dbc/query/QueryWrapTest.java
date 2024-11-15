@@ -1,21 +1,21 @@
 package sh.rime.reactor.r2dbc.query;
 
+import cn.hutool.core.lang.Pair;
 import cn.hutool.system.UserInfo;
-import org.mockito.ArgumentCaptor;
-import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.util.Assert;
-import sh.rime.reactor.commons.domain.Pair;
-import sh.rime.reactor.commons.domain.Search;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.RowMetadata;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.r2dbc.core.RowsFetchSpec;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.util.Assert;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+import sh.rime.reactor.commons.domain.Search;
 import sh.rime.reactor.commons.exception.ServerException;
 import sh.rime.reactor.core.util.BeanUtil;
 
@@ -233,6 +233,7 @@ class QueryWrapTest {
     }
 
     @Test
+    @SuppressWarnings("all")
     void testSpecWhenPairsIsNotNull() {
         // Arrange
         R2dbcEntityTemplate template = Mockito.mock(R2dbcEntityTemplate.class);
@@ -243,14 +244,13 @@ class QueryWrapTest {
         when(databaseClient.sql(anyString())).thenReturn(genericExecuteSpec);
         when(genericExecuteSpec.bind(anyString(), any())).thenReturn(genericExecuteSpec);
 
-        Pair<String, Object> pair1 = Pair.of("key1", "value1");
-        Pair<String, Object> pair2 = Pair.of("key2", 123);
+        Pair<String, String> pair1 = Pair.of("key1", "value1");
+        Pair<String, Integer> pair2 = Pair.of("key2", 123);
 
         QueryWrap<Object> queryWrap = new QueryWrap<>();
         queryWrap.template(template);
 
         // Act
-
         ReflectionTestUtils.invokeMethod(queryWrap, "spec",
                 "SELECT * FROM table WHERE column1 = :key1 AND column2 = :key2", new Pair[]{pair1, pair2});
 

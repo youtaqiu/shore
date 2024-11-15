@@ -96,7 +96,7 @@ public class LoggingLokiAppender implements ILoggingAppender {
     private Loki4jEncoder getFormat(LoggerContext context,
                                     LoggingProperties.Loki properties) {
         LoggingProperties.LokiEncoder encoder = properties.getEncoder();
-        AbstractLoki4jEncoder loki4jEncoder = LoggingProperties.LokiEncoder.ProtoBuf == encoder
+        AbstractLoki4jEncoder loki4jEncoder = LoggingProperties.LokiEncoder.PROTOBUF == encoder
                 ? new ProtobufEncoder() : new JsonEncoder();
         // label config
         AbstractLoki4jEncoder.LabelCfg labelCfg = new AbstractLoki4jEncoder.LabelCfg();
@@ -130,9 +130,9 @@ public class LoggingLokiAppender implements ILoggingAppender {
     private static HttpSender getSender(LoggingProperties.Loki properties) {
         LoggingProperties.HttpSender httpSenderType = getHttpSender(properties);
         AbstractHttpSender httpSender;
-        if (LoggingProperties.HttpSender.OKHttp == httpSenderType) {
+        if (LoggingProperties.HttpSender.OK_HTTP == httpSenderType) {
             httpSender = new Loki4jOkHttpSender();
-        } else if (LoggingProperties.HttpSender.ApacheHttp == httpSenderType) {
+        } else if (LoggingProperties.HttpSender.APACHE_HTTP == httpSenderType) {
             httpSender = new ApacheHttpSender();
         } else {
             httpSender = new JavaHttpSender();

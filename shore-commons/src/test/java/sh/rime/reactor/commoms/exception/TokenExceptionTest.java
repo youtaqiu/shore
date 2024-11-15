@@ -25,4 +25,10 @@ class TokenExceptionTest {
         assertEquals(401, exception.getErrorCode());
         assertEquals("unauthorized", exception.getMessage());
     }
+
+    @Test
+    void testGetKey() {
+        TokenException exception = new TokenException();
+        assertEquals("unauthorized", exception.getKey());
+    }
 }

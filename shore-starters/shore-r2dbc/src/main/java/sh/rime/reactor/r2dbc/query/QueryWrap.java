@@ -1,10 +1,6 @@
 package sh.rime.reactor.r2dbc.query;
 
-import sh.rime.reactor.commons.domain.PageResult;
-import sh.rime.reactor.commons.domain.Pair;
-import sh.rime.reactor.commons.domain.Search;
-import sh.rime.reactor.commons.exception.ServerException;
-import sh.rime.reactor.r2dbc.page.IPageUtil;
+import cn.hutool.core.lang.Pair;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.RowMetadata;
 import lombok.AllArgsConstructor;
@@ -13,6 +9,10 @@ import org.springframework.lang.NonNull;
 import org.springframework.r2dbc.core.DatabaseClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import sh.rime.reactor.commons.domain.PageResult;
+import sh.rime.reactor.commons.domain.Search;
+import sh.rime.reactor.commons.exception.ServerException;
+import sh.rime.reactor.r2dbc.page.IPageUtil;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -34,6 +34,8 @@ public class QueryWrap<T> {
      * This constructor is used for serialization and other reflective operations.
      */
     public QueryWrap() {
+        // This constructor is intentionally empty.
+        // Further initialization logic can be added here if needed in the future.
     }
 
     /**
@@ -116,6 +118,7 @@ public class QueryWrap<T> {
      * @return {@link QueryWrap}
      */
     @SafeVarargs
+    @SuppressWarnings("all")
     public final QueryWrap<T> bind(Pair<String, ?>... pairs) {
         this.pairs = pairs;
         return this;
@@ -263,7 +266,7 @@ public class QueryWrap<T> {
         var spec = client.sql(countSql);
         if (pairs != null) {
             for (Pair<String, ?> pair : pairs) {
-                spec = spec.bind(pair.key(), pair.value());
+                spec = spec.bind(pair.getKey(), pair.getValue());
             }
         }
         return spec;

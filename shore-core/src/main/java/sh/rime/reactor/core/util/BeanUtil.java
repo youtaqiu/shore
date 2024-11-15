@@ -30,6 +30,8 @@ public class BeanUtil extends org.springframework.beans.BeanUtils {
      * This constructor is used for serialization and other reflective operations.
      */
     public BeanUtil() {
+        // This constructor is intentionally empty.
+        // Further initialization logic can be added here if needed in the future.
     }
 
     /**
@@ -54,6 +56,7 @@ public class BeanUtil extends org.springframework.beans.BeanUtils {
      * @param <T>    目标类型
      * @return T 目标
      */
+    @SuppressWarnings("all")
     public static <T> T copy(Object source, T target) {
         org.springframework.beans.BeanUtils.copyProperties(source, target, getNullPropertyNames(source));
         return target;
