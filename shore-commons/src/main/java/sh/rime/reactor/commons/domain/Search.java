@@ -20,6 +20,8 @@ public class Search implements Serializable {
      * This constructor is used for serialization and other reflective operations.
      */
     public Search() {
+        // This constructor is intentionally empty.
+        // Further initialization logic can be added here if needed in the future.
     }
 
     /**

@@ -34,10 +34,17 @@ import java.util.Objects;
 public class LoggingConfiguration {
 
     /**
+     * ENABLED
+     */
+    public static final String ENABLED = ".enabled";
+
+    /**
      * Default constructor.
      * This constructor is used for serialization and other reflective operations.
      */
     public LoggingConfiguration() {
+        // This constructor is intentionally empty.
+        // Further initialization logic can be added here if needed in the future.
     }
 
     /**
@@ -75,6 +82,8 @@ public class LoggingConfiguration {
          * This constructor is used for serialization and other reflective operations.
          */
         public LoggingFileConfiguration() {
+            // This constructor is intentionally empty.
+            // Further initialization logic can be added here if needed in the future.
         }
 
         /**
@@ -104,6 +113,8 @@ public class LoggingConfiguration {
          * This constructor is used for serialization and other reflective operations.
          */
         public LoggingLokiConfiguration() {
+            // This constructor is intentionally empty.
+            // Further initialization logic can be added here if needed in the future.
         }
 
         /**
@@ -132,6 +143,8 @@ public class LoggingConfiguration {
          * This constructor is used for serialization and other reflective operations.
          */
         public LoggingOpenTelemetryConfiguration() {
+            // This constructor is intentionally empty.
+            // Further initialization logic can be added here if needed in the future.
         }
 
         /**
@@ -179,12 +192,12 @@ public class LoggingConfiguration {
             Appender appender = Appender.valueOf(value.toString());
             Environment environment = context.getEnvironment();
             ClassLoader classLoader = context.getClassLoader();
-            Boolean fileEnabled = environment.getProperty(LoggingProperties.Files.PREFIX + ".enabled", Boolean.class, Boolean.TRUE);
-            Boolean lokiEnabled = environment.getProperty(LoggingProperties.Loki.PREFIX + ".enabled", Boolean.class, Boolean.FALSE);
-            Boolean openTelemetryEnabled = environment.getProperty(LoggingProperties.OpenTelemetry.PREFIX + ".enabled", Boolean.class, Boolean.FALSE);
+            Boolean fileEnabled = environment.getProperty(LoggingProperties.Files.PREFIX + ENABLED, Boolean.class, Boolean.TRUE);
+            Boolean lokiEnabled = environment.getProperty(LoggingProperties.Loki.PREFIX + ENABLED, Boolean.class, Boolean.FALSE);
+            Boolean openTelemetryEnabled = environment.getProperty(LoggingProperties.OpenTelemetry.PREFIX + ENABLED, Boolean.class, Boolean.FALSE);
             ConditionOutcome conditionOutcome;
             if (Appender.LOKI == appender) {
-                if (!lokiEnabled) {
+                if (Boolean.FALSE.equals(lokiEnabled)) {
                     return ConditionOutcome.noMatch("Logging loki is not enabled.");
                 }
                 if (hasLokiDependencies(classLoader)) {
@@ -192,7 +205,7 @@ public class LoggingConfiguration {
                 }
                 throw new IllegalStateException("Logging loki is enabled, please add com.github.loki4j loki-logback-appender dependencies.");
             } else if (Appender.OPEN_TELEMETRY == appender) {
-                if (!openTelemetryEnabled) {
+                if (Boolean.FALSE.equals(openTelemetryEnabled)) {
                     return ConditionOutcome.noMatch("Logging openTelemetry is not enabled.");
                 }
                 if (hasOpenTelemetryDependencies(classLoader)) {
@@ -200,7 +213,7 @@ public class LoggingConfiguration {
                 }
                 throw new IllegalStateException("Logging openTelemetry is enabled, please add io.opentelemetry.instrumentation opentelemetry-logback-appender-1.0 dependencies.");
             } else if (Appender.FILE == appender) {
-                if (!fileEnabled) {
+                if (Boolean.FALSE.equals(fileEnabled)) {
                     conditionOutcome = ConditionOutcome.noMatch("Logging logstash is not enabled.");
                 } else {
                     conditionOutcome = ConditionOutcome.match();

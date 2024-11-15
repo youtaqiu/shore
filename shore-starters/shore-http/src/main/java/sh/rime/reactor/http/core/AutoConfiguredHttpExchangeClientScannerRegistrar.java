@@ -33,6 +33,8 @@ public class AutoConfiguredHttpExchangeClientScannerRegistrar implements BeanFac
      * This constructor is used for serialization and other reflective operations.
      */
     public AutoConfiguredHttpExchangeClientScannerRegistrar() {
+        // This constructor is intentionally empty.
+        // Further initialization logic can be added here if needed in the future.
     }
 
     @Override

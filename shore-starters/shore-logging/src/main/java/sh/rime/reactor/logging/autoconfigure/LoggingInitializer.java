@@ -24,6 +24,8 @@ public class LoggingInitializer implements EnvironmentPostProcessor, Ordered {
      * This constructor is used for serialization and other reflective operations.
      */
     public LoggingInitializer() {
+        // This constructor is intentionally empty.
+        // Further initialization logic can be added here if needed in the future.
     }
 
     /**

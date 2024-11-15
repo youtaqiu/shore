@@ -22,6 +22,7 @@ public class LoggingProperties {
      * This constructor is used for serialization and other reflective operations.
      */
     public LoggingProperties() {
+        // This constructor is intentionally empty.
     }
 
     /**
@@ -46,6 +47,7 @@ public class LoggingProperties {
          * This constructor is used for serialization and other reflective operations.
          */
         public Console() {
+            // This constructor is intentionally empty.
         }
 
         /**
@@ -66,6 +68,7 @@ public class LoggingProperties {
          * This constructor is used for serialization and other reflective operations.
          */
         public OpenTelemetry() {
+            // This constructor is intentionally empty.
         }
 
         /**
@@ -91,6 +94,7 @@ public class LoggingProperties {
          * This constructor is used for serialization and other reflective operations.
          */
         public Files() {
+            // This constructor is intentionally empty.
         }
 
         /**
@@ -119,6 +123,7 @@ public class LoggingProperties {
          * This constructor is used for serialization and other reflective operations.
          */
         public Loki() {
+            // This constructor is intentionally empty.
         }
 
         /**
@@ -132,7 +137,7 @@ public class LoggingProperties {
         /**
          * 编码方式，支持 Json、ProtoBuf，默认： Json
          */
-        private LokiEncoder encoder = LokiEncoder.Json;
+        private LokiEncoder encoder = LokiEncoder.JSON;
         /**
          * http sender，支持 java11、OKHttp、ApacheHttp，默认: 从项目依赖中查找，顺序 java11 -> okHttp -> ApacheHttp
          */
@@ -196,11 +201,11 @@ public class LoggingProperties {
         /**
          * Encoder
          */
-        Json,
+        JSON,
         /**
          * ProtoBuf
          */
-        ProtoBuf
+        PROTOBUF
     }
 
     /**
@@ -216,11 +221,11 @@ public class LoggingProperties {
         /**
          * okhttp3
          */
-        OKHttp("okhttp3.OkHttpClient"),
+        OK_HTTP("okhttp3.OkHttpClient"),
         /**
          * 依赖于 org.apache.httpcomponents:httpclient
          */
-        ApacheHttp("org.apache.http.impl.client.HttpClients");
+        APACHE_HTTP("org.apache.http.impl.client.HttpClients");
 
         /**
          * sender 判定类

@@ -21,5 +21,7 @@ public class HttpExchangeClientScannerRegistrarConfiguration {
      * This constructor is used for serialization and other reflective operations.
      */
     public HttpExchangeClientScannerRegistrarConfiguration() {
+        // This constructor is intentionally empty.
+        // Further initialization logic can be added here if needed in the future.
     }
 }

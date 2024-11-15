@@ -61,13 +61,13 @@ class SpringExpressionResolverTest {
     @Test
     void testEvaluateWithValidExpression() {
         String expression = "Hello #{#name}";
-        EvaluationContext context = new StandardEvaluationContext();
-        context.setVariable("name", "World");
+        EvaluationContext evalContext = new StandardEvaluationContext();
+        evalContext.setVariable("name", "World");
 
         when(environment.resolvePlaceholders(expression))
                 .thenReturn("Hello #{#name}");
 
-        String result = resolver.evaluate(expression, context, String.class);
+        String result = resolver.evaluate(expression, evalContext, String.class);
 
         assertEquals("Hello World", result);
     }
@@ -76,23 +76,23 @@ class SpringExpressionResolverTest {
     void testEvaluateWithInvalidExpression() {
         String expression = "Hello #{#unknown}";
 
-        EvaluationContext context = new StandardEvaluationContext();
+        EvaluationContext evalContext = new StandardEvaluationContext();
 
         when(environment.resolvePlaceholders(expression))
                 .thenReturn("Hello #{#unknown}");
 
-        assertThrows(ExpressionException.class, () -> resolver.evaluate(expression, context, Integer.class));
+        assertThrows(ExpressionException.class, () -> resolver.evaluate(expression, evalContext, Integer.class));
     }
 
     @Test
     void testEvaluateWithNoVariables() {
         String expression = "Hello World";
-        EvaluationContext context = new StandardEvaluationContext();
+        EvaluationContext evalContext = new StandardEvaluationContext();
 
         when(environment.resolvePlaceholders(expression))
                 .thenReturn("Hello World");
 
-        String result = resolver.evaluate(expression, context, String.class);
+        String result = resolver.evaluate(expression, evalContext, String.class);
 
         assertEquals("Hello World", result);
     }

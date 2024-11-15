@@ -56,6 +56,8 @@ public class R<T> implements Serializable {
      * This constructor is used for serialization and other reflective operations.
      */
     public R() {
+        // This constructor is intentionally empty.
+        // Further initialization logic can be added here if needed in the future.
     }
 
     /**

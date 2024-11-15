@@ -17,13 +17,15 @@ import java.util.Objects;
  * LoggingUtil：日志工具类
  * 包含日志文件的相关配置和操作
  */
-public class LoggingUtil {
+public final class LoggingUtil {
 
     /**
      * Default constructor.
      * This constructor is used for serialization and other reflective operations.
      */
-    public LoggingUtil() {
+    private LoggingUtil() {
+        // This constructor is intentionally empty.
+        // Further initialization logic can be added here if needed in the future.
     }
 
     /**
