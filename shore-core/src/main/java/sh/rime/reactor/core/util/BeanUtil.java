@@ -56,7 +56,7 @@ public class BeanUtil extends org.springframework.beans.BeanUtils {
      * @param <T>    目标类型
      * @return T 目标
      */
-    @SuppressWarnings("unused")
+    @SuppressWarnings("all")
     public static <T> T copy(Object source, T target) {
         org.springframework.beans.BeanUtils.copyProperties(source, target, getNullPropertyNames(source));
         return target;
