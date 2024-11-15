@@ -43,6 +43,7 @@ class DefaultEvaluationContextFactoryTest {
         assertNotNull(context.getTypeConverter());
     }
 
+    @SuppressWarnings("unused")
     static class SampleClass {
         public void sampleMethod(String param1, int param2) {
         }
