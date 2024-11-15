@@ -378,7 +378,7 @@ public class R<T> implements Serializable {
      * @param <T>  type
      * @return mono
      */
-    private static <T> Mono<R<T>> responseCreate(T data, int code, String msg) {
+    public static <T> Mono<R<T>> responseCreate(T data, int code, String msg) {
         Mono<T> monoData = Mono.just(data);
         return getMono(code, msg, monoData);
     }

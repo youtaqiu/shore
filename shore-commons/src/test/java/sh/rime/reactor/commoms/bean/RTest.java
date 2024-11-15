@@ -9,8 +9,6 @@ import sh.rime.reactor.commons.constants.CommonConstant;
 import sh.rime.reactor.commons.enums.CommonExceptionEnum;
 import sh.rime.reactor.commons.exception.ServerException;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
@@ -275,14 +273,9 @@ class RTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    void responseCreate() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Method responseCreateMethod = R.class.getDeclaredMethod("responseCreate", Object.class, int.class, String.class);
-        responseCreateMethod.setAccessible(true);
-
-        Mono<R<String>> result = (Mono<R<String>>) responseCreateMethod.invoke(null, "data", 1000, "custom message");
+    void testResponseCreateWithDataCodeAndMsg() {
+        Mono<R<String>> result = R.responseCreate("data", 1000, "custom message");
         R<String> r = result.block();
-
         assertNotNull(r);
         assertEquals(1000, r.getCode());
         assertEquals("custom message", r.getMessage());
