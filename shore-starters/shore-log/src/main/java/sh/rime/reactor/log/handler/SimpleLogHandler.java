@@ -32,7 +32,7 @@ public class SimpleLogHandler implements LogHandler {
     @Override
     public Mono<Boolean> handler(LogDomain logDomain) {
         var logStr = "logContent: {}, requestMethod: {}, requestUri: {}, requestId: {}, ip: {}, "
-                + "traceId: {}, clientId: {}, queryParams: {}, operationParam: {}, result: {}";
+                + "traceId: {}, queryParams: {}, operationParam: {}, result: {}";
         Throwable ex = logDomain.getEx();
         var logContent = logDomain.getLogContent();
         var requestMethod = logDomain.getRequestMethod();
@@ -40,19 +40,18 @@ public class SimpleLogHandler implements LogHandler {
         var requestId = logDomain.getRequestId();
         var ip = logDomain.getIp();
         var traceId = logDomain.getTraceId();
-        var clientId = logDomain.getClientId();
         var queryParams = logDomain.getQueryParams();
         var operationParam = logDomain.getOperationParam();
         var result = logDomain.getResult();
         if (ex == null) {
             log.info(logStr, logContent, requestMethod, requestUri,
-                    requestId, ip, traceId, clientId, JSONUtil.toJsonStr(queryParams),
+                    requestId, ip, traceId, JSONUtil.toJsonStr(queryParams),
                     JSONUtil.toJsonStr(operationParam), JSONUtil.toJsonStr(result));
             return Mono.just(true);
         }
         logStr = logStr + ", ex: {}";
         log.info(logStr, logContent, requestMethod, requestUri,
-                requestId, traceId, clientId, ip,
+                requestId, traceId, ip,
                 JSONUtil.toJsonStr(operationParam), JSONUtil.toJsonStr(result),
                 OptionalBean.ofNullable(ex).getBean(Throwable::getLocalizedMessage).orElse(null));
         return Mono.just(true);

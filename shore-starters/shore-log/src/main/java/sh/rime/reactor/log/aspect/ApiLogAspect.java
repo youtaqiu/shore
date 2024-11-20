@@ -1,12 +1,7 @@
 package sh.rime.reactor.log.aspect;
 
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
-import org.springframework.util.MultiValueMap;
-import sh.rime.reactor.core.context.ReactiveContextHolder;
-import sh.rime.reactor.core.util.ReactiveAddrUtil;
-import sh.rime.reactor.log.annotation.Log;
-import sh.rime.reactor.log.handler.LogDomain;
-import sh.rime.reactor.log.service.ApiLogService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -18,14 +13,19 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
+import sh.rime.reactor.core.context.ReactiveContextHolder;
+import sh.rime.reactor.core.util.ReactiveAddrUtil;
+import sh.rime.reactor.log.annotation.Log;
+import sh.rime.reactor.log.handler.LogDomain;
+import sh.rime.reactor.log.service.ApiLogService;
 
 import java.util.*;
 
-import static sh.rime.reactor.commons.constants.Constants.CLIENT_ID_HEADER;
 import static sh.rime.reactor.commons.constants.Constants.REQUEST_ID_HEADER;
 
 
@@ -125,7 +125,9 @@ public class ApiLogAspect {
                     var uri = request.getPath().value();
                     HttpHeaders headers = request.getHeaders();
                     String requestId = headers.getFirst(REQUEST_ID_HEADER);
-                    String clientId = headers.getFirst(CLIENT_ID_HEADER);
+                    if (StrUtil.isBlank(requestId)) {
+                        requestId = IdUtil.fastSimpleUUID();
+                    }
 
                     if (!(signature instanceof MethodSignature methodSignature)) {
                         return obj;
@@ -150,7 +152,6 @@ public class ApiLogAspect {
                             .requestMethod(method)
                             .requestUri(uri)
                             .requestId(requestId)
-                            .clientId(clientId)
                             .ip(remoteAddr)
                             .queryParams(queryParamMap)
                             .operationParam(params)
