@@ -4,7 +4,6 @@ import com.github.loki4j.client.http.HttpConfig;
 import com.github.loki4j.client.http.Loki4jHttpClient;
 import com.github.loki4j.client.http.LokiResponse;
 import okhttp3.*;
-import okhttp3.internal.Util;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -85,7 +84,7 @@ public class Loki4jOkHttpClient implements Loki4jHttpClient {
         }
         Call call = httpClient.newCall(request.build());
         try (Response response = call.execute()) {
-            String body = response.body() != null ? response.body().string() : "";
+            String body = response.body().string();
             return new LokiResponse(response.code(), body);
         } catch (IOException e) {
             throw new IllegalStateException("Error while sending batch to Loki", e);
@@ -98,7 +97,11 @@ public class Loki4jOkHttpClient implements Loki4jHttpClient {
         httpClient.connectionPool().evictAll();
         Cache cache = httpClient.cache();
         if (cache != null) {
-            Util.closeQuietly(cache);
+            try {
+                cache.close();
+            } catch (IOException e) {
+                throw new IllegalStateException("Error while closing OkHttpClient cache", e);
+            }
         }
     }
 }
