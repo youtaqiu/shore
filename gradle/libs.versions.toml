@@ -20,6 +20,7 @@ opentelemetry = "2.10.0"
 reactorRabbitmq = "1.5.6"
 swaggerV3Annotations = "2.2.25"
 awsSdk = "2.29.13"
+okhttp3 = "5.0.0-alpha.14"
 
 [libraries]
 r2dbc-mysql = { group = "io.asyncer", name = "r2dbc-mysql", version.ref = "r2dbcMysql" }
@@ -42,6 +43,7 @@ reactor-rabbitmq = { group = "io.projectreactor.rabbitmq", name = "reactor-rabbi
 swagger-v3-annotations = { group = "io.swagger.core.v3", name = "swagger-annotations-jakarta", version.ref = "swaggerV3Annotations" }
 aws-sdk-s3 = { group = "software.amazon.awssdk", name = "s3", version.ref = "awsSdk" }
 aws-sdk-sts = { group = "software.amazon.awssdk", name = "sts", version.ref = "awsSdk" }
+squareup-okhttp3 = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp3" }
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
