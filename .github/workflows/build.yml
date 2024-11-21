@@ -2,9 +2,9 @@ name: Project CI
 
 on:
   push:
-    branches: [ master, main ]
+    branches: [ master,main ]
   pull_request:
-    branches: [ master, main ]
+    branches: [ master,main ]
   workflow_dispatch:
     inputs:
       perform_release:
@@ -31,10 +31,10 @@ jobs:
       fail-fast: false
     name: Test ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4 # 使用 v4 版本
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
       - name: Set up Homebrew
         id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@master
+        uses: Homebrew/actions/setup-homebrew@6a9d2a587bdd5edf275605a0fad7ca2ed4c9d5cd
       - name: Install libraries for Linux/Mac
         if: contains(matrix.os, 'ubuntu')
         run: brew install webp jpeg-xl libheif
@@ -67,12 +67,12 @@ jobs:
       version_next: ${{ steps.versions.outputs.version_next }}
       should_release: ${{ steps.versions.outputs.should_release }}
     steps:
-      - uses: actions/checkout@v4 # 使用 v4 版本
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
         with:
           fetch-depth: 0
       - name: Set up Homebrew
         id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@master # 使用 master 分支
+        uses: Homebrew/actions/setup-homebrew@6a9d2a587bdd5edf275605a0fad7ca2ed4c9d5cd
       - name: Install svu
         run: brew install caarlos0/tap/svu
       - name: Compute next version for release
@@ -108,7 +108,7 @@ jobs:
     runs-on: ubuntu-latest
     if: needs.version.outputs.should_release
     steps:
-      - uses: actions/checkout@v4 # 使用 v4 版本
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Display versions
@@ -124,7 +124,7 @@ jobs:
       - name: Nexus publish
         run: ./gradlew publish
       - name: Release commit and push
-        uses: EndBug/add-and-commit@v9 # 使用 v9 版本
+        uses: EndBug/add-and-commit@a94899bca583c204427a224a7af87c02f9b325d5
         if: inputs.perform_release
         with:
           message: 'chore(release): ${{ needs.version.outputs.version_next }} [skip ci]'
