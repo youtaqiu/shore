@@ -1,32 +1,27 @@
 package sh.rime.reactor.log.aspect;
 
-import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 import sh.rime.reactor.core.context.ReactiveContextHolder;
-import sh.rime.reactor.core.util.ReactiveAddrUtil;
 import sh.rime.reactor.log.annotation.Log;
-import sh.rime.reactor.log.handler.LogDomain;
-import sh.rime.reactor.log.service.ApiLogService;
 
-import java.util.*;
+import java.util.function.Function;
 
-import static sh.rime.reactor.commons.constants.Constants.REQUEST_ID_HEADER;
+import static lombok.AccessLevel.PACKAGE;
 
 
 /**
@@ -37,22 +32,22 @@ import static sh.rime.reactor.commons.constants.Constants.REQUEST_ID_HEADER;
 @Aspect
 @Slf4j
 @Order(1)
+@RequiredArgsConstructor(access = PACKAGE)
 public class ApiLogAspect {
 
-    private final MessageSource messageSource;
-    private final ApiLogService apiLogService;
+    private final JoinPointSerialise joinPointSerialise;
+    private final Function<Class<?>, Logger> loggerGetter;
 
     /**
      * Default constructor.
      * This constructor is used for serialization and other reflective operations.
      *
-     * @param messageSource the message source
-     * @param apiLogService the api log service
+     * @param joinPointSerialise the join point serialise
      */
-    public ApiLogAspect(MessageSource messageSource, ApiLogService apiLogService) {
-        this.messageSource = messageSource;
-        this.apiLogService = apiLogService;
+    public ApiLogAspect(JoinPointSerialise joinPointSerialise) {
+        this(joinPointSerialise, LoggerFactory::getLogger);
     }
+
 
     /**
      * 处理日志
@@ -87,11 +82,10 @@ public class ApiLogAspect {
             } else {
                 Mono<Object> mono;
                 if (ex != null) {
-                    mono = Mono.just("");
+                    mono = Mono.justOrEmpty(new Object());
                     monoResult = logMonoResult(joinPoint, ReactiveContextHolder.getExchange()
                             .map(ServerWebExchange::getRequest)
-                            .zipWith(mono), log, ex)
-                            .then(Mono.error(ex));
+                            .zipWith(mono), log, ex);
                 } else {
                     mono = Mono.justOrEmpty(result);
                     monoResult = logMonoResult(joinPoint, ReactiveContextHolder.getExchange()
@@ -117,81 +111,26 @@ public class ApiLogAspect {
                                   Log apiLog, Throwable ex) {
         Signature signature = joinPoint.getSignature();
         String logContent = StrUtil.trimToNull(apiLog.value());
+        if (ex != null) {
+            var serialisedJoinPoint = joinPointSerialise.serialise(joinPoint, logContent,
+                    null, ex, null);
+            var declaringType = signature.getDeclaringType();
+            var logger = loggerGetter.apply(declaringType);
+            logger.info(serialisedJoinPoint);
+        }
         return zipData
                 .map(data -> {
                     var request = data.getT1();
                     var obj = data.getT2();
-                    var method = request.getMethod().name();
-                    var uri = request.getPath().value();
-                    HttpHeaders headers = request.getHeaders();
-                    String requestId = headers.getFirst(REQUEST_ID_HEADER);
-                    if (StrUtil.isBlank(requestId)) {
-                        requestId = IdUtil.fastSimpleUUID();
-                    }
-
-                    if (!(signature instanceof MethodSignature methodSignature)) {
+                    if (!(signature instanceof MethodSignature)) {
                         return obj;
                     }
-                    Object[] args = joinPoint.getArgs();
-                    Map<String, Object> queryParamMap = Map.of();
-                    MultiValueMap<String, String> queryParams = request.getQueryParams();
-                    if (!queryParams.isEmpty()) {
-                        queryParamMap = buildParamMap(queryParams);
-                    }
-                    Collection<Object> values = queryParamMap.values();
-                    List<Object> params = new ArrayList<>();
-                    for (Object arg : args) {
-                        if (!values.contains(arg)) {
-                            params.add(arg);
-                        }
-                    }
-                    String formattedLogContent = parseLogContent(logContent, args);
-                    String remoteAddr = ReactiveAddrUtil.getRemoteAddr(request);
-                    LogDomain logDomain = LogDomain.builder()
-                            .logContent(formattedLogContent)
-                            .requestMethod(method)
-                            .requestUri(uri)
-                            .requestId(requestId)
-                            .ip(remoteAddr)
-                            .queryParams(queryParamMap)
-                            .operationParam(params)
-                            .result(obj)
-                            .ex(ex)
-                            .build();
-                    this.apiLogService.log(logDomain, methodSignature, apiLog);
+                    var serialisedJoinPoint = joinPointSerialise.serialise(joinPoint, logContent, request, ex, obj);
+                    var declaringType = signature.getDeclaringType();
+                    var logger = loggerGetter.apply(declaringType);
+                    logger.info(serialisedJoinPoint);
                     return obj;
                 });
-    }
-
-    /**
-     * 解析日志内容
-     *
-     * @param logContent 日志内容
-     * @param args       参数
-     * @return 解析后的日志内容
-     */
-    private String parseLogContent(String logContent, Object[] args) {
-        Locale locale = LocaleContextHolder.getLocale();
-        String message = messageSource.getMessage(logContent, args, logContent, locale);
-        return message == null ? logContent : message;
-    }
-
-    /**
-     * 构建参数
-     *
-     * @param parameterNames 参数名
-     * @return 参数
-     */
-    private Map<String, Object> buildParamMap(MultiValueMap<String, String> parameterNames) {
-        Map<String, Object> params = new HashMap<>(parameterNames.size());
-        parameterNames.forEach((key, value) -> {
-            if (value.size() == 1) {
-                params.put(key, value.getFirst());
-            } else {
-                params.put(key, value);
-            }
-        });
-        return params;
     }
 
 }
