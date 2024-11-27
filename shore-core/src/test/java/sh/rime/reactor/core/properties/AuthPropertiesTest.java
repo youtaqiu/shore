@@ -185,24 +185,24 @@ class AuthPropertiesTest {
     @Test
     void testExcludePrivateMethodWhenPatternsMatch() {
         // 通过反射调用私有方法
-        boolean result = ReflectionTestUtils.invokeMethod(
-                authProperties, "exclude", "/docs");
+        boolean result = Boolean.TRUE.equals(ReflectionTestUtils.invokeMethod(
+                authProperties, "exclude", "/docs"));
         assertTrue(result, "Path should be excluded by the pattern");
 
-        result = ReflectionTestUtils.invokeMethod(
-                authProperties, "exclude", "/swagger-resources");
+        result = Boolean.TRUE.equals(ReflectionTestUtils.invokeMethod(
+                authProperties, "exclude", "/swagger-resources"));
         assertTrue(result, "Path should be excluded by the pattern");
     }
 
     @Test
     void testExcludePrivateMethodWhenPatternsDoNotMatch() {
         // 通过反射调用私有方法
-        boolean result = ReflectionTestUtils.invokeMethod(
-                authProperties, "exclude", "/included/test");
+        boolean result = Boolean.TRUE.equals(ReflectionTestUtils.invokeMethod(
+                authProperties, "exclude", "/included/test"));
         assertFalse(result, "Path should not be excluded by the pattern");
 
-        result = ReflectionTestUtils.invokeMethod(
-                authProperties, "exclude", "/some/other/path");
+        result = Boolean.TRUE.equals(ReflectionTestUtils.invokeMethod(
+                authProperties, "exclude", "/some/other/path"));
         assertFalse(result, "Path should not be excluded by the pattern");
     }
 
@@ -212,8 +212,8 @@ class AuthPropertiesTest {
         authProperties.getExcludePatterns().clear();
 
         // 当没有设置任何排除模式时，所有路径都不应该被排除
-        boolean result = ReflectionTestUtils.invokeMethod(
-                authProperties, "exclude", "/any/path");
+        boolean result = Boolean.TRUE.equals(ReflectionTestUtils.invokeMethod(
+                authProperties, "exclude", "/any/path"));
         assertFalse(result, "Path should not be excluded because no patterns are set");
     }
 
