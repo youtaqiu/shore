@@ -65,6 +65,11 @@ public enum CommonExceptionEnum implements ServerFailure {
     CLIENT_NOT_FOUND_ERROR(8001, "客户端信息未找到"),
 
     /**
+     * 登录token解析失败
+     */
+    LOGIN_TOKEN_ERROR(1000, "Login failed"),
+
+    /**
      * 登出token解析失败
      */
     LOGOUT_TOKEN_ERROR(1001, "Logout failed"),

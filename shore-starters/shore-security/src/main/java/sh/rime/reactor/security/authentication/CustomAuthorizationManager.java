@@ -1,10 +1,5 @@
 package sh.rime.reactor.security.authentication;
 
-import sh.rime.reactor.commons.annotation.RequestMethodEnum;
-import sh.rime.reactor.commons.bean.R;
-import sh.rime.reactor.commons.enums.CommonExceptionEnum;
-import sh.rime.reactor.core.properties.AuthProperties;
-import sh.rime.reactor.security.domain.RoleEnum;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.ReactiveAuthorizationManager;
@@ -13,6 +8,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.server.authorization.AuthorizationContext;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+import sh.rime.reactor.commons.annotation.RequestMethodEnum;
+import sh.rime.reactor.commons.bean.R;
+import sh.rime.reactor.commons.enums.CommonExceptionEnum;
+import sh.rime.reactor.core.properties.AuthProperties;
+import sh.rime.reactor.security.domain.RoleEnum;
 
 import java.util.Arrays;
 
@@ -42,7 +42,6 @@ public class CustomAuthorizationManager implements ReactiveAuthorizationManager<
         var exchange = context.getExchange();
         var requestPath = exchange.getRequest().getURI().getPath();
         var httpMethod = exchange.getRequest().getMethod();
-        // 是否直接放行
         if (authenticated(httpMethod, requestPath)) {
             return Mono.just(new AuthorizationDecision(true));
         }

@@ -1,12 +1,11 @@
 package sh.rime.reactor.web.autoconfigure;
 
-import sh.rime.reactor.web.handler.WebSocketMappingHandlerMapping;
-import sh.rime.reactor.web.sender.WebSocketSender;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.HandlerMapping;
 import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter;
+import sh.rime.reactor.web.handler.WebSocketMappingHandlerMapping;
+import sh.rime.reactor.web.sender.WebSocketSender;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,7 +31,6 @@ public class WebSocketAutoConfiguration {
      * @return WebSocketHandlerAdapter
      */
     @Bean
-    @ConditionalOnMissingBean
     public WebSocketHandlerAdapter handlerAdapter() {
         return new WebSocketHandlerAdapter();
     }

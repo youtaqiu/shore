@@ -14,13 +14,13 @@ import sh.rime.reactor.security.util.ResponseUtils;
  * @author youta
  **/
 @Component
-public class AuthEntryPoint implements ServerAuthenticationEntryPoint {
+public class ReactiveAuthEntryPoint implements ServerAuthenticationEntryPoint {
 
     /**
      * Default constructor.
      * This constructor is used for serialization and other reflective operations.
      */
-    public AuthEntryPoint() {
+    public ReactiveAuthEntryPoint() {
     }
 
     @Override

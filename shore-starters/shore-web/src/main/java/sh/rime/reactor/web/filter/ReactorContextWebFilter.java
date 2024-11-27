@@ -1,5 +1,6 @@
 package sh.rime.reactor.web.filter;
 
+import lombok.extern.slf4j.Slf4j;
 import sh.rime.reactor.core.context.ReactiveContextHolder;
 import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
@@ -15,6 +16,7 @@ import reactor.core.publisher.Mono;
  *
  * @author youta
  */
+@Slf4j
 public class ReactorContextWebFilter implements WebFilter, Ordered {
 
     /**
@@ -46,6 +48,8 @@ public class ReactorContextWebFilter implements WebFilter, Ordered {
      */
     @NonNull
     public final Mono<Void> filter(@NonNull ServerWebExchange exchange, @NonNull WebFilterChain chain) {
-        return chain.filter(exchange).contextWrite(context -> context.put(ReactiveContextHolder.CONTEXT_KEY, exchange));
+        return chain.filter(exchange).contextWrite(context ->
+                context.put(ReactiveContextHolder.CONTEXT_KEY, exchange));
     }
+
 }

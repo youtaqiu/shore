@@ -1,8 +1,8 @@
 package sh.rime.reactor.r2dbc.page;
 
-import sh.rime.reactor.commons.domain.Search;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageRequest;
+import sh.rime.reactor.commons.domain.Search;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

@@ -34,7 +34,6 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
 
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) {
-        // 已经通过验证，直接返回
         if (authentication.isAuthenticated()) {
             return Mono.just(authentication);
         }

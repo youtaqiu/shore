@@ -1,6 +1,7 @@
 description "shore limit starter"
 
 dependencies {
+    optional project(":shore-core")
     optional project(":shore-starters:shore-security")
     optional "org.springframework.boot:spring-boot-autoconfigure"
     optional "org.springframework:spring-webflux"

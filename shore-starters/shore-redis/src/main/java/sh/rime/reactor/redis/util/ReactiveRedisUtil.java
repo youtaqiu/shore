@@ -15,7 +15,7 @@ import java.util.Map;
  *
  * @author youta
  **/
-@SuppressWarnings(value = {"unchecked"})
+@SuppressWarnings(value = {"unchecked","unused"})
 @Slf4j
 public class ReactiveRedisUtil {
 
@@ -96,7 +96,7 @@ public class ReactiveRedisUtil {
         }
         ReactiveValueOperations<String, T> stringObjectReactiveValueOperations = (ReactiveValueOperations<String, T>) customizeReactiveRedisTemplate.opsForValue();
         return stringObjectReactiveValueOperations.get(key)
-                .doOnSuccess(o -> log.debug("get key:" + key + " value:" + o));
+                .doOnSuccess(o -> log.debug("get key:{} value:{}", key, o));
     }
 
     /**
