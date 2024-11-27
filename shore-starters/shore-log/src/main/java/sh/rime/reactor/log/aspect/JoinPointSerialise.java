@@ -50,36 +50,36 @@ public final class JoinPointSerialise {
                             Throwable ex, Object result) {
 
         // ANSI 转义序列
-        final String RESET = "\033[0m";        // 重置颜色
-        final String CYAN = "\033[36m";        // 青色
-        final String YELLOW = "\033[33m";     // 黄色
-        final String GREEN = "\033[32m";      // 绿色
-        final String RED = "\033[31m";        // 红色
-        final String MAGENTA = "\033[35m";    // 紫色
+        final String reset = "\033[0m";        // 重置颜色
+        final String cyan = "\033[36m";        // 青色
+        final String yellow = "\033[33m";     // 黄色
+        final String green = "\033[32m";      // 绿色
+        final String red = "\033[31m";        // 红色
+        final String magenta = "\033[35m";    // 紫色
 
         // 构建基础信息
         var loggedMethod = getLoggedMethod(joinPoint, logContent, serverHttpRequest);
         StringBuilder output = new StringBuilder();
 
         // 标题
-        output.append(CYAN).append("\n===== Log Entry Start =====\n").append(RESET);
+        output.append(cyan).append("\n===== Log Entry Start =====\n").append(reset);
 
         // 日志内容
-        output.append(YELLOW).append("Logged Content    : ").append(RESET)
+        output.append(yellow).append("Logged Content    : ").append(reset)
                 .append(loggedMethod.logContent()).append("\n")
-                .append(YELLOW).append("Method            : ").append(RESET)
+                .append(yellow).append("Method            : ").append(reset)
                 .append(loggedMethod.className()).append("#").append(loggedMethod.methodName()).append("\n");
 
         if (serverHttpRequest != null) {
-            output.append(YELLOW).append("Request URI       : ").append(RESET)
+            output.append(yellow).append("Request URI       : ").append(reset)
                     .append(loggedMethod.requestUri()).append("\n")
-                    .append(YELLOW).append("Request Real IP   : ").append(RESET)
+                    .append(yellow).append("Request Real IP   : ").append(reset)
                     .append(loggedMethod.remoteAddr()).append("\n");
         }
 
         // 参数部分
         if (loggedMethod.params() != null && !loggedMethod.params().isEmpty()) {
-            output.append(GREEN).append("Parameters        : ").append(RESET).append("\n");
+            output.append(green).append("Parameters        : ").append(reset).append("\n");
 
             // 遍历 Map 并格式化每个参数项
             for (Map.Entry<String, Object> entry : loggedMethod.params().entrySet()) {
@@ -90,28 +90,28 @@ public final class JoinPointSerialise {
                 String formattedValue = formatAsJson(value);
 
                 // 输出每个参数
-                output.append("  ").append(YELLOW).append(key).append(RESET)
-                        .append(" = ").append(MAGENTA).append(formattedValue).append(RESET).append("\n");
+                output.append("  ").append(yellow).append(key).append(reset)
+                        .append(" = ").append(magenta).append(formattedValue).append(reset).append("\n");
             }
         }
 
         // 查询参数
         if (!loggedMethod.queryParamMap().isEmpty()) {
-            output.append(GREEN).append("Query Parameters  : ").append(RESET)
+            output.append(green).append("Query Parameters  : ").append(reset)
                     .append(loggedMethod.queryParamMap()).append("\n");
         }
 
         // 异常或结果
         if (ex != null) {
-            output.append(RED).append("Exception         : ").append(RESET)
+            output.append(red).append("Exception         : ").append(reset)
                     .append(ex.getMessage()).append("\n");
         } else if (result != null) {
-            output.append(MAGENTA).append("Result            : ").append(RESET)
+            output.append(magenta).append("Result            : ").append(reset)
                     .append(formatAsJson(result)).append("\n");
         }
 
         // 尾部
-        output.append(CYAN).append("===== Log Entry End =====").append(RESET);
+        output.append(cyan).append("===== Log Entry End =====").append(reset);
         return output.toString();
     }
 

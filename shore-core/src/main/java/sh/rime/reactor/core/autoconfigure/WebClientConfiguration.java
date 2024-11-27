@@ -2,7 +2,6 @@ package sh.rime.reactor.core.autoconfigure;
 
 import io.netty.channel.ChannelOption;
 import io.netty.handler.logging.LogLevel;
-import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -16,7 +15,6 @@ import org.springframework.http.client.ReactorResourceFactory;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
-import reactor.netty.tcp.DefaultSslContextSpec;
 import reactor.netty.transport.logging.AdvancedByteBufFormat;
 
 import java.time.Duration;
@@ -94,9 +92,6 @@ public class WebClientConfiguration {
                     httpClient.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 3000)
                             .wiretap(WebClient.class.getName(), LogLevel.DEBUG, AdvancedByteBufFormat.TEXTUAL)
                             .responseTimeout(Duration.ofSeconds(15))
-                            .secure(sslContextSpec -> sslContextSpec.sslContext(
-                                    DefaultSslContextSpec.forClient().configure(builder ->
-                                            builder.trustManager(InsecureTrustManagerFactory.INSTANCE))))
                             .doOnConnected(connection ->
                                     connection.addHandlerLast(new ReadTimeoutHandler(20))
                                             .addHandlerLast(new WriteTimeoutHandler(20)));
