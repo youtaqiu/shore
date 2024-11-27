@@ -171,8 +171,6 @@ public class AuthProperties {
      */
     @PostConstruct
     public void initIgnoreUrl() {
-        excludePatterns.add(loginPattern);
-        excludePatterns.add(logoutPattern);
         Collections.addAll(excludePatterns, ENDPOINTS);
     }
 

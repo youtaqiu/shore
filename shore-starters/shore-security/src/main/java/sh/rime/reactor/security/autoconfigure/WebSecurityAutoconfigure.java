@@ -59,6 +59,7 @@ public class WebSecurityAutoconfigure {
 
     private final AuthenticationManager authenticationManager;
     private final TokenServerSecurityContextRepository tokenServerSecurityContextRepository;
+    private final TokenServerAuthenticationSuccessHandler tokenServerAuthenticationSuccessHandler;
     private final TokenServerAuthenticationFailureHandler tokenServerAuthenticationFailureHandler;
     private final TokenServerLogoutSuccessHandler tokenServerLogoutSuccessHandler;
     private final ReactiveAuthEntryPoint reactiveAuthEntryPoint;
@@ -78,9 +79,10 @@ public class WebSecurityAutoconfigure {
      *
      * @param authenticationManager                   the authentication manager
      * @param tokenServerSecurityContextRepository    the token server security context repository
+     * @param tokenServerAuthenticationSuccessHandler the token server authentication success handler
      * @param tokenServerAuthenticationFailureHandler the token server authentication failure handler
      * @param tokenServerLogoutSuccessHandler         the token server logout success handler
-     * @param reactiveAuthEntryPoint                          the auth entry point
+     * @param reactiveAuthEntryPoint                  the auth entry point
      * @param authAccessDeniedHandler                 the auth access denied handler
      * @param customAuthorizationManager              the custom authorization manager
      * @param reactiveServerAuthenticationConverter   the post login auth converter
@@ -88,7 +90,7 @@ public class WebSecurityAutoconfigure {
      * @param requestMappingHandlerMapping            the request mapping handler mapping
      */
     public WebSecurityAutoconfigure(AuthenticationManager authenticationManager,
-                                    TokenServerSecurityContextRepository tokenServerSecurityContextRepository,
+                                    TokenServerSecurityContextRepository tokenServerSecurityContextRepository, TokenServerAuthenticationSuccessHandler tokenServerAuthenticationSuccessHandler,
                                     TokenServerAuthenticationFailureHandler tokenServerAuthenticationFailureHandler,
                                     TokenServerLogoutSuccessHandler tokenServerLogoutSuccessHandler,
                                     ReactiveAuthEntryPoint reactiveAuthEntryPoint, AuthAccessDeniedHandler authAccessDeniedHandler,
@@ -97,6 +99,7 @@ public class WebSecurityAutoconfigure {
                                     RequestMappingHandlerMapping requestMappingHandlerMapping) {
         this.authenticationManager = authenticationManager;
         this.tokenServerSecurityContextRepository = tokenServerSecurityContextRepository;
+        this.tokenServerAuthenticationSuccessHandler = tokenServerAuthenticationSuccessHandler;
         this.tokenServerAuthenticationFailureHandler = tokenServerAuthenticationFailureHandler;
         this.tokenServerLogoutSuccessHandler = tokenServerLogoutSuccessHandler;
         this.reactiveAuthEntryPoint = reactiveAuthEntryPoint;
@@ -235,8 +238,10 @@ public class WebSecurityAutoconfigure {
         AuthenticationWebFilter filter = new AuthenticationWebFilter(reactiveAuthenticationManager());
         filter.setSecurityContextRepository(tokenServerSecurityContextRepository);
         filter.setServerAuthenticationConverter(reactiveServerAuthenticationConverter);
+        filter.setAuthenticationSuccessHandler(tokenServerAuthenticationSuccessHandler);
         filter.setAuthenticationFailureHandler(tokenServerAuthenticationFailureHandler);
-        filter.setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers(HttpMethod.POST, authProperties.getLoginPattern()));
+        filter.setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers(HttpMethod.POST,
+                authProperties.getLoginPattern()));
 
         return filter;
     }
