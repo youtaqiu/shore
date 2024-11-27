@@ -117,7 +117,6 @@ public class GlobalExceptionHandler {
                 default -> {
                 }
             }
-            log.error("Request failed", e);
             fail = serverException(e, fail);
             if (fail != null) {
                 return fail;
@@ -128,6 +127,7 @@ public class GlobalExceptionHandler {
             if (fail != null) {
                 return fail;
             }
+            log.error("Request failed", e);
             fail = Result.failed(500, defaultMsg);
             fail.setException(e.getLocalizedMessage());
         }
