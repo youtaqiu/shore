@@ -82,7 +82,7 @@ public class ApiLogAspect {
             } else {
                 Mono<Object> mono;
                 if (ex != null) {
-                    mono = Mono.justOrEmpty(new Object());
+                    mono = Mono.error(ex);
                     monoResult = logMonoResult(joinPoint, ReactiveContextHolder.getExchange()
                             .map(ServerWebExchange::getRequest)
                             .zipWith(mono), log, ex);
@@ -116,7 +116,7 @@ public class ApiLogAspect {
                     null, ex, null);
             var declaringType = signature.getDeclaringType();
             var logger = loggerGetter.apply(declaringType);
-            logger.info(serialisedJoinPoint);
+            logger.error(serialisedJoinPoint);
         }
         return zipData
                 .map(data -> {

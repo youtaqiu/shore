@@ -22,8 +22,7 @@ public class CaffeineAuthenticationCache implements AuthenticationCache<CurrentU
     private final Cache<String, CurrentUser> userCache;
 
     /**
-     * Default constructor.
-     * This constructor is used for serialization and other reflective operations.
+     * Creates a Caffeine-based implementation of AuthenticationCache.
      */
     public CaffeineAuthenticationCache() {
         this.userCache = Caffeine.newBuilder()
@@ -66,7 +65,6 @@ public class CaffeineAuthenticationCache implements AuthenticationCache<CurrentU
 
     @Override
     public Mono<Duration> getExpire(String key) {
-        // Caffeine doesn't directly support expiry query
         return Mono.just(Duration.ofSeconds(3600));
     }
 
@@ -103,7 +101,6 @@ public class CaffeineAuthenticationCache implements AuthenticationCache<CurrentU
 
     @Override
     public Mono<Boolean> renew(String tokenKey, long expire) {
-        // Not supported, Caffeine automatically refreshes expiration time upon access
         return Mono.just(true);
     }
 }

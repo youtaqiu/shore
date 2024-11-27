@@ -26,6 +26,7 @@ public final class JoinPointSerialise {
      * The cache of logged methods.
      */
     private static final Map<UniqueMethodSignature, LoggedMethod> CACHE = new ConcurrentHashMap<>();
+    private static final ObjectMapper MAPPER = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
     /**
      * Default constructor.
@@ -49,22 +50,22 @@ public final class JoinPointSerialise {
     public String serialise(JoinPoint joinPoint, String logContent, ServerHttpRequest serverHttpRequest,
                             Throwable ex, Object result) {
 
-        // ANSI 转义序列
-        final String reset = "\033[0m";        // 重置颜色
-        final String cyan = "\033[36m";        // 青色
-        final String yellow = "\033[33m";     // 黄色
-        final String green = "\033[32m";      // 绿色
-        final String red = "\033[31m";        // 红色
-        final String magenta = "\033[35m";    // 紫色
+        // ANSI escape codes for colored output
+        final String reset = "\033[0m";        // reset color
+        final String cyan = "\033[36m";        // cyan
+        final String yellow = "\033[33m";     // yellow
+        final String green = "\033[32m";      // green
+        final String red = "\033[31m";        // red
+        final String magenta = "\033[35m";    // magenta
 
         // 构建基础信息
         var loggedMethod = getLoggedMethod(joinPoint, logContent, serverHttpRequest);
         StringBuilder output = new StringBuilder();
 
-        // 标题
+        // log entry header
         output.append(cyan).append("\n===== Log Entry Start =====\n").append(reset);
 
-        // 日志内容
+        // logged method
         output.append(yellow).append("Logged Content    : ").append(reset)
                 .append(loggedMethod.logContent()).append("\n")
                 .append(yellow).append("Method            : ").append(reset)
@@ -77,31 +78,31 @@ public final class JoinPointSerialise {
                     .append(loggedMethod.remoteAddr()).append("\n");
         }
 
-        // 参数部分
+        // parameters
         if (loggedMethod.params() != null && !loggedMethod.params().isEmpty()) {
             output.append(green).append("Parameters        : ").append(reset).append("\n");
 
-            // 遍历 Map 并格式化每个参数项
+            // iterate over the parameters
             for (Map.Entry<String, Object> entry : loggedMethod.params().entrySet()) {
                 String key = entry.getKey();
                 Object value = entry.getValue();
 
-                // 格式化值：如果是复杂对象，转换为 JSON 字符串（可以自定义格式化方式）
+                // format value as JSON
                 String formattedValue = formatAsJson(value);
 
-                // 输出每个参数
+                // print key and value
                 output.append("  ").append(yellow).append(key).append(reset)
                         .append(" = ").append(magenta).append(formattedValue).append(reset).append("\n");
             }
         }
 
-        // 查询参数
+        // query parameters
         if (!loggedMethod.queryParamMap().isEmpty()) {
             output.append(green).append("Query Parameters  : ").append(reset)
                     .append(loggedMethod.queryParamMap()).append("\n");
         }
 
-        // 异常或结果
+        // exception or result
         if (ex != null) {
             output.append(red).append("Exception         : ").append(reset)
                     .append(ex.getMessage()).append("\n");
@@ -110,18 +111,16 @@ public final class JoinPointSerialise {
                     .append(formatAsJson(result)).append("\n");
         }
 
-        // 尾部
+        // log entry footer
         output.append(cyan).append("===== Log Entry End =====").append(reset);
         return output.toString();
     }
 
 
-    // 使用 Jackson 将对象格式化为漂亮的 JSON
+    // format object as JSON
     private String formatAsJson(Object object) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.enable(SerializationFeature.INDENT_OUTPUT);
-            return mapper.writeValueAsString(object);
+            return MAPPER.writeValueAsString(object);
         } catch (Exception e) {
             return "Error serializing result: " + e.getMessage();
         }
@@ -197,8 +196,8 @@ public final class JoinPointSerialise {
     /**
      * build parameter map
      *
-     * @param parameterNames 参数名
-     * @return 参数
+     * @param parameterNames parameter names
+     * @return parameter map
      */
     private Map<String, Object> buildParamMap(MultiValueMap<String, String> parameterNames) {
         Map<String, Object> params = new HashMap<>(parameterNames.size());

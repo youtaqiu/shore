@@ -41,11 +41,11 @@ public class AuthenticationCacheAutoconfigure {
     static class RedisCacheConfig {
 
         /**
-         * Default constructor.
+         * Creates a Redis-based implementation of AuthenticationCache.
          *
-         * @param reactiveRedisUtil           reactiveRedisUtil
-         * @param reactiveStringRedisTemplate reactiveStringRedisTemplate
-         * @return RedisAuthenticationCache
+         * @param reactiveRedisUtil           utility for reactive Redis operations
+         * @param reactiveStringRedisTemplate template for reactive Redis string operations
+         * @return an instance of AuthenticationCache using Redis
          */
         @Bean
         @ConditionalOnClass(ReactiveRedisUtil.class)

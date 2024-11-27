@@ -6,11 +6,8 @@ import org.springframework.security.web.server.WebFilterExchange;
 import org.springframework.security.web.server.authentication.ServerAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
-import sh.rime.reactor.commons.bean.R;
 import sh.rime.reactor.commons.bean.Result;
 import sh.rime.reactor.security.util.ResponseUtils;
-
-import static sh.rime.reactor.commons.enums.CommonExceptionEnum.LOGIN_TOKEN_ERROR;
 
 
 /**
@@ -33,8 +30,7 @@ public class TokenServerAuthenticationSuccessHandler implements ServerAuthentica
     @Override
     public Mono<Void> onAuthenticationSuccess(WebFilterExchange webFilterExchange, Authentication authentication) {
         return Mono.fromRunnable(() -> log.info("Authentication success by {}", authentication.getName()))
-                .onErrorResume(e -> R.error(LOGIN_TOKEN_ERROR))
-                .flatMap(x -> ResponseUtils.build(webFilterExchange.getExchange().getResponse(), Result.ok()));
+                .then(Mono.defer(() -> ResponseUtils.build(webFilterExchange.getExchange().getResponse(), Result.ok())));
     }
 
 }
