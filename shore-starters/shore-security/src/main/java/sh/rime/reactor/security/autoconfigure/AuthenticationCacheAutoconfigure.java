@@ -48,6 +48,7 @@ public class AuthenticationCacheAutoconfigure {
          * @return RedisAuthenticationCache
          */
         @Bean
+        @ConditionalOnClass(ReactiveRedisUtil.class)
         public AuthenticationCache<CurrentUser> redisAuthenticationCache(
                 ReactiveRedisUtil reactiveRedisUtil,
                 ReactiveStringRedisTemplate reactiveStringRedisTemplate) {
