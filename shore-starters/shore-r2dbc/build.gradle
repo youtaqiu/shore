@@ -1,7 +1,8 @@
 description "shore r2dbc starter"
 
 dependencies {
-    api project(":shore-starters:shore-security")
+    optional project(":shore-starters:shore-security")
+    optional project(":shore-core")
     api "org.springframework.boot:spring-boot-starter-data-r2dbc"
     runtimeOnly "io.asyncer:r2dbc-mysql"
     testCompileOnly "io.asyncer:r2dbc-mysql"

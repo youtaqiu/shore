@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Import;
  * @author rained
  **/
 @Configuration
-@Import({WebSecurityAutoconfigure.class, PasswordEncoderAutoconfigure.class})
+@Import({WebSecurityAutoconfigure.class, AuthenticationCacheAutoconfigure.class,AuthenticationCacheAutoconfigure.class, PasswordEncoderAutoconfigure.class})
 public class SecurityConfiguration {
 
     /**

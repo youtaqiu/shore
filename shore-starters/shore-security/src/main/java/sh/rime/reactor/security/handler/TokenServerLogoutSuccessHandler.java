@@ -1,17 +1,18 @@
 package sh.rime.reactor.security.handler;
 
-import sh.rime.reactor.commons.bean.R;
-import sh.rime.reactor.commons.bean.Result;
-import sh.rime.reactor.commons.constants.Constants;
-import sh.rime.reactor.security.constants.TokenConstants;
-import sh.rime.reactor.security.repository.AuthenticationRepository;
-import sh.rime.reactor.security.util.ResponseUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.server.WebFilterExchange;
 import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+import sh.rime.reactor.commons.bean.R;
+import sh.rime.reactor.commons.bean.Result;
+import sh.rime.reactor.commons.constants.Constants;
+import sh.rime.reactor.security.cache.AuthenticationCache;
+import sh.rime.reactor.security.constants.TokenConstants;
+import sh.rime.reactor.security.domain.CurrentUser;
+import sh.rime.reactor.security.util.ResponseUtils;
 
 import static sh.rime.reactor.commons.enums.CommonExceptionEnum.LOGOUT_TOKEN_ERROR;
 
@@ -24,16 +25,16 @@ import static sh.rime.reactor.commons.enums.CommonExceptionEnum.LOGOUT_TOKEN_ERR
 @Component
 public class TokenServerLogoutSuccessHandler implements ServerLogoutSuccessHandler {
 
-    private final AuthenticationRepository authenticationRepository;
+    private final AuthenticationCache<CurrentUser> authenticationCache;
 
     /**
      * Default constructor.
      * This constructor is used for serialization and other reflective operations.
      *
-     * @param authenticationRepository the authentication repository
+     * @param authenticationCache the authentication cache
      */
-    public TokenServerLogoutSuccessHandler(AuthenticationRepository authenticationRepository) {
-        this.authenticationRepository = authenticationRepository;
+    public TokenServerLogoutSuccessHandler(AuthenticationCache<CurrentUser> authenticationCache) {
+        this.authenticationCache = authenticationCache;
     }
 
     @Override
@@ -41,11 +42,11 @@ public class TokenServerLogoutSuccessHandler implements ServerLogoutSuccessHandl
         return Mono.justOrEmpty(exchange.getExchange().getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION))
                 .filter(authHeader -> authHeader.startsWith(Constants.TOKEN_TYPE))
                 .map(authHeader -> authHeader.substring(Constants.TOKEN_TYPE.length()))
-                .flatMap(bearerToken -> authenticationRepository.delete(TokenConstants.token(bearerToken))
+                .flatMap(bearerToken -> authenticationCache.delete(TokenConstants.token(bearerToken))
                         .onErrorResume(ex -> R.error(LOGOUT_TOKEN_ERROR))
-                        .then(authenticationRepository.delete(TokenConstants.session(bearerToken)))
+                        .then(authenticationCache.delete(TokenConstants.session(bearerToken)))
                         .onErrorResume(ex -> R.error(LOGOUT_TOKEN_ERROR))
-                        .then(authenticationRepository.delete(TokenConstants.tokenSession(bearerToken))))
+                        .then(authenticationCache.delete(TokenConstants.tokenSession(bearerToken))))
                 .flatMap(x -> ResponseUtils.build(exchange.getExchange().getResponse(), Result.ok()));
     }
 }

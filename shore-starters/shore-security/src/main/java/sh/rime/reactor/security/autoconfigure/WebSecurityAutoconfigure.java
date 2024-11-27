@@ -2,15 +2,6 @@ package sh.rime.reactor.security.autoconfigure;
 
 import cn.hutool.extra.spring.SpringUtil;
 import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
-import sh.rime.reactor.commons.annotation.Anonymous;
-import sh.rime.reactor.commons.annotation.RequestMethodEnum;
-import sh.rime.reactor.core.properties.AuthProperties;
-import sh.rime.reactor.security.authentication.AuthenticationManager;
-import sh.rime.reactor.security.authentication.CustomAuthorizationManager;
-import sh.rime.reactor.security.authentication.PostLoginAuthConverter;
-import sh.rime.reactor.security.authentication.TokenServerSecurityContextRepository;
-import sh.rime.reactor.security.domain.CurrentUser;
-import sh.rime.reactor.security.handler.*;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -30,6 +21,15 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.reactive.result.method.RequestMappingInfo;
 import org.springframework.web.reactive.result.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.util.pattern.PathPattern;
+import sh.rime.reactor.commons.annotation.Anonymous;
+import sh.rime.reactor.commons.annotation.RequestMethodEnum;
+import sh.rime.reactor.core.properties.AuthProperties;
+import sh.rime.reactor.security.authentication.AuthenticationManager;
+import sh.rime.reactor.security.authentication.CustomAuthorizationManager;
+import sh.rime.reactor.security.authentication.ReactiveServerAuthenticationConverter;
+import sh.rime.reactor.security.authentication.TokenServerSecurityContextRepository;
+import sh.rime.reactor.security.domain.CurrentUser;
+import sh.rime.reactor.security.handler.*;
 
 import java.lang.annotation.Annotation;
 import java.util.LinkedList;
@@ -49,10 +49,10 @@ import java.util.stream.Collectors;
 @Configuration
 @EnableConfigurationProperties(AuthProperties.class)
 @RegisterReflectionForBinding(CurrentUser.class)
-@ComponentScan(basePackages = {"sh.rime.reactor.security.authentication",
-        "sh.rime.reactor.security.grant",
+@ComponentScan(basePackages = {
+        "sh.rime.reactor.security.authentication",
         "sh.rime.reactor.security.handler",
-        "sh.rime.reactor.security.repository"
+        "sh.rime.reactor.security.grant"
 })
 @SuppressWarnings("all")
 public class WebSecurityAutoconfigure {
@@ -62,10 +62,10 @@ public class WebSecurityAutoconfigure {
     private final TokenServerAuthenticationSuccessHandler tokenServerAuthenticationSuccessHandler;
     private final TokenServerAuthenticationFailureHandler tokenServerAuthenticationFailureHandler;
     private final TokenServerLogoutSuccessHandler tokenServerLogoutSuccessHandler;
-    private final AuthEntryPoint authEntryPoint;
+    private final ReactiveAuthEntryPoint reactiveAuthEntryPoint;
     private final AuthAccessDeniedHandler authAccessDeniedHandler;
     private final CustomAuthorizationManager customAuthorizationManager;
-    private final PostLoginAuthConverter postLoginAuthConverter;
+    private final ReactiveServerAuthenticationConverter reactiveServerAuthenticationConverter;
     private final AuthProperties authProperties;
 
     /**
@@ -82,10 +82,10 @@ public class WebSecurityAutoconfigure {
      * @param tokenServerAuthenticationSuccessHandler the token server authentication success handler
      * @param tokenServerAuthenticationFailureHandler the token server authentication failure handler
      * @param tokenServerLogoutSuccessHandler         the token server logout success handler
-     * @param authEntryPoint                          the auth entry point
+     * @param reactiveAuthEntryPoint                          the auth entry point
      * @param authAccessDeniedHandler                 the auth access denied handler
      * @param customAuthorizationManager              the custom authorization manager
-     * @param postLoginAuthConverter                  the post login auth converter
+     * @param reactiveServerAuthenticationConverter   the post login auth converter
      * @param authProperties                          the auth properties
      * @param requestMappingHandlerMapping            the request mapping handler mapping
      */
@@ -94,19 +94,19 @@ public class WebSecurityAutoconfigure {
                                     TokenServerAuthenticationSuccessHandler tokenServerAuthenticationSuccessHandler,
                                     TokenServerAuthenticationFailureHandler tokenServerAuthenticationFailureHandler,
                                     TokenServerLogoutSuccessHandler tokenServerLogoutSuccessHandler,
-                                    AuthEntryPoint authEntryPoint, AuthAccessDeniedHandler authAccessDeniedHandler,
+                                    ReactiveAuthEntryPoint reactiveAuthEntryPoint, AuthAccessDeniedHandler authAccessDeniedHandler,
                                     CustomAuthorizationManager customAuthorizationManager,
-                                    PostLoginAuthConverter postLoginAuthConverter, AuthProperties authProperties,
+                                    ReactiveServerAuthenticationConverter reactiveServerAuthenticationConverter, AuthProperties authProperties,
                                     RequestMappingHandlerMapping requestMappingHandlerMapping) {
         this.authenticationManager = authenticationManager;
         this.tokenServerSecurityContextRepository = tokenServerSecurityContextRepository;
         this.tokenServerAuthenticationSuccessHandler = tokenServerAuthenticationSuccessHandler;
         this.tokenServerAuthenticationFailureHandler = tokenServerAuthenticationFailureHandler;
         this.tokenServerLogoutSuccessHandler = tokenServerLogoutSuccessHandler;
-        this.authEntryPoint = authEntryPoint;
+        this.reactiveAuthEntryPoint = reactiveAuthEntryPoint;
         this.authAccessDeniedHandler = authAccessDeniedHandler;
         this.customAuthorizationManager = customAuthorizationManager;
-        this.postLoginAuthConverter = postLoginAuthConverter;
+        this.reactiveServerAuthenticationConverter = reactiveServerAuthenticationConverter;
         this.authProperties = authProperties;
         this.requestMappingHandlerMapping = requestMappingHandlerMapping;
     }
@@ -118,7 +118,7 @@ public class WebSecurityAutoconfigure {
      * @return 认证管理器
      */
     @Bean
-    SecurityWebFilterChain defaultSecurityFilterChain(ServerHttpSecurity http) {
+    public SecurityWebFilterChain defaultSecurityFilterChain(ServerHttpSecurity http) {
         loadAnonymousUrls();
         http.authorizeExchange(authorizeRequests -> {
                             if (!authProperties.getEnable()) {
@@ -134,10 +134,11 @@ public class WebSecurityAutoconfigure {
                 )
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
-                .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
+                .formLogin(formLoginSpec -> formLoginSpec.disable())
+                .securityContextRepository(tokenServerSecurityContextRepository)
                 .exceptionHandling(exceptionHandlingSpec -> exceptionHandlingSpec
                         .accessDeniedHandler(authAccessDeniedHandler)
-                        .authenticationEntryPoint(authEntryPoint)
+                        .authenticationEntryPoint(reactiveAuthEntryPoint)
                 )
                 .addFilterAt(authenticationWebFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
                 .logout(logoutSpec -> logoutSpec.logoutUrl(authProperties.getLogoutPattern())
@@ -237,7 +238,7 @@ public class WebSecurityAutoconfigure {
     private AuthenticationWebFilter authenticationWebFilter() {
         AuthenticationWebFilter filter = new AuthenticationWebFilter(reactiveAuthenticationManager());
         filter.setSecurityContextRepository(tokenServerSecurityContextRepository);
-        filter.setServerAuthenticationConverter(postLoginAuthConverter);
+        filter.setServerAuthenticationConverter(reactiveServerAuthenticationConverter);
         filter.setAuthenticationSuccessHandler(tokenServerAuthenticationSuccessHandler);
         filter.setAuthenticationFailureHandler(tokenServerAuthenticationFailureHandler);
         filter.setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers(HttpMethod.POST, authProperties.getLoginPattern()));
@@ -247,9 +248,11 @@ public class WebSecurityAutoconfigure {
 
     /**
      * 用户信息验证管理器，可按需求添加多个按顺序执行
+     *
+     * @return 用户信息验证管理器
      */
     @Bean("customReactiveAuthenticationManager")
-    ReactiveAuthenticationManager reactiveAuthenticationManager() {
+    public ReactiveAuthenticationManager reactiveAuthenticationManager() {
         LinkedList<ReactiveAuthenticationManager> managers = new LinkedList<>();
         managers.add(authenticationManager);
         return new DelegatingReactiveAuthenticationManager(managers);

@@ -26,7 +26,7 @@ import static sh.rime.reactor.commons.enums.CommonExceptionEnum.LOGIN_BODY_PARSE
  **/
 @Slf4j
 @Component
-public class PostLoginAuthConverter implements ServerAuthenticationConverter {
+public class ReactiveServerAuthenticationConverter implements ServerAuthenticationConverter {
 
     private final ObjectMapper objectMapper;
     private final AuthenticationGrantManager authenticationGrantManager;
@@ -38,7 +38,7 @@ public class PostLoginAuthConverter implements ServerAuthenticationConverter {
      * @param objectMapper               the object mapper
      * @param authenticationGrantManager the authentication grant manager
      */
-    public PostLoginAuthConverter(ObjectMapper objectMapper, AuthenticationGrantManager authenticationGrantManager) {
+    public ReactiveServerAuthenticationConverter(ObjectMapper objectMapper, AuthenticationGrantManager authenticationGrantManager) {
         this.objectMapper = objectMapper;
         this.authenticationGrantManager = authenticationGrantManager;
     }

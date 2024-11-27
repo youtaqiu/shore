@@ -3,7 +3,7 @@ package sh.rime.reactor.test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import sh.rime.reactor.security.repository.AuthenticationRepository;
+import sh.rime.reactor.security.cache.AuthenticationCache;
 
 /**
  * ShoreSecurityTestAutoconfigure is a class that config.
@@ -26,7 +26,7 @@ public class ShoreSecurityTestAutoconfigure {
      * @return AuthenticationRepository
      */
     @Bean
-    public AuthenticationRepository authenticationRepository() {
-        return Mockito.mock(AuthenticationRepository.class);
+    public AuthenticationCache<?> authenticationRepository() {
+        return Mockito.mock(AuthenticationCache.class);
     }
 }

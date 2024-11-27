@@ -1,5 +1,6 @@
 package sh.rime.reactor.core.util;
 
+import org.springframework.util.StringUtils;
 import sh.rime.reactor.commons.constants.Constants;
 import sh.rime.reactor.commons.exception.TokenException;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +33,7 @@ public final class TokenUtil {
      * @return String
      */
     public static String getToken(String auth) {
-        if (!auth.startsWith(Constants.TOKEN_TYPE)) {
+        if (!StringUtils.hasLength(auth) || !auth.startsWith(Constants.TOKEN_TYPE)) {
             throw new TokenException("Invalid token type");
         }
         if ((auth.length() > AUTH_LENGTH)) {

@@ -1,6 +1,7 @@
 description "shore redis starter"
 
 dependencies {
+    optional project(":shore-core")
     optional "org.springframework.boot:spring-boot-autoconfigure"
     api "org.springframework.boot:spring-boot-starter-data-redis-reactive"
     optional "com.fasterxml.jackson.core:jackson-databind"

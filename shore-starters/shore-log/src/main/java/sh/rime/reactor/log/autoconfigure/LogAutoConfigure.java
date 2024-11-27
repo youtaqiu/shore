@@ -1,12 +1,13 @@
 package sh.rime.reactor.log.autoconfigure;
 
-import sh.rime.reactor.log.aspect.ApiLogAspect;
-import sh.rime.reactor.log.handler.LogHandler;
-import sh.rime.reactor.log.service.ApiLogService;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.context.MessageSource;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import sh.rime.reactor.log.aspect.ApiLogAspect;
+import sh.rime.reactor.log.aspect.JoinPointSerialise;
+import sh.rime.reactor.log.handler.LogHandler;
+import sh.rime.reactor.log.service.ApiLogService;
 
 /**
  * 日志自动配置
@@ -26,15 +27,25 @@ public class LogAutoConfigure {
     }
 
     /**
+     * joinPointSerialise
+     *
+     * @return joinPointSerialise
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public JoinPointSerialise joinPointSerialise() {
+        return new JoinPointSerialise();
+    }
+
+    /**
      * 日志切面
      *
-     * @param apiLogService 日志处理器
-     * @param messageSource 国际化
+     * @param joinPointSerialise 切点序列化
      * @return 日志切面
      */
     @Bean
-    public ApiLogAspect logAspect(MessageSource messageSource, ApiLogService apiLogService) {
-        return new ApiLogAspect(messageSource, apiLogService);
+    public ApiLogAspect logAspect(JoinPointSerialise joinPointSerialise) {
+        return new ApiLogAspect(joinPointSerialise);
     }
 
     /**

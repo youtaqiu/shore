@@ -37,6 +37,12 @@ public class AuthProperties {
      */
     @Setter
     private Boolean enable = true;
+
+    /**
+     * 缓存类型(caffeine, redis).
+     */
+    @Setter
+    private String cache = "caffeine";
     private static final AntPathMatcher MATCHER = new AntPathMatcher();
 
 
@@ -165,6 +171,8 @@ public class AuthProperties {
      */
     @PostConstruct
     public void initIgnoreUrl() {
+        excludePatterns.add(loginPattern);
+        excludePatterns.add(logoutPattern);
         Collections.addAll(excludePatterns, ENDPOINTS);
     }
 
