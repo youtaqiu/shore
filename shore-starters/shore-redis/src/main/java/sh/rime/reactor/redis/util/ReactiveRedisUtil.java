@@ -15,7 +15,7 @@ import java.util.Map;
  *
  * @author youta
  **/
-@SuppressWarnings(value = {"unchecked","unused"})
+@SuppressWarnings(value = {"unchecked", "unused"})
 @Slf4j
 public class ReactiveRedisUtil {
 
