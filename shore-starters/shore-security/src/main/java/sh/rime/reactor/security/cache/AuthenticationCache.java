@@ -111,7 +111,7 @@ public interface AuthenticationCache<T> {
      * @param tokenKey  The token key
      * @param renewTime The renew time
      */
-    default void renew(long expire, String tokenKey, long renewTime) {
+    default void renew(String tokenKey, long expire, long renewTime) {
         var renewExpire = expire - renewTime > 0 ? renewTime : expire;
         Schedulers.boundedElastic().schedule(() -> this.renew(tokenKey, renewExpire).subscribe());
     }

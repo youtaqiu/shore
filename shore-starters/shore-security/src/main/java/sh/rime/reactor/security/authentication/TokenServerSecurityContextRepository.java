@@ -4,35 +4,35 @@ import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.IdUtil;
 import io.vavr.Tuple;
 import io.vavr.Tuple3;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import sh.rime.reactor.commons.bean.R;
-import sh.rime.reactor.commons.bean.Result;
-import sh.rime.reactor.commons.constants.Constants;
-import sh.rime.reactor.commons.enums.CommonExceptionEnum;
-import sh.rime.reactor.commons.exception.ServerException;
-import sh.rime.reactor.core.properties.AuthProperties;
-import sh.rime.reactor.security.cache.AuthenticationCache;
-import sh.rime.reactor.core.util.BeanUtil;
-import sh.rime.reactor.security.constants.TokenConstants;
-import sh.rime.reactor.security.domain.ClientInfo;
-import sh.rime.reactor.security.domain.CurrentUser;
-import sh.rime.reactor.security.domain.TokenAuthentication;
-import sh.rime.reactor.security.domain.TokenInfo;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.web.server.context.ServerSecurityContextRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+import sh.rime.reactor.commons.bean.R;
+import sh.rime.reactor.commons.bean.Result;
+import sh.rime.reactor.commons.constants.Constants;
+import sh.rime.reactor.commons.enums.CommonExceptionEnum;
+import sh.rime.reactor.commons.exception.ServerException;
+import sh.rime.reactor.core.properties.AuthProperties;
+import sh.rime.reactor.core.util.BeanUtil;
+import sh.rime.reactor.security.cache.AuthenticationCache;
+import sh.rime.reactor.security.constants.TokenConstants;
+import sh.rime.reactor.security.domain.ClientInfo;
+import sh.rime.reactor.security.domain.CurrentUser;
+import sh.rime.reactor.security.domain.TokenAuthentication;
+import sh.rime.reactor.security.domain.TokenInfo;
 import sh.rime.reactor.security.service.ClientInfoService;
 import sh.rime.reactor.security.util.ResponseUtils;
 
 import java.time.Duration;
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import static sh.rime.reactor.commons.enums.CommonExceptionEnum.LOGIN_TOKEN_CACHE_ERROR;
 
@@ -55,10 +55,10 @@ public class TokenServerSecurityContextRepository implements ServerSecurityConte
      * Default constructor.
      * This constructor is used for serialization and other reflective operations.
      *
-     * @param authenticationCache the authentication cache
-     * @param authenticationManager    the authentication manager
-     * @param properties               the properties
-     * @param clientProvider           the client provider
+     * @param authenticationCache   the authentication cache
+     * @param authenticationManager the authentication manager
+     * @param properties            the properties
+     * @param clientProvider        the client provider
      */
     public TokenServerSecurityContextRepository(AuthenticationCache<CurrentUser> authenticationCache,
                                                 AuthenticationManager authenticationManager,
@@ -99,7 +99,7 @@ public class TokenServerSecurityContextRepository implements ServerSecurityConte
                                     .map(Duration::getSeconds)
                                     .filter(expire -> expire >= 0)
                                     .switchIfEmpty(Mono.error(new ServerException(CommonExceptionEnum.UNAUTHORIZED)))
-                                    .doOnNext(expire -> this.authenticationCache.renew(expire, tokenKey, properties.getRenewTimeSeconds()))
+                                    .doOnNext(expire -> this.authenticationCache.renew(tokenKey, expire, properties.getRenewTimeSeconds()))
                                     .flatMap(expire -> this.authenticationCache.user(TokenConstants.session(token))
                                             .doOnNext(u -> log.trace("Found user: {}", user))
                                             .switchIfEmpty(Mono.error(new ServerException(CommonExceptionEnum.UNAUTHORIZED)))
@@ -119,6 +119,9 @@ public class TokenServerSecurityContextRepository implements ServerSecurityConte
      */
     private Mono<TokenInfo> getToken(Authentication authentication, Tuple3<String, String, ClientInfo> tokens) {
         CurrentUser userDetails = (CurrentUser) authentication.getPrincipal();
+        if (userDetails == null) {
+            return Mono.error(new ServerException(CommonExceptionEnum.UNAUTHORIZED));
+        }
         if (CharSequenceUtil.isEmpty(userDetails.getUserId())) {
             userDetails.setUserId(userDetails.getId());
         }
@@ -137,7 +140,7 @@ public class TokenServerSecurityContextRepository implements ServerSecurityConte
             tokenInfo.setRoles(userDetails.getRoleInfos());
         }
         return this.authenticationCache.getTokenList(TokenConstants.tokenList(tokenInfo.getUsername()))
-                .defaultIfEmpty(new ArrayList<>())
+                .defaultIfEmpty(new LinkedList<>())
                 .flatMap(tokensList -> {
                     if (tokensList.size() >= clientInfo.getConcurrentLoginCount()) {
                         String firstToken = tokensList.getFirst();
