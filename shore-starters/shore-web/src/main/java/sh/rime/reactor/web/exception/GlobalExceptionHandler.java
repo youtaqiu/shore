@@ -118,17 +118,7 @@ public class GlobalExceptionHandler {
                 }
             }
             fail = serverException(e, fail);
-            if (fail != null) {
-                return fail;
-            }
-            Throwable cause = e.getCause();
-
-            fail = serverException(cause, null);
-            if (fail != null) {
-                return fail;
-            }
             log.error("Request failed", e);
-            fail = Result.failed(500, defaultMsg);
             fail.setException(e.getLocalizedMessage());
         }
         if (!globalExceptionProperties.getEnable()) {
