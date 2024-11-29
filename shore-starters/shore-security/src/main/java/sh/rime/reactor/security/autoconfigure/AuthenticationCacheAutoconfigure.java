@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import sh.rime.reactor.core.properties.AuthProperties;
 import sh.rime.reactor.redis.util.ReactiveRedisUtil;
@@ -38,6 +39,7 @@ public class AuthenticationCacheAutoconfigure {
     @Configuration
     @ConditionalOnProperty(name = "shore.security.cache", havingValue = "redis")
     @ConditionalOnClass(ReactiveRedisUtil.class)
+    @Profile("!test")
     static class RedisCacheConfig {
 
         /**

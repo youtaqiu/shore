@@ -1,7 +1,5 @@
 package sh.rime.reactor.security.autoconfigure;
 
-import cn.hutool.extra.spring.SpringUtil;
-import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -16,27 +14,14 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.reactive.result.method.RequestMappingInfo;
-import org.springframework.web.reactive.result.method.annotation.RequestMappingHandlerMapping;
-import org.springframework.web.util.pattern.PathPattern;
-import sh.rime.reactor.commons.annotation.Anonymous;
-import sh.rime.reactor.commons.annotation.RequestMethodEnum;
 import sh.rime.reactor.core.properties.AuthProperties;
-import sh.rime.reactor.security.authentication.AuthenticationManager;
-import sh.rime.reactor.security.authentication.CustomAuthorizationManager;
-import sh.rime.reactor.security.authentication.ReactiveServerAuthenticationConverter;
-import sh.rime.reactor.security.authentication.TokenServerSecurityContextRepository;
-import sh.rime.reactor.security.domain.CurrentUser;
+import sh.rime.reactor.security.anonymous.AnonymousUrlLoader;
+import sh.rime.reactor.security.authentication.*;
 import sh.rime.reactor.security.handler.*;
 
 import java.lang.annotation.Annotation;
 import java.util.LinkedList;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 
 /**
@@ -48,7 +33,6 @@ import java.util.stream.Collectors;
 @EnableReactiveMethodSecurity
 @Configuration
 @EnableConfigurationProperties(AuthProperties.class)
-@RegisterReflectionForBinding(CurrentUser.class)
 @ComponentScan(basePackages = {
         "sh.rime.reactor.security.authentication",
         "sh.rime.reactor.security.handler",
@@ -69,11 +53,6 @@ public class WebSecurityAutoconfigure {
     private final AuthProperties authProperties;
 
     /**
-     * requestMappingHandlerMapping
-     */
-    protected final RequestMappingHandlerMapping requestMappingHandlerMapping;
-
-    /**
      * Default constructor.
      * This constructor is used for serialization and other reflective operations.
      *
@@ -87,7 +66,6 @@ public class WebSecurityAutoconfigure {
      * @param customAuthorizationManager              the custom authorization manager
      * @param reactiveServerAuthenticationConverter   the post login auth converter
      * @param authProperties                          the auth properties
-     * @param requestMappingHandlerMapping            the request mapping handler mapping
      */
     public WebSecurityAutoconfigure(AuthenticationManager authenticationManager,
                                     TokenServerSecurityContextRepository tokenServerSecurityContextRepository, TokenServerAuthenticationSuccessHandler tokenServerAuthenticationSuccessHandler,
@@ -95,8 +73,7 @@ public class WebSecurityAutoconfigure {
                                     TokenServerLogoutSuccessHandler tokenServerLogoutSuccessHandler,
                                     ReactiveAuthEntryPoint reactiveAuthEntryPoint, AuthAccessDeniedHandler authAccessDeniedHandler,
                                     CustomAuthorizationManager customAuthorizationManager,
-                                    ReactiveServerAuthenticationConverter reactiveServerAuthenticationConverter, AuthProperties authProperties,
-                                    RequestMappingHandlerMapping requestMappingHandlerMapping) {
+                                    ReactiveServerAuthenticationConverter reactiveServerAuthenticationConverter, AuthProperties authProperties) {
         this.authenticationManager = authenticationManager;
         this.tokenServerSecurityContextRepository = tokenServerSecurityContextRepository;
         this.tokenServerAuthenticationSuccessHandler = tokenServerAuthenticationSuccessHandler;
@@ -107,7 +84,6 @@ public class WebSecurityAutoconfigure {
         this.customAuthorizationManager = customAuthorizationManager;
         this.reactiveServerAuthenticationConverter = reactiveServerAuthenticationConverter;
         this.authProperties = authProperties;
-        this.requestMappingHandlerMapping = requestMappingHandlerMapping;
     }
 
     /**
@@ -118,7 +94,8 @@ public class WebSecurityAutoconfigure {
      */
     @Bean
     public SecurityWebFilterChain defaultSecurityFilterChain(ServerHttpSecurity http) {
-        loadAnonymousUrls();
+        AnonymousUrlLoader urlLoader = new AnonymousUrlLoader(authProperties);
+        urlLoader.loadAnonymousUrls();
         http.authorizeExchange(authorizeRequests -> {
                             if (!authProperties.getEnable()) {
                                 authorizeRequests.anyExchange().permitAll();
@@ -145,89 +122,7 @@ public class WebSecurityAutoconfigure {
         return http.build();
     }
 
-    /**
-     * 加载匿名访问的url
-     */
-    private void loadAnonymousUrls() {
-        if (SpringUtil.getApplicationContext() == null) {
-            return;
-        }
-        RequestMappingHandlerMapping handlerMapping = SpringUtil.getBean("requestMappingHandlerMapping");
-        Map<RequestMappingInfo, HandlerMethod> handlerMethods = handlerMapping.getHandlerMethods();
-        for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethods.entrySet()) {
-            RequestMappingInfo requestMappingInfo = entry.getKey();
-            HandlerMethod handlerMethod = entry.getValue();
-            // 处理注解信息
-            boolean needLogin = getAnnotation(handlerMethod, Anonymous.class) == null;
-            if (!needLogin) {
-                Set<RequestMethod> methods = requestMappingInfo.getMethodsCondition().getMethods();
-                RequestMethodEnum request = RequestMethodEnum.find(methods.isEmpty()
-                        ? RequestMethodEnum.ALL.getType()
-                        : methods.stream().findFirst()
-                        .orElseThrow(() -> new RuntimeException("Method not found"))
-                        .name());
-                setPath(request, requestMappingInfo);
-            }
-        }
-    }
 
-    /**
-     * 设置路径
-     *
-     * @param method             请求方法
-     * @param requestMappingInfo 请求映射信息
-     */
-    private void setPath(RequestMethodEnum method, RequestMappingInfo requestMappingInfo) {
-        Set<PathPattern> patterns = requestMappingInfo.getPatternsCondition().getPatterns();
-        if (patterns.isEmpty()) {
-            return;
-        }
-        switch (Objects.requireNonNull(method)) {
-            case GET -> {
-                Set<String> collect = patterns
-                        .stream()
-                        .map(PathPattern::getPatternString)
-                        .collect(Collectors.toSet());
-                authProperties.getGetExcludePatterns().addAll(collect);
-            }
-            case POST -> {
-                Set<String> collect = patterns
-                        .stream()
-                        .map(PathPattern::getPatternString)
-                        .collect(Collectors.toSet());
-                authProperties.getPostExcludePatterns().addAll(collect);
-            }
-            case PUT -> {
-                Set<String> collect = patterns
-                        .stream()
-                        .map(PathPattern::getPatternString)
-                        .collect(Collectors.toSet());
-                authProperties.getPutExcludePatterns().addAll(collect);
-            }
-            case PATCH -> {
-                Set<String> collect = patterns
-                        .stream()
-                        .map(PathPattern::getPatternString)
-                        .collect(Collectors.toSet());
-                authProperties.getPatchExcludePatterns().addAll(collect);
-            }
-            case DELETE -> {
-                Set<String> collect = patterns
-                        .stream()
-                        .map(PathPattern::getPatternString)
-                        .collect(Collectors.toSet());
-                authProperties.getDeleteExcludePatterns().addAll(collect);
-            }
-            default -> {
-                Set<String> collect = patterns
-                        .stream()
-                        .map(PathPattern::getPatternString)
-                        .collect(Collectors.toSet());
-                authProperties.getExcludePatterns().addAll(collect);
-            }
-        }
-
-    }
 
     /**
      * 配置认证过滤器

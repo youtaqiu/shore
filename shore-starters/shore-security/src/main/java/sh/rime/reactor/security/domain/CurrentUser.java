@@ -44,6 +44,7 @@ public class CurrentUser extends Token implements UserDetails {
     /**
      * 角色
      */
+    @JsonIgnore
     private List<RoleInfo> roleInfos;
 
     /**
@@ -72,30 +73,50 @@ public class CurrentUser extends Token implements UserDetails {
 
     /**
      * 是否启用
+     * -- SETTER --
+     *  是否启用
+     *
      */
+    @Setter
     private boolean enabled;
 
     /**
      * 是否过期
+     * -- SETTER --
+     *  设置是否过期
+     *
      */
+    @Setter
     @Builder.Default
     private boolean accountNonExpired = true;
 
     /**
      * 是否锁定
+     * -- SETTER --
+     *  设置是否锁定
+     *
      */
+    @Setter
     @Builder.Default
     private boolean accountNonLocked = true;
 
     /**
      * 是否过期
+     * -- SETTER --
+     *  设置是否过期
+     *
      */
+    @Setter
     @Builder.Default
     private boolean credentialsNonExpired = true;
 
     /**
      * 权限
+     * -- SETTER --
+     *  设置权限
+     *
      */
+    @Setter
     private Collection<? extends GrantedAuthority> authorities;
 
     /**
@@ -135,29 +156,6 @@ public class CurrentUser extends Token implements UserDetails {
                 .build());
     }
 
-    /**
-     * 设置权限
-     *
-     * @param authorities 权限
-     */
-    public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
-        this.authorities = authorities;
-    }
-
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    /**
-     * 设置是否过期
-     *
-     * @param accountNonExpired 是否过期
-     */
-    public void setAccountNonExpired(boolean accountNonExpired) {
-        this.accountNonExpired = accountNonExpired;
-    }
 
     /**
      * 是否锁定
@@ -170,15 +168,6 @@ public class CurrentUser extends Token implements UserDetails {
     }
 
     /**
-     * 设置是否锁定
-     *
-     * @param accountNonLocked 是否锁定
-     */
-    public void setAccountNonLocked(boolean accountNonLocked) {
-        this.accountNonLocked = accountNonLocked;
-    }
-
-    /**
      * 是否过期
      *
      * @return 是否过期
@@ -186,24 +175,6 @@ public class CurrentUser extends Token implements UserDetails {
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
-    }
-
-    /**
-     * 设置是否过期
-     *
-     * @param credentialsNonExpired 是否过期
-     */
-    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
-        this.credentialsNonExpired = credentialsNonExpired;
-    }
-
-    /**
-     * 是否启用
-     *
-     * @param enabled 是否启用
-     */
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 
 }

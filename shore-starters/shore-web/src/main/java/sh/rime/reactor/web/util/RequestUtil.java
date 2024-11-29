@@ -1,7 +1,7 @@
 package sh.rime.reactor.web.util;
 
+import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.server.RequestPath;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -50,7 +50,7 @@ public class RequestUtil {
      * @return 请求路径
      */
     private static String parseRequestUri0(RequestPath requestPath) {
-        String contextPath = StringUtils.trimToNull(requestPath.contextPath().value());
+        String contextPath = StrUtil.trimToNull(requestPath.contextPath().value());
         String requestUri = requestPath.value();
 
         if (contextPath != null) {
