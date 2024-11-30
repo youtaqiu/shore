@@ -125,6 +125,8 @@ subprojects {
 
 configure(allprojects) {
     repositories {
+        mavenLocal()
+        mavenCentral()
         maven { url "https://repo.spring.io/release" }
         maven { url "https://plugins.gradle.org/m2/" }
     }
