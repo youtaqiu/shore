@@ -91,9 +91,6 @@ public class TokenServerAuthenticationSuccessHandler implements ServerAuthentica
                         .stream()
                         .map(SimpleGrantedAuthority::getAuthority)
                         .toList());
-        if (!userDetails.getRoleInfos().isEmpty()) {
-            tokenInfo.setRoles(userDetails.getRoleInfos());
-        }
         return this.authenticationCache.getTokenList(TokenConstants.tokenList(tokenInfo.getUsername()))
                 .defaultIfEmpty(new ArrayList<>())
                 .flatMap(tokensList -> {

@@ -32,6 +32,7 @@
     <logger name="io.netty.resolver.dns.DnsServerAddressStreamProviders" level="OFF"/>
     <logger name="org.springframework.context.support.ResourceBundleMessageSource" level="OFF"/>
     <logger name="org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport" level="OFF"/>
+    <logger name="org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration" level="OFF"/>
 
     <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
         <resetJUL>true</resetJUL>

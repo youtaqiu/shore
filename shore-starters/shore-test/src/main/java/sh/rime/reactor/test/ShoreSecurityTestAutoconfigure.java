@@ -1,9 +1,10 @@
 package sh.rime.reactor.test;
 
-import org.mockito.Mockito;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import sh.rime.reactor.security.cache.AuthenticationCache;
+import sh.rime.reactor.security.cache.CaffeineAuthenticationCache;
 
 /**
  * ShoreSecurityTestAutoconfigure is a class that config.
@@ -21,12 +22,13 @@ public class ShoreSecurityTestAutoconfigure {
     }
 
     /**
-     * Mock AuthenticationRepository
+     * Mock CaffeineAuthenticationCache
      *
-     * @return AuthenticationRepository
+     * @return CaffeineAuthenticationCache
      */
     @Bean
-    public AuthenticationCache<?> authenticationRepository() {
-        return Mockito.mock(AuthenticationCache.class);
+    @Profile("test")
+    public AuthenticationCache<?> caffeineAuthenticationCache() {
+        return new CaffeineAuthenticationCache();
     }
 }
