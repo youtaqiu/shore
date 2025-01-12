@@ -3,6 +3,7 @@ package sh.rime.reactor.r2dbc.query;
 import cn.hutool.core.lang.Pair;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.RowMetadata;
+import io.vavr.control.Option;
 import lombok.AllArgsConstructor;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.lang.NonNull;
@@ -152,10 +153,20 @@ public class QueryWrap<T> {
      * @return T
      */
     public Mono<T> one() {
-        this.one = this.spec(sql, pairs)
+        this.one = this.spec(sql, getPairs())
                 .map(rowFunction)
                 .one();
         return this.one;
+    }
+
+    /**
+     * get pairs
+     * @return pairs
+     */
+    private List<Pair<String, ?>> getPairs() {
+        return Option.of(pairs)
+                .map(List::of)
+                .getOrElse(List.of());
     }
 
     /**
@@ -164,7 +175,8 @@ public class QueryWrap<T> {
      * @return T
      */
     public Mono<T> first() {
-        this.first = this.spec(sql, pairs)
+
+        this.first = this.spec(sql, getPairs())
                 .map(rowFunction)
                 .first();
         return this.first;
@@ -176,7 +188,7 @@ public class QueryWrap<T> {
      * @return T list
      */
     public Flux<T> list() {
-        this.list = this.spec(sql, pairs)
+        this.list = this.spec(sql, getPairs())
                 .map(rowFunction)
                 .all();
         return this.list;
@@ -234,7 +246,7 @@ public class QueryWrap<T> {
      * @return spec
      */
     private DatabaseClient.GenericExecuteSpec pageSpec(@NonNull Search search, @NonNull String sql, Pair<String, ?>[] pairs) {
-        return this.spec(sql, pairs)
+        return this.spec(sql, getPairs())
                 .bind("limit", search.getSize())
                 .bind("offset", (search.getCurrent() - 1) * search.getSize());
     }
@@ -249,7 +261,7 @@ public class QueryWrap<T> {
     @SafeVarargs
     @NonNull
     public final Mono<Long> count(@NonNull String sql, Pair<String, ?>... pairs) {
-        return this.spec(this.countSql(sql), pairs)
+        return this.spec(this.countSql(sql), getPairs())
                 .map((row, rowMetadata) -> row.get(0, Long.class))
                 .one();
     }
@@ -261,7 +273,7 @@ public class QueryWrap<T> {
      * @param pairs    pairs
      * @return spec
      */
-    private DatabaseClient.GenericExecuteSpec spec(String countSql, Pair<String, ?>[] pairs) {
+    private DatabaseClient.GenericExecuteSpec spec(String countSql, List<Pair<String, ?>> pairs) {
         var client = this.template.getDatabaseClient();
         var spec = client.sql(countSql);
         if (pairs != null) {
