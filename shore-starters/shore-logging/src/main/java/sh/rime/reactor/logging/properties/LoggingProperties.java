@@ -184,13 +184,11 @@ public class LoggingProperties {
          * format 标签 key、value 分隔符，默认: =
          */
         private String formatLabelKeyValueSeparator = "=";
-        private boolean formatLabelNoPex = true;
         /**
          * 消息体格式，默认为: l=%level c=%logger{20} t=%thread | %msg %ex
          */
         private String formatMessagePattern = "level=%level class=%logger{20} thread=%thread traceID=%X{trace_id} | %msg %ex";
         private boolean formatStaticLabels = false;
-        private boolean formatSortByTime = false;
     }
 
     /**
