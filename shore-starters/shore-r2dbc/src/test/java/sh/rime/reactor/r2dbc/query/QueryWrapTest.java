@@ -19,6 +19,7 @@ import sh.rime.reactor.commons.domain.Search;
 import sh.rime.reactor.commons.exception.ServerException;
 import sh.rime.reactor.core.util.BeanUtil;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.function.BiFunction;
 
@@ -252,7 +253,7 @@ class QueryWrapTest {
 
         // Act
         ReflectionTestUtils.invokeMethod(queryWrap, "spec",
-                "SELECT * FROM table WHERE column1 = :key1 AND column2 = :key2", new Pair[]{pair1, pair2});
+                "SELECT * FROM table WHERE column1 = :key1 AND column2 = :key2", List.of(pair1, pair2));
 
         // Assert
         ArgumentCaptor<String> keyCaptor = ArgumentCaptor.forClass(String.class);
