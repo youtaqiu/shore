@@ -1,5 +1,5 @@
 [versions]
-springBoot = "3.4.1"
+springBoot = "3.4.2"
 springCloud = "2023.0.3"
 hutool = "5.8.35"
 slf4jApi = "2.0.16"
