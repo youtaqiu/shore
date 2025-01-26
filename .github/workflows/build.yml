@@ -139,4 +139,4 @@ jobs:
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
-        run: ./gradlew dist assemble jreleaserFullRelease --no-daemon
+        run: ./gradlew assemble jreleaserFullRelease --no-daemon
