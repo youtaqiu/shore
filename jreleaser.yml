@@ -1,0 +1,43 @@
+project:
+  name: shore
+  description: Shore is uses the Reactor framework, including WebFlux for non-blocking web applications, R2DBC for reactive database connectivity, Reactive Redis for reactive operations on Redis, and Reactor RabbitMQ for reactive messaging with RabbitMQ.
+  version: 1.0.0
+  website: https://github.com/youtaqiu/shore
+  license: Apache-2.0
+  java:
+    groupId: org.codehaus.griffon
+    version: 21
+    multiProject: true
+  extraProperties:
+    inceptionYear: 2024
+
+release:
+  github:
+    enabled: true
+    owner: youtaqiu
+    name: shore
+    branch: main
+    overwrite: true
+    sign: true
+    changelog:
+      formatted: ALWAYS
+      format: '- {{commitShortHash}} {{commitTitle}}'
+      preset: conventional-commits
+      contributors:
+        format: '- {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}'
+      hide:
+        categories:
+          - '🔀 Merge'
+        contributors:
+          - 'GitHub'
+signing:
+  active: always
+  armored: true
+deploy:
+  maven:
+    mavenCentral:
+      sonatype:
+        active: ALWAYS
+        url: https://central.sonatype.com/api/v1/publisher
+        stagingRepositories:
+          - target/staging-deploy
