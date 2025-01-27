@@ -9,5 +9,5 @@ dependencies {
     testCompileOnly "io.r2dbc:r2dbc-h2"
     testRuntimeOnly "io.r2dbc:r2dbc-h2"
     runtimeOnly "com.mysql:mysql-connector-j"
-    api "org.liquibase:liquibase-core"
+    api "org.flywaydb:flyway-mysql"
 }
