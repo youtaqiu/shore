@@ -19,7 +19,7 @@ qualityVersion = "5.0.0"
 opentelemetry = "2.13.1"
 reactorRabbitmq = "1.5.6"
 swaggerV3Annotations = "2.2.28"
-awsSdk = "2.30.21"
+awsSdk = "2.30.23"
 okhttp3 = "5.0.0-alpha.14"
 lombok = "1.18.36"
 
