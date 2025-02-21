@@ -85,14 +85,14 @@ jobs:
       - name: Compute next version for snapshot
         if: inputs.perform_release != true
         run: |
-          VERSION_NEXT=$(svu next)
-          VERSION_NEXT_SUFFIX=$(svu next)-SNAPSHOT
+          VERSION_NEXT=$(svu next --tag.prefix "")
+          VERSION_NEXT_SUFFIX=$(svu next --tag.prefix "")-SNAPSHOT
           echo "VERSION_NEXT=${VERSION_NEXT}" | tee -a $GITHUB_ENV
           echo "VERSION_NEXT_SUFFIX=${VERSION_NEXT_SUFFIX}" | tee -a $GITHUB_ENV
       - name: Set Versions
         id: versions
         run: |
-          VERSION_CURRENT=$(svu current)
+          VERSION_CURRENT=$(svu current --tag.prefix "")
           VERSION_NEXT=${{ env.VERSION_NEXT_SUFFIX }}
           echo "version_current=${VERSION_CURRENT}" >> $GITHUB_OUTPUT
           echo "version_next=${VERSION_NEXT}" >> $GITHUB_OUTPUT
