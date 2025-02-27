@@ -78,8 +78,8 @@ jobs:
       - name: Compute next version for release
         if: inputs.perform_release
         run: |
-          VERSION_NEXT=$(svu ${{ inputs.bump }})
-          VERSION_NEXT_SUFFIX=$(svu ${{ inputs.bump }})
+          VERSION_NEXT=$(svu ${{ inputs.bump }} --tag.prefix "")
+          VERSION_NEXT_SUFFIX=$(svu ${{ inputs.bump }} --tag.prefix "")
           echo "VERSION_NEXT=${VERSION_NEXT}" | tee -a $GITHUB_ENV
           echo "VERSION_NEXT_SUFFIX=${VERSION_NEXT_SUFFIX}" | tee -a $GITHUB_ENV
       - name: Compute next version for snapshot
