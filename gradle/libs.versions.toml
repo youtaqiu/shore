@@ -22,7 +22,7 @@ reactorRabbitmq = "1.5.6"
 swaggerV3Annotations = "2.2.29"
 awsSdk = "2.31.11"
 okhttp3 = "5.0.0-alpha.14"
-lombok = "1.18.36"
+lombok = "1.18.38"
 
 [libraries]
 r2dbc-mysql = { group = "io.asyncer", name = "r2dbc-mysql", version.ref = "r2dbcMysql" }
