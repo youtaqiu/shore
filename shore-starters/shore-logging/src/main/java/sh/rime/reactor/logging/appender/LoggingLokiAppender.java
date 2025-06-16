@@ -6,13 +6,13 @@ import ch.qos.logback.classic.PatternLayout;
 import ch.qos.logback.core.CoreConstants;
 import cn.hutool.core.text.CharPool;
 import cn.hutool.core.util.StrUtil;
-import com.github.loki4j.logback.*;
-import sh.rime.reactor.logging.loki.Loki4jOkHttpSender;
-import sh.rime.reactor.logging.properties.LoggingProperties;
+import com.github.loki4j.logback.Loki4jAppender;
+import com.github.loki4j.logback.PipelineConfigAppenderBase;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
+import sh.rime.reactor.logging.properties.LoggingProperties;
 
 /**
  * loki 日志接收
@@ -67,17 +67,26 @@ public class LoggingLokiAppender implements ILoggingAppender {
         lokiAppender.setName(APPENDER_NAME);
         lokiAppender.setContext(context);
         // 通用配置
-        lokiAppender.setBatchMaxItems(properties.getBatchMaxItems());
-        lokiAppender.setBatchMaxBytes(properties.getBatchMaxBytes());
-        lokiAppender.setBatchTimeoutMs(properties.getBatchTimeoutMs());
-        lokiAppender.setSendQueueMaxBytes(properties.getSendQueueMaxBytes());
-        lokiAppender.setUseDirectBuffers(properties.isUseDirectBuffers());
-        lokiAppender.setDrainOnStop(properties.isDrainOnStop());
+        PipelineConfigAppenderBase.BatchCfg batchCfg = new PipelineConfigAppenderBase.BatchCfg();
+        batchCfg.setMaxItems(properties.getBatchMaxItems());
+        batchCfg.setMaxBytes(properties.getBatchMaxBytes());
+        batchCfg.setTimeoutMs(properties.getBatchTimeoutMs());
+        batchCfg.setSendQueueMaxBytes(properties.getSendQueueMaxBytes());
+        batchCfg.setUseDirectBuffers(properties.isUseDirectBuffers());
+        batchCfg.setDrainOnStop(properties.isDrainOnStop());
+        lokiAppender.setBatch(batchCfg);
         lokiAppender.setMetricsEnabled(properties.isMetricsEnabled());
         lokiAppender.setVerbose(properties.isVerbose());
-        // format
-        Loki4jEncoder loki4jEncoder = getFormat(context, properties);
-        lokiAppender.setFormat(loki4jEncoder);
+        // message config
+        PatternLayout patternLayout = new PatternLayout();
+        String formatMessagePattern = properties.getFormatMessagePattern();
+        if (StrUtil.isNotBlank(formatMessagePattern)) {
+            patternLayout.setPattern(formatMessagePattern);
+        }
+        lokiAppender.setMessage(patternLayout);
+        String labelsPattern = formatLabelPatternHandle(context, properties);
+        lokiAppender.setLabels(labelsPattern);
+        lokiAppender.setContext(context);
         // http
         lokiAppender.setHttp(getSender(properties));
         lokiAppender.start();
@@ -86,38 +95,6 @@ public class LoggingLokiAppender implements ILoggingAppender {
         context.getLogger(Logger.ROOT_LOGGER_NAME).addAppender(lokiAppender);
     }
 
-    /**
-     * 获取格式化
-     *
-     * @param context    context
-     * @param properties properties
-     * @return Loki4jEncoder
-     */
-    private Loki4jEncoder getFormat(LoggerContext context,
-                                    LoggingProperties.Loki properties) {
-        LoggingProperties.LokiEncoder encoder = properties.getEncoder();
-        AbstractLoki4jEncoder loki4jEncoder = LoggingProperties.LokiEncoder.PROTOBUF == encoder
-                ? new ProtobufEncoder() : new JsonEncoder();
-        // label config
-        AbstractLoki4jEncoder.LabelCfg labelCfg = new AbstractLoki4jEncoder.LabelCfg();
-        labelCfg.setPattern(formatLabelPatternHandle(context, properties));
-        labelCfg.setPairSeparator(properties.getFormatLabelPairSeparator());
-        labelCfg.setKeyValueSeparator(properties.getFormatLabelKeyValueSeparator());
-        loki4jEncoder.setLabel(labelCfg);
-        // message config
-        PatternLayout patternLayout = new PatternLayout();
-        String formatMessagePattern = properties.getFormatMessagePattern();
-        if (StrUtil.isNotBlank(formatMessagePattern)) {
-            patternLayout.setPattern(formatMessagePattern);
-        }
-        loki4jEncoder.setMessage(patternLayout);
-
-        // 其他配置
-        loki4jEncoder.setStaticLabels(properties.isFormatStaticLabels());
-        loki4jEncoder.setContext(context);
-        loki4jEncoder.start();
-        return loki4jEncoder;
-    }
 
     /**
      * 获取HttpSender
@@ -125,29 +102,21 @@ public class LoggingLokiAppender implements ILoggingAppender {
      * @param properties properties
      * @return HttpSender
      */
-    private static HttpSender getSender(LoggingProperties.Loki properties) {
-        LoggingProperties.HttpSender httpSenderType = getHttpSender(properties);
-        AbstractHttpSender httpSender;
-        if (LoggingProperties.HttpSender.OK_HTTP == httpSenderType) {
-            httpSender = new Loki4jOkHttpSender();
-        } else if (LoggingProperties.HttpSender.APACHE_HTTP == httpSenderType) {
-            httpSender = new ApacheHttpSender();
-        } else {
-            httpSender = new JavaHttpSender();
-        }
-        httpSender.setUrl(properties.getHttpUrl());
-        httpSender.setConnectionTimeoutMs(properties.getHttpConnectionTimeoutMs());
-        httpSender.setRequestTimeoutMs(properties.getHttpRequestTimeoutMs());
+    private static PipelineConfigAppenderBase.HttpCfg getSender(LoggingProperties.Loki properties) {
+        PipelineConfigAppenderBase.HttpCfg httpCfg = new PipelineConfigAppenderBase.HttpCfg();
+        httpCfg.setUrl(properties.getHttpUrl());
+        httpCfg.setConnectionTimeoutMs(properties.getHttpConnectionTimeoutMs());
+        httpCfg.setRequestTimeoutMs(properties.getHttpRequestTimeoutMs());
         String authUsername = properties.getHttpAuthUsername();
         String authPassword = properties.getHttpAuthPassword();
         if (StrUtil.isNotBlank(authUsername) && StrUtil.isNotBlank(authPassword)) {
-            AbstractHttpSender.BasicAuth basicAuth = new AbstractHttpSender.BasicAuth();
+            PipelineConfigAppenderBase.BasicAuth basicAuth = new PipelineConfigAppenderBase.BasicAuth();
             basicAuth.setUsername(authUsername);
             basicAuth.setPassword(authPassword);
-            httpSender.setAuth(basicAuth);
+            httpCfg.setAuth(basicAuth);
         }
-        httpSender.setTenantId(properties.getHttpTenantId());
-        return httpSender;
+        httpCfg.setTenantId(properties.getHttpTenantId());
+        return httpCfg;
     }
 
     /**
@@ -158,40 +127,16 @@ public class LoggingLokiAppender implements ILoggingAppender {
      * @return 格式化后的标签
      */
     private String formatLabelPatternHandle(LoggerContext context, LoggingProperties.Loki properties) {
-        String labelPattern = properties.getFormatLabelPattern();
-        Assert.hasText(labelPattern, "ShoreLoggingProperties shore.logging.loki.format-label-pattern is blank.");
+        String labelsPattern = properties.getFormatLabelPattern();
+        Assert.hasText(labelsPattern, "ShoreLoggingProperties shore.logging.loki.format-label-pattern is blank.");
         String labelPatternExtend = properties.getFormatLabelPatternExtend();
         if (StrUtil.isNotBlank(labelPatternExtend)) {
-            labelPattern = labelPattern + CharPool.COMMA + labelPatternExtend;
+            labelsPattern = labelsPattern + CharPool.LF + labelPatternExtend;
         }
-        return labelPattern
+        return labelsPattern
                 .replace("${appName}", appName)
                 .replace("${profile}", profile)
                 .replace("${HOSTNAME}", context.getProperty(CoreConstants.HOSTNAME_KEY));
     }
 
-    /**
-     * 获取HttpSender
-     *
-     * @param properties properties
-     * @return HttpSender
-     */
-    private static LoggingProperties.HttpSender getHttpSender(LoggingProperties.Loki properties) {
-        LoggingProperties.HttpSender httpSenderProp = properties.getHttpSender();
-        if (httpSenderProp != null && httpSenderProp.isAvailable()) {
-            log.debug("shore logging use {} HttpSender", httpSenderProp);
-            return httpSenderProp;
-        }
-        if (httpSenderProp == null) {
-            LoggingProperties.HttpSender[] httpSenders = LoggingProperties.HttpSender.values();
-            for (LoggingProperties.HttpSender httpSender : httpSenders) {
-                if (httpSender.isAvailable()) {
-                    log.debug("shore logging use {} HttpSender", httpSender);
-                    return httpSender;
-                }
-            }
-            throw new IllegalArgumentException("Not java11 and no okHttp or apache http dependency.");
-        }
-        throw new NoClassDefFoundError(httpSenderProp.getSenderClass());
-    }
 }

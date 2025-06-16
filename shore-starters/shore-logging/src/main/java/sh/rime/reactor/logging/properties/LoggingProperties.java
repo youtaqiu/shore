@@ -135,14 +135,6 @@ public class LoggingProperties {
          */
         private boolean enabled = false;
         /**
-         * 编码方式，支持 Json、ProtoBuf，默认： Json
-         */
-        private LokiEncoder encoder = LokiEncoder.JSON;
-        /**
-         * http sender，支持 java11、OKHttp、ApacheHttp，默认: 从项目依赖中查找，顺序 java11 -> okHttp -> ApacheHttp
-         */
-        private HttpSender httpSender;
-        /**
          * 通用配置
          */
         private int batchMaxItems = 1000;
@@ -171,7 +163,7 @@ public class LoggingProperties {
         /**
          * format 标签，默认： appName=${appName},profile=${profile},host=${HOSTNAME},level=%level,traceId=%X{traceId:-NAN},requestId=%X{requestId:-}
          */
-        private String formatLabelPattern = "app=${appName},profile=${profile},host=${HOSTNAME},level=%level,thread=%thread,traceID=%X{trace_id:-NONE}";
+        private String formatLabelPattern = "app=${appName}\nprofile=${profile}\nhost=${HOSTNAME}\nlevel=%level\nthread=%thread\ntraceID=%X{trace_id:-NONE}";
         /**
          * format 标签扩展
          */
@@ -188,7 +180,6 @@ public class LoggingProperties {
          * 消息体格式，默认为: l=%level c=%logger{20} t=%thread | %msg %ex
          */
         private String formatMessagePattern = "level=%level class=%logger{20} thread=%thread traceID=%X{trace_id} | %msg %ex";
-        private boolean formatStaticLabels = false;
     }
 
     /**
