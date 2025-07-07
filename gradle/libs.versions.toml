@@ -19,7 +19,7 @@ jreleaserhVersion = "1.19.0"
 qualityVersion = "5.0.0"
 opentelemetry = "2.17.0"
 reactorRabbitmq = "1.5.6"
-okhttp3 = "5.0.0-alpha.16"
+okhttp3 = "5.1.0"
 lombok = "1.18.38"
 
 [libraries]
