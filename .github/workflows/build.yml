@@ -50,7 +50,7 @@ jobs:
         env:
           LD_LIBRARY_PATH: /home/linuxbrew/.linuxbrew/lib
           JAVA_LIBRARY_PATH: /usr/local/lib/
-        run: ./gradlew build
+        run: ./gradlew build --debug
       - name: Upload Unit Test Reports
         if: always()
         uses: actions/upload-artifact@v4
