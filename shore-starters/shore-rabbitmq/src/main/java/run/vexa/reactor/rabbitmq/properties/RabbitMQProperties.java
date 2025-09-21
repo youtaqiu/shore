@@ -50,7 +50,7 @@ public class RabbitMQProperties {
     /**
      * password
      */
-    private String password = "guest";
+    private String password;
 
     /**
      * virtualHost
