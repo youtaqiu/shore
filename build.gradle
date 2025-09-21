@@ -13,7 +13,7 @@ ext {
 }
 
 allprojects {
-    group = 'sh.rime.reactor'
+    group = 'run.vexa.reactor'
 }
 
 configure(modules) {
