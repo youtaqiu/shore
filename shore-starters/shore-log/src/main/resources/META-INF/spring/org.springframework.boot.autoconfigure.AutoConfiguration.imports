@@ -1,2 +1,2 @@
-sh.rime.reactor.log.autoconfigure.LogAutoConfigure
-sh.rime.reactor.log.autoconfigure.LogConsoleAutoConfiguration
+run.vexa.reactor.log.autoconfigure.LogAutoConfigure
+run.vexa.reactor.log.autoconfigure.LogConsoleAutoConfiguration

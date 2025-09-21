@@ -1,2 +1,2 @@
-sh.rime.reactor.core.autoconfigure.WebClientConfiguration
-sh.rime.reactor.core.autoconfigure.JacksonConfiguration
+run.vexa.reactor.core.autoconfigure.WebClientConfiguration
+run.vexa.reactor.core.autoconfigure.JacksonConfiguration

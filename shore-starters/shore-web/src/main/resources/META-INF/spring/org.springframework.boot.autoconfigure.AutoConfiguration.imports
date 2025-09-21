@@ -1,5 +1,5 @@
-sh.rime.reactor.web.autoconfigure.ReactorContextWebFilterAutoConfigure
-sh.rime.reactor.web.autoconfigure.WebFluxGlobalExceptionHandlerAutoConfigure
-sh.rime.reactor.web.autoconfigure.SwaggerConfiguration
-sh.rime.reactor.web.autoconfigure.WebSocketAutoConfiguration
-sh.rime.reactor.web.autoconfigure.JacksonConfiguration
+run.vexa.reactor.web.autoconfigure.ReactorContextWebFilterAutoConfigure
+run.vexa.reactor.web.autoconfigure.WebFluxGlobalExceptionHandlerAutoConfigure
+run.vexa.reactor.web.autoconfigure.SwaggerConfiguration
+run.vexa.reactor.web.autoconfigure.WebSocketAutoConfiguration
+run.vexa.reactor.web.autoconfigure.JacksonConfiguration

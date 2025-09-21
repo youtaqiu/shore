@@ -1,1 +1,1 @@
-sh.rime.reactor.rabbitmq.autoconfigure.RabbitMqAutoConfiguration
+run.vexa.reactor.rabbitmq.autoconfigure.RabbitMqAutoConfiguration
