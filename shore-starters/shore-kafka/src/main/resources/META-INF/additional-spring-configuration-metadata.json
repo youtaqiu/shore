@@ -1,0 +1,96 @@
+{
+  "properties": [
+    {
+      "name": "shore.kafka.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable shore kafka starter.",
+      "defaultValue": true
+    },
+    {
+      "name": "shore.kafka.bootstrap-servers",
+      "type": "java.lang.String",
+      "description": "Kafka bootstrap servers.",
+      "defaultValue": "localhost:9092"
+    },
+    {
+      "name": "shore.kafka.client-id",
+      "type": "java.lang.String",
+      "description": "Kafka client id.",
+      "defaultValue": "shore-kafka"
+    },
+    {
+      "name": "shore.kafka.acks",
+      "type": "java.lang.String",
+      "description": "Producer acks config.",
+      "defaultValue": "all"
+    },
+    {
+      "name": "shore.kafka.linger",
+      "type": "java.time.Duration",
+      "description": "Producer linger duration.",
+      "defaultValue": "5ms"
+    },
+    {
+      "name": "shore.kafka.batch-size",
+      "type": "java.lang.Integer",
+      "description": "Producer batch size in bytes.",
+      "defaultValue": 16384
+    },
+    {
+      "name": "shore.kafka.buffer-memory",
+      "type": "java.lang.Long",
+      "description": "Total producer memory in bytes.",
+      "defaultValue": 33554432
+    },
+    {
+      "name": "shore.kafka.max-in-flight",
+      "type": "java.lang.Integer",
+      "description": "Max in-flight requests per connection.",
+      "defaultValue": 1024
+    },
+    {
+      "name": "shore.kafka.group-id",
+      "type": "java.lang.String",
+      "description": "Consumer group id.",
+      "defaultValue": "shore-group"
+    },
+    {
+      "name": "shore.kafka.auto-offset-reset",
+      "type": "java.lang.String",
+      "description": "Offset reset strategy.",
+      "defaultValue": "latest"
+    },
+    {
+      "name": "shore.kafka.enable-auto-commit",
+      "type": "java.lang.Boolean",
+      "description": "Enable auto commit.",
+      "defaultValue": true
+    },
+    {
+      "name": "shore.kafka.max-poll-records",
+      "type": "java.lang.Integer",
+      "description": "Max poll records per request.",
+      "defaultValue": 500
+    },
+    {
+      "name": "shore.kafka.session-timeout",
+      "type": "java.time.Duration",
+      "description": "Consumer session timeout.",
+      "defaultValue": "10s"
+    },
+    {
+      "name": "shore.kafka.request-timeout",
+      "type": "java.time.Duration",
+      "description": "Consumer request timeout.",
+      "defaultValue": "30s"
+    },
+    {
+      "name": "shore.kafka.topics",
+      "type": "java.util.List<java.lang.String>",
+      "description": "Default subscription topics.",
+      "defaultValue": []
+    }
+  ]
+}
+
+
