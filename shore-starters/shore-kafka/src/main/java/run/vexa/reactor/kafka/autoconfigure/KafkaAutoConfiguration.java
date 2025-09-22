@@ -22,14 +22,23 @@ import run.vexa.reactor.kafka.consumer.KafkaReceiverTemplate;
 import run.vexa.reactor.kafka.producer.KafkaSenderTemplate;
 import run.vexa.reactor.kafka.properties.KafkaProperties;
 
+/**
+ * Auto-configuration for Reactor Kafka sender and receiver.
+ * <p>
+ * Provides {@link SenderOptions}, {@link KafkaSender}, {@link ReceiverOptions} and
+ * simple templates for producing and consuming messages, driven by {@link KafkaProperties}.
+ */
 @Configuration
 @EnableConfigurationProperties(KafkaProperties.class)
 @ConditionalOnProperty(prefix = "shore.kafka", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class KafkaAutoConfiguration {
 
-	@Bean
-	@ConditionalOnMissingBean
-	public SenderOptions<String, byte[]> kafkaSenderOptions(KafkaProperties properties) {
+    /**
+     * Build default {@link SenderOptions} based on {@link KafkaProperties}.
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public SenderOptions<String, byte[]> kafkaSenderOptions(KafkaProperties properties) {
 		Map<String, Object> config = new HashMap<>();
 		config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, properties.getBootstrapServers());
 		config.put(ProducerConfig.CLIENT_ID_CONFIG, properties.getClientId());
@@ -43,21 +52,30 @@ public class KafkaAutoConfiguration {
 		return SenderOptions.<String, byte[]>create(config).maxInFlight(properties.getMaxInFlight());
 	}
 
-	@Bean
-	@ConditionalOnMissingBean
-	public KafkaSender<String, byte[]> kafkaSender(SenderOptions<String, byte[]> senderOptions) {
+    /**
+     * Create a {@link KafkaSender} using configured {@link SenderOptions}.
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public KafkaSender<String, byte[]> kafkaSender(SenderOptions<String, byte[]> senderOptions) {
 		return KafkaSender.create(senderOptions);
 	}
 
-	@Bean
-	@ConditionalOnMissingBean
-	public KafkaSenderTemplate kafkaSenderTemplate(KafkaSender<String, byte[]> sender) {
+    /**
+     * Expose a simple template for sending messages.
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public KafkaSenderTemplate kafkaSenderTemplate(KafkaSender<String, byte[]> sender) {
 		return new KafkaSenderTemplate(sender);
 	}
 
-	@Bean
-	@ConditionalOnMissingBean
-	public ReceiverOptions<String, byte[]> kafkaReceiverOptions(KafkaProperties properties) {
+    /**
+     * Build default {@link ReceiverOptions} based on {@link KafkaProperties}.
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public ReceiverOptions<String, byte[]> kafkaReceiverOptions(KafkaProperties properties) {
 		Map<String, Object> config = new HashMap<>();
 		config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, properties.getBootstrapServers());
 		config.put(ConsumerConfig.GROUP_ID_CONFIG, properties.getGroupId());
@@ -76,9 +94,12 @@ public class KafkaAutoConfiguration {
 		return options;
 	}
 
-	@Bean
-	@ConditionalOnMissingBean
-	public KafkaReceiverTemplate kafkaReceiverTemplate(ReceiverOptions<String, byte[]> receiverOptions) {
+    /**
+     * Expose a simple template for receiving messages.
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public KafkaReceiverTemplate kafkaReceiverTemplate(ReceiverOptions<String, byte[]> receiverOptions) {
 		return new KafkaReceiverTemplate(receiverOptions);
 	}
 }
