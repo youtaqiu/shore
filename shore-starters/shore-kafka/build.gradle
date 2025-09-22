@@ -1,0 +1,11 @@
+description "shore kafka starter"
+
+dependencies {
+    api project(":shore-core")
+    optional "org.springframework.boot:spring-boot-autoconfigure"
+    optional "org.springframework.boot:spring-boot-configuration-processor"
+    optional "jakarta.annotation:jakarta.annotation-api"
+    testImplementation("org.springframework.kafka:spring-kafka-test")
+    testImplementation("io.projectreactor:reactor-test")
+    api("io.projectreactor.kafka:reactor-kafka")
+}
