@@ -1,12 +1,11 @@
 package run.vexa.reactor.kafka.properties;
 
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
-import lombok.Data;
 
 /**
  * Configuration properties for the Shore Kafka starter.
@@ -17,6 +16,13 @@ import lombok.Data;
 @ConfigurationProperties(prefix = "shore.kafka")
 @Data
 public class KafkaProperties {
+
+    /**
+     * Default constructor.
+     * This constructor is used for serialization and other reflective operations.
+     */
+    public KafkaProperties() {
+    }
 
     /** Whether the starter is enabled. */
     private boolean enabled = true;

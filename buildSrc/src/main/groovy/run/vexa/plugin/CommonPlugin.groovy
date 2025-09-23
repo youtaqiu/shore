@@ -1,10 +1,10 @@
-package sh.rime.plugin
+package run.vexa.plugin
 
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaLibraryPlugin
-import sh.rime.plugin.compile.ResourcesPlugin
+import run.vexa.plugin.compile.ResourcesPlugin
 
 /**
  * @author youta

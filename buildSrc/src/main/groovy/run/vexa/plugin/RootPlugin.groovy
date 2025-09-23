@@ -1,4 +1,4 @@
-package sh.rime.plugin
+package run.vexa.plugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
