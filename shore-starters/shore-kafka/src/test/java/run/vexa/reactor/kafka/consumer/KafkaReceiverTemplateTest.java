@@ -41,7 +41,7 @@ class KafkaReceiverTemplateTest {
     }
 
     @Test
-    void receiveRaw_ShouldReturnFluxOfConsumerRecords() {
+    void receiveRawShouldReturnFluxOfConsumerRecords() {
         // Given
         String topic = "test-topic";
         String key = "key1";
@@ -59,15 +59,15 @@ class KafkaReceiverTemplateTest {
         // When & Then
         StepVerifier.create(template.receiveRaw())
                 .expectNextMatches(r -> 
-                    r.topic().equals(topic) && 
-                    r.key().equals(key) &&
-                    new String(r.value(), StandardCharsets.UTF_8).equals("test-message")
+                    r.topic().equals(topic) 
+                    && r.key().equals(key)
+                    && new String(r.value(), StandardCharsets.UTF_8).equals("test-message")
                 )
                 .verifyComplete();
     }
 
     @Test
-    void receiveRaw_ShouldHandleEmptyFlux() {
+    void receiveRawShouldHandleEmptyFlux() {
         // Given
         when(mockReceiver.receiveAutoAck())
                 .thenReturn(Flux.just(Flux.empty()));
