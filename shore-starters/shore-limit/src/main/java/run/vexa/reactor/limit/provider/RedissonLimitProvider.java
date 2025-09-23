@@ -36,9 +36,15 @@ public class RedissonLimitProvider implements LimitProvider {
             if (StrUtil.isEmpty(key)) {
                 return Mono.error(new ServerException("Limit key is null or empty"));
             }
+            final Duration ttl;
+            try {
+                ttl = Duration.of(expire, unit);
+                } catch (java.time.temporal.UnsupportedTemporalTypeException | NullPointerException e) {
+                return Mono.error(new ServerException("Unsupported TimeUnit", e));
+            }
             RRateLimiterReactive rateLimiter = this.redissonReactiveClient.getRateLimiter(key);
             return rateLimiter
-                    .trySetRate(RateType.OVERALL, rate, Duration.of(expire, unit))
+                    .trySetRate(RateType.OVERALL, rate, ttl)
                     .switchIfEmpty(Mono.error(new ServerException("Unsupported TimeUnit")))
                     .flatMap(x -> rateLimiter.tryAcquire(1))
                     .flatMap(acquired -> rateLimiter.expire(Duration.of(expire, unit)).thenReturn(acquired));
