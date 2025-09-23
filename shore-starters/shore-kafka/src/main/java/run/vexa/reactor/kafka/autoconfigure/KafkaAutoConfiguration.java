@@ -34,10 +34,22 @@ public class KafkaAutoConfiguration {
 
 	/**
 	 * Default constructor.
-	 * This constructor is used for serialization and other reflective operations.
-	 */
-	public KafkaAutoConfiguration() {
-	}
+     * <p>
+     * This constructor is intentionally empty as it's only used by the Spring container
+     * for dependency injection. All the bean configurations are done through the
+     * {@code @Bean} annotated methods in this class.
+     * </p>
+     * This constructor is also used for serialization and other reflective operations.
+     *
+     * @see #kafkaSenderOptions(KafkaProperties)
+     * @see #kafkaSender(SenderOptions)
+     * @see #kafkaSenderTemplate(KafkaSender)
+     * @see #kafkaReceiverOptions(KafkaProperties)
+     * @see #kafkaReceiverTemplate(ReceiverOptions)
+     */
+    public KafkaAutoConfiguration() {
+        // Intentionally empty - see class documentation for details
+    }
 
     /**
      * Build default {@link SenderOptions} based on {@link KafkaProperties}.

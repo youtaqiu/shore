@@ -18,10 +18,34 @@ import java.util.List;
 public class KafkaProperties {
 
     /**
-     * Default constructor.
-     * This constructor is used for serialization and other reflective operations.
+     * Default constructor used by Spring Boot's configuration processor.
+     * <p>
+     * This constructor is intentionally empty as it's used by Spring's dependency injection
+     * framework to create an instance of this configuration properties class. All fields
+     * are initialized with default values and can be overridden via application properties
+     * with the prefix 'shore.kafka'.
+     * </p>
+     * <p>
+     * This constructor is also used for serialization and other reflective operations.
+     * </p>
+     *
+     * @see #bootstrapServers
+     * @see #clientId
+     * @see #acks
+     * @see #linger
+     * @see #batchSize
+     * @see #bufferMemory
+     * @see #maxInFlight
+     * @see #groupId
+     * @see #autoOffsetReset
+     * @see #enableAutoCommit
+     * @see #maxPollRecords
+     * @see #sessionTimeout
+     * @see #requestTimeout
+     * @see #topics
      */
     public KafkaProperties() {
+        // Intentionally empty - see class documentation for details
     }
 
     /** Whether the starter is enabled. */

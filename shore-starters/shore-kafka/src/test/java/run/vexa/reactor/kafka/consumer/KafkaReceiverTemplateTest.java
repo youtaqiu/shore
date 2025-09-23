@@ -48,9 +48,9 @@ class KafkaReceiverTemplateTest {
         byte[] value = "test-message".getBytes(StandardCharsets.UTF_8);
         
         // Create a test record
-        ConsumerRecord<String, byte[]> record = new ConsumerRecord<>(topic, 0, 1L, key, value);
+        ConsumerRecord<String, byte[]> consumerRecord = new ConsumerRecord<>(topic, 0, 1L, key, value);
         ReceiverOffset offset = Mockito.mock(ReceiverOffset.class);
-        ReceiverRecord<String, byte[]> receiverRecord = new ReceiverRecord<>(record, offset);
+        ReceiverRecord<String, byte[]> receiverRecord = new ReceiverRecord<>(consumerRecord, offset);
         
         // Mock the receiver to return our test record
         when(mockReceiver.receiveAutoAck())
