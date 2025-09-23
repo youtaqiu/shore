@@ -1,4 +1,4 @@
-package sh.rime.plugin.tasks
+package run.vexa.plugin.tasks
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project

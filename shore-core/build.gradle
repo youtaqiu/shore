@@ -1,6 +1,6 @@
 plugins {
-    id "sh.rime.common"
-    id "sh.rime.mvn.deployed"
+    id "run.vexa.common"
+    id "run.vexa.mvn.deployed"
 }
 
 description "shore core packages"

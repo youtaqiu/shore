@@ -22,28 +22,28 @@ dependencies {
 gradlePlugin {
     plugins {
         create("bomPlugin") {
-            id = "sh.rime.bom"
-            implementationClass = "sh.rime.plugin.BomPlugin"
+            id = "run.vexa.bom"
+            implementationClass = "run.vexa.plugin.BomPlugin"
         }
         create("modulePlugin") {
-            id = "sh.rime.module"
-            implementationClass = "sh.rime.plugin.ModulePlugin"
+            id = "run.vexa.module"
+            implementationClass = "run.vexa.plugin.ModulePlugin"
         }
         create("commonPlugin") {
-            id = "sh.rime.common"
-            implementationClass = "sh.rime.plugin.CommonPlugin"
+            id = "run.vexa.common"
+            implementationClass = "run.vexa.plugin.CommonPlugin"
         }
         create("rootProjectPlugin") {
-            id = "sh.rime.root"
-            implementationClass = "sh.rime.plugin.RootPlugin"
+            id = "run.vexa.root"
+            implementationClass = "run.vexa.plugin.RootPlugin"
         }
         create("servicePlugin") {
-            id = "sh.rime.service"
-            implementationClass = "sh.rime.plugin.ServicePlugin"
+            id = "run.vexa.service"
+            implementationClass = "run.vexa.plugin.ServicePlugin"
         }
         create("deployedPlugin") {
-            id = "sh.rime.mvn.deployed"
-            implementationClass = "sh.rime.plugin.maven.DeployedPlugin"
+            id = "run.vexa.mvn.deployed"
+            implementationClass = "run.vexa.plugin.maven.DeployedPlugin"
         }
     }
 }

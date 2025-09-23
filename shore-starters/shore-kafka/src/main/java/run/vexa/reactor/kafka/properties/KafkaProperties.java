@@ -1,12 +1,11 @@
 package run.vexa.reactor.kafka.properties;
 
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
-import lombok.Data;
 
 /**
  * Configuration properties for the Shore Kafka starter.
@@ -17,6 +16,37 @@ import lombok.Data;
 @ConfigurationProperties(prefix = "shore.kafka")
 @Data
 public class KafkaProperties {
+
+    /**
+     * Default constructor used by Spring Boot's configuration processor.
+     * <p>
+     * This constructor is intentionally empty as it's used by Spring's dependency injection
+     * framework to create an instance of this configuration properties class. All fields
+     * are initialized with default values and can be overridden via application properties
+     * with the prefix 'shore.kafka'.
+     * </p>
+     * <p>
+     * This constructor is also used for serialization and other reflective operations.
+     * </p>
+     *
+     * @see #bootstrapServers
+     * @see #clientId
+     * @see #acks
+     * @see #linger
+     * @see #batchSize
+     * @see #bufferMemory
+     * @see #maxInFlight
+     * @see #groupId
+     * @see #autoOffsetReset
+     * @see #enableAutoCommit
+     * @see #maxPollRecords
+     * @see #sessionTimeout
+     * @see #requestTimeout
+     * @see #topics
+     */
+    public KafkaProperties() {
+        // Intentionally empty - see class documentation for details
+    }
 
     /** Whether the starter is enabled. */
     private boolean enabled = true;

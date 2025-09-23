@@ -1,11 +1,11 @@
-package sh.rime.plugin
+package run.vexa.plugin
 
 
-import sh.rime.plugin.dependency.CompileProcessorPlugin
-import sh.rime.plugin.dependency.ManagementPlugin
-import sh.rime.plugin.dependency.OptionalPlugin
-import sh.rime.plugin.tasks.DeleteExpand
-import sh.rime.plugin.info.ManifestPlugin
+import run.vexa.plugin.dependency.CompileProcessorPlugin
+import run.vexa.plugin.dependency.ManagementPlugin
+import run.vexa.plugin.dependency.OptionalPlugin
+import run.vexa.plugin.tasks.DeleteExpand
+import run.vexa.plugin.info.ManifestPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 

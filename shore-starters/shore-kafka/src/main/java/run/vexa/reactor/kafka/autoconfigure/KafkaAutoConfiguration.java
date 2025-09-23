@@ -1,8 +1,5 @@
 package run.vexa.reactor.kafka.autoconfigure;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.ByteArrayDeserializer;
@@ -14,13 +11,15 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import reactor.kafka.receiver.ReceiverOptions;
 import reactor.kafka.sender.KafkaSender;
 import reactor.kafka.sender.SenderOptions;
 import run.vexa.reactor.kafka.consumer.KafkaReceiverTemplate;
 import run.vexa.reactor.kafka.producer.KafkaSenderTemplate;
 import run.vexa.reactor.kafka.properties.KafkaProperties;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Auto-configuration for Reactor Kafka sender and receiver.
@@ -33,8 +32,29 @@ import run.vexa.reactor.kafka.properties.KafkaProperties;
 @ConditionalOnProperty(prefix = "shore.kafka", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class KafkaAutoConfiguration {
 
+	/**
+	 * Default constructor.
+     * <p>
+     * This constructor is intentionally empty as it's only used by the Spring container
+     * for dependency injection. All the bean configurations are done through the
+     * {@code @Bean} annotated methods in this class.
+     * </p>
+     * This constructor is also used for serialization and other reflective operations.
+     *
+     * @see #kafkaSenderOptions(KafkaProperties)
+     * @see #kafkaSender(SenderOptions)
+     * @see #kafkaSenderTemplate(KafkaSender)
+     * @see #kafkaReceiverOptions(KafkaProperties)
+     * @see #kafkaReceiverTemplate(ReceiverOptions)
+     */
+    public KafkaAutoConfiguration() {
+        // Intentionally empty - see class documentation for details
+    }
+
     /**
      * Build default {@link SenderOptions} based on {@link KafkaProperties}.
+	 * @param properties properties
+	 * @return senderOptions
      */
     @Bean
     @ConditionalOnMissingBean
@@ -54,6 +74,8 @@ public class KafkaAutoConfiguration {
 
     /**
      * Create a {@link KafkaSender} using configured {@link SenderOptions}.
+	 * @param senderOptions senderOptions
+	 * @return kafkaSender
      */
     @Bean
     @ConditionalOnMissingBean
@@ -63,6 +85,8 @@ public class KafkaAutoConfiguration {
 
     /**
      * Expose a simple template for sending messages.
+	 * @param sender sender
+	 * @return kafkaSenderTemplate
      */
     @Bean
     @ConditionalOnMissingBean
@@ -72,6 +96,8 @@ public class KafkaAutoConfiguration {
 
     /**
      * Build default {@link ReceiverOptions} based on {@link KafkaProperties}.
+	 * @param properties properties
+	 * @return receiverOptions
      */
     @Bean
     @ConditionalOnMissingBean
@@ -96,6 +122,8 @@ public class KafkaAutoConfiguration {
 
     /**
      * Expose a simple template for receiving messages.
+	 * @param receiverOptions receiverOptions
+	 * @return kafkaReceiverTemplate
      */
     @Bean
     @ConditionalOnMissingBean

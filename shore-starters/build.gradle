@@ -1,10 +1,10 @@
 plugins {
-    id "sh.rime.root"
+    id "run.vexa.root"
     id "java-library"
 }
 
 
 subprojects {
-	apply plugin : "sh.rime.common"
-    apply plugin : "sh.rime.mvn.deployed"
+	apply plugin : "run.vexa.common"
+    apply plugin : "run.vexa.mvn.deployed"
 }

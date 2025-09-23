@@ -1,7 +1,7 @@
 import org.springframework.boot.gradle.plugin.SpringBootPlugin
 
 plugins {
-    id "sh.rime.bom"
+    id "run.vexa.bom"
 }
 
 description "shore bom"

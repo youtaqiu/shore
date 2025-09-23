@@ -1,7 +1,7 @@
 import org.jreleaser.gradle.plugin.tasks.JReleaserFullReleaseTask
 
 plugins {
-    id "sh.rime.root"
+    id "run.vexa.root"
     id 'org.jreleaser'
     id 'jacoco'
 }
@@ -17,7 +17,7 @@ allprojects {
 }
 
 configure(modules) {
-    apply plugin: "sh.rime.module"
+    apply plugin: "run.vexa.module"
     apply plugin: 'jacoco'
     apply plugin: 'checkstyle'
 

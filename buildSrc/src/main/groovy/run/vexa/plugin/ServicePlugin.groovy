@@ -1,10 +1,10 @@
-package sh.rime.plugin
+package run.vexa.plugin
 
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
-import sh.rime.plugin.info.BootPlugin
+import run.vexa.plugin.info.BootPlugin
 
 /**
  * service plugin.
