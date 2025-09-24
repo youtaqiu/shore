@@ -31,7 +31,7 @@ class PageWrapTest {
 
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         connectionFactory = new H2ConnectionFactory(
                 H2ConnectionConfiguration.builder()
                         .inMemory("h2db")

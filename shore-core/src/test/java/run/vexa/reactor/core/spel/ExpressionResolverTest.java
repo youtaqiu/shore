@@ -42,8 +42,39 @@ class ExpressionResolverTest {
                 .thenReturn(expression);
 
         String result = expressionResolver.evaluate(expression, method, args, String.class);
-
         assertEquals("Hello World", result);
+
+        // 测试不带返回类型的重载方法
+        Object result2 = expressionResolver.evaluate(expression, method, args);
+        assertEquals("Hello World", result2);
+    }
+
+    @Test
+    void testEvaluateWithMethodArgsAndMap() throws NoSuchMethodException {
+        String expression = "Hello #{#name}";
+        Method method = this.getClass().getMethod("dummyMethod", String.class);
+        Object[] args = {"World"};
+        Map<String, Object> expandMap = new HashMap<>();
+        expandMap.put("extraVar", "Extra");
+
+        when(environmentMock.resolvePlaceholders(expression))
+                .thenReturn(expression);
+
+        String result = expressionResolver.evaluate(expression, method, args, expandMap);
+        assertEquals("Hello World", result);
+    }
+
+    @Test
+    void testEvaluateWithMap() {
+        String expression = "Hello #{#customVar}";
+        Map<String, Object> expandMap = new HashMap<>();
+        expandMap.put("customVar", "Custom");
+
+        when(environmentMock.resolvePlaceholders(expression))
+                .thenReturn(expression);
+
+        Object result = expressionResolver.evaluate(expression, expandMap);
+        assertEquals("Hello Custom", result);
     }
 
     @Test

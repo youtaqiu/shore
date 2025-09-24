@@ -92,5 +92,70 @@ class OptionalBeanTest {
 
         assertThrows(ServerException.class, () -> emptyBean.orElseThrow(failure));
     }
+
+    @Test
+    void testGetBean() {
+        Person person = new Person("John", 25);
+        OptionalBean<Person> optionalBean = OptionalBean.of(person);
+
+        OptionalBean<String> nameBean = optionalBean.getBean(Person::getName);
+        assertTrue(nameBean.isPresent());
+        assertEquals("John", nameBean.get());
+
+        OptionalBean<Integer> ageBean = optionalBean.getBean(Person::getAge);
+        assertTrue(ageBean.isPresent());
+        assertEquals(25, ageBean.get());
+    }
+
+    @Test
+    void testOrElseGet() {
+        OptionalBean<String> optionalBean = OptionalBean.ofNullable(null);
+        assertEquals("default", optionalBean.orElseGet(() -> "default"));
+
+        OptionalBean<String> presentBean = OptionalBean.of("present");
+        assertEquals("present", presentBean.orElseGet(() -> "default"));
+    }
+
+    @Test
+    void testChainedCalls() {
+        Person person = new Person("John", 25);
+        OptionalBean<Person> optionalBean = OptionalBean.of(person);
+
+        String result = optionalBean
+            .getBean(Person::getName)
+            .orElse("unknown");
+        assertEquals("John", result);
+
+        OptionalBean<Person> emptyBean = OptionalBean.ofNullable(null);
+        String defaultResult = emptyBean
+            .getBean(Person::getName)
+            .orElse("unknown");
+        assertEquals("unknown", defaultResult);
+    }
+
+    @Test
+    void testEmpty() {
+        OptionalBean<Object> emptyBean = OptionalBean.empty();
+        assertFalse(emptyBean.isPresent());
+        assertNull(emptyBean.get());
+    }
+
+    static class Person {
+        private final String name;
+        private final int age;
+
+        Person(String name, int age) {
+            this.name = name;
+            this.age = age;
+        }
+
+        String getName() {
+            return name;
+        }
+
+        int getAge() {
+            return age;
+        }
+    }
 }
 

@@ -2,10 +2,13 @@ package run.vexa.reactor.core.context;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.web.server.ServerWebExchange;
+import run.vexa.reactor.core.test.TestUtils;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 import reactor.util.context.Context;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -14,6 +17,18 @@ import static org.mockito.Mockito.mock;
  * @author rained
  **/
 class ReactiveContextHolderTest {
+
+    @Test
+    void testPrivateConstructor() {
+        var exception = assertThrows(UnsupportedOperationException.class,
+            () -> TestUtils.invokePrivateConstructor(ReactiveContextHolder.class));
+        assertEquals("This is a utility class and cannot be instantiated", exception.getMessage());
+    }
+
+    @Test
+    void testContextKey() {
+        assertEquals(ReactiveContextHolder.CONTEXT_KEY, ServerWebExchange.class);
+    }
 
     @Test
     void testGetExchange() {
@@ -37,6 +52,18 @@ class ReactiveContextHolderTest {
                 .contextWrite(Context.empty());
 
         // Verify that the Mono completes without emitting any value
+        StepVerifier.create(exchangeMono)
+                .verifyComplete();
+    }
+
+    @Test
+    void testGetExchangeWithWrongType() {
+        // Test with a wrong type in the context
+        Mono<ServerWebExchange> exchangeMono = Mono.empty()
+                .contextWrite(Context.of(ReactiveContextHolder.CONTEXT_KEY, "wrong type"))
+                .transform(unused -> ReactiveContextHolder.getExchange());
+
+        // Since there's a wrong type in the context, it should be treated as not having the key
         StepVerifier.create(exchangeMono)
                 .verifyComplete();
     }

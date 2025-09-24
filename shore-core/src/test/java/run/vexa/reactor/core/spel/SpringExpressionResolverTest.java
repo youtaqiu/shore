@@ -29,6 +29,27 @@ class SpringExpressionResolverTest {
         environment = mock(Environment.class);
     }
 
+    @Test
+    void testConstructorWithClassLoader() {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        SpringExpressionResolver resolverWithClassLoader = new SpringExpressionResolver(classLoader);
+        
+        context.setVariable("value", 5);
+        String expression = "#value * 2";
+        Integer result = resolverWithClassLoader.evaluate(expression, context, Integer.class);
+        assertEquals(10, result);
+    }
+
+    @Test
+    void testConstructorWithEnvironment() {
+        Environment mockEnv = mock(Environment.class);
+        when(mockEnv.resolvePlaceholders("${test.value}")).thenReturn("123");
+        
+        SpringExpressionResolver resolverWithEnv = new SpringExpressionResolver(mockEnv);
+        String result = resolverWithEnv.evaluate("${test.value}", context, String.class);
+        assertEquals("123", result);
+    }
+
 
     @Test
     void testExpressionWithVariables() {
