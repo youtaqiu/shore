@@ -73,8 +73,8 @@ class JacksonSerializerUtilsTest {
     @Test
     void testUtilityConstructorIsInaccessible() throws Exception {
         Constructor<JacksonSerializerUtils> constructor = JacksonSerializerUtils.class.getDeclaredConstructor();
-        constructor.setAccessible(true);
 
+        constructor.trySetAccessible();
         InvocationTargetException exception = assertThrows(InvocationTargetException.class, constructor::newInstance);
         assertTrue(exception.getCause() instanceof UnsupportedOperationException);
     }
