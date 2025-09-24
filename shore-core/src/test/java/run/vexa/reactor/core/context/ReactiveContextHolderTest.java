@@ -5,7 +5,11 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 import reactor.util.context.Context;
+import run.vexa.reactor.core.test.TestUtils;
 
+import java.lang.reflect.InvocationTargetException;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -14,6 +18,25 @@ import static org.mockito.Mockito.mock;
  * @author rained
  **/
 class ReactiveContextHolderTest {
+
+    @Test
+    void testPrivateConstructor() {
+        // The actual exception is wrapped in InvocationTargetException
+        var exception = assertThrows(InvocationTargetException.class,
+            () -> TestUtils.invokePrivateConstructor(ReactiveContextHolder.class));
+        
+        // Verify the cause is UnsupportedOperationException with the right message
+        assertInstanceOf(UnsupportedOperationException.class, exception.getCause());
+        assertEquals(
+            "This is a utility class and cannot be instantiated", 
+            exception.getCause().getMessage()
+        );
+    }
+
+    @Test
+    void testContextKey() {
+        assertEquals(ReactiveContextHolder.CONTEXT_KEY, ServerWebExchange.class);
+    }
 
     @Test
     void testGetExchange() {
@@ -37,6 +60,18 @@ class ReactiveContextHolderTest {
                 .contextWrite(Context.empty());
 
         // Verify that the Mono completes without emitting any value
+        StepVerifier.create(exchangeMono)
+                .verifyComplete();
+    }
+
+    @Test
+    void testGetExchangeWithWrongType() {
+        // Test with a wrong type in the context
+        Mono<ServerWebExchange> exchangeMono = Mono.empty()
+                .contextWrite(Context.of(ReactiveContextHolder.CONTEXT_KEY, "wrong type"))
+                .transform(unused -> ReactiveContextHolder.getExchange());
+
+        // Since there's a wrong type in the context, it should be treated as not having the key
         StepVerifier.create(exchangeMono)
                 .verifyComplete();
     }
