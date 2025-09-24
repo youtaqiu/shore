@@ -2,13 +2,14 @@ package run.vexa.reactor.core.context;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.web.server.ServerWebExchange;
-import run.vexa.reactor.core.test.TestUtils;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 import reactor.util.context.Context;
+import run.vexa.reactor.core.test.TestUtils;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.lang.reflect.InvocationTargetException;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -20,9 +21,16 @@ class ReactiveContextHolderTest {
 
     @Test
     void testPrivateConstructor() {
-        var exception = assertThrows(UnsupportedOperationException.class,
+        // The actual exception is wrapped in InvocationTargetException
+        var exception = assertThrows(InvocationTargetException.class,
             () -> TestUtils.invokePrivateConstructor(ReactiveContextHolder.class));
-        assertEquals("This is a utility class and cannot be instantiated", exception.getMessage());
+        
+        // Verify the cause is UnsupportedOperationException with the right message
+        assertInstanceOf(UnsupportedOperationException.class, exception.getCause());
+        assertEquals(
+            "This is a utility class and cannot be instantiated", 
+            exception.getCause().getMessage()
+        );
     }
 
     @Test

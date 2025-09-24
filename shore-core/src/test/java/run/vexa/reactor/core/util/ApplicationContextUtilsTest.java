@@ -9,7 +9,8 @@ import org.springframework.context.ApplicationContext;
 import java.lang.reflect.InvocationTargetException;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Application context utils unit test.
@@ -44,14 +45,27 @@ class ApplicationContextUtilsTest {
 
     @Test
     void testPrivateConstructor() {
+        // Verify the constructor is private
+        var constructor = assertDoesNotThrow(() -> ApplicationContextUtils.class.getDeclaredConstructor((Class<?>[]) null));
+        assertTrue(java.lang.reflect.Modifier.isPrivate(constructor.getModifiers()),
+            "Constructor should be private");
+
+        // Verify instantiation throws UnsupportedOperationException
         var exception = assertThrows(InvocationTargetException.class, () -> {
-            var constructor = ApplicationContextUtils.class.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            constructor.newInstance();
+            // Try to create instance through reflection
+            try {
+                constructor.setAccessible(true);
+                constructor.newInstance();
+            } finally {
+                // Reset accessibility
+                constructor.setAccessible(false);
+            }
         });
 
+        // Verify the exception type and message
         assertInstanceOf(UnsupportedOperationException.class, exception.getCause());
-        assertEquals("This is a utility class and cannot be instantiated", exception.getCause().getMessage());
+        assertEquals("This is a utility class and cannot be instantiated", 
+            exception.getCause().getMessage());
     }
 
     @Test
@@ -69,8 +83,7 @@ class ApplicationContextUtilsTest {
         when(context.getBean(ServiceWithoutConstructorOrFactory.class))
                 .thenThrow(new RuntimeException("Bean not found"));
 
-        assertThrows(RuntimeException.class, () ->
-                ApplicationContextUtils.getBeanOrReflect(context, ServiceWithoutConstructorOrFactory.class));
+        assertThrows(RuntimeException.class, () -> ApplicationContextUtils.getBeanOrReflect(context, ServiceWithoutConstructorOrFactory.class));
     }
 
     /**
@@ -94,6 +107,7 @@ class ApplicationContextUtilsTest {
      * Sample service class with static create method
      */
     @Getter
+    @SuppressWarnings("unused")
     static final class ServiceWithCreateMethod {
         private final boolean createdByStaticMethod;
 
