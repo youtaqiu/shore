@@ -42,9 +42,13 @@ class TokenUtilTest {
     }
 
     @Test
+    void testGetTokenWithOnlyPrefix() {
+        assertThrows(TokenException.class, () -> TokenUtil.getToken(Constants.TOKEN_TYPE));
+    }
+
+    @Test
     void testAuthTypeLength() {
         assertEquals(7, TokenUtil.AUTH_LENGTH);
     }
 
 }
-
