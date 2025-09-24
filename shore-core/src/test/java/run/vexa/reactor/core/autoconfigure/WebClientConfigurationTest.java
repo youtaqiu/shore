@@ -142,18 +142,18 @@ class WebClientConfigurationTest {
                 fail("Expected connection to fail but it succeeded for method: " + method);
             } catch (Exception e) {
                 // Verify that the exception is due to connection failure or timeout
-                assertTrue(e instanceof ConnectException || 
-                         e.getCause() instanceof ConnectException ||
-                         e instanceof TimeoutException ||
-                         e.getCause() instanceof TimeoutException,
+                assertTrue(e instanceof ConnectException
+                                || e.getCause() instanceof ConnectException
+                                || e instanceof TimeoutException
+                                || e.getCause() instanceof TimeoutException,
                     "Expected connection failure or timeout but got: " + e.getClass().getName() + " for method: " + method);
                 
                 // Verify the error message contains connection-related information
                 String errorMessage = e.getMessage() + (e.getCause() != null ? ", Cause: " + e.getCause().getMessage() : "");
-                assertTrue(errorMessage.contains("Connection") || 
-                         errorMessage.contains("refused") ||
-                         errorMessage.contains("timeout") ||
-                         errorMessage.contains("Timeout"),
+                assertTrue(errorMessage.contains("Connection")
+                                || errorMessage.contains("refused")
+                                || errorMessage.contains("timeout")
+                                || errorMessage.contains("Timeout"),
                     "Expected connection-related error message but got: " + errorMessage);
             }
         }

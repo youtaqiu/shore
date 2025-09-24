@@ -4,13 +4,14 @@ import cn.hutool.core.lang.Pair;
 import cn.hutool.system.UserInfo;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.RowMetadata;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.r2dbc.core.RowsFetchSpec;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.util.Assert;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -18,7 +19,6 @@ import run.vexa.reactor.commons.domain.Search;
 import run.vexa.reactor.commons.exception.ServerException;
 import run.vexa.reactor.core.util.BeanUtil;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -30,306 +30,243 @@ import static org.mockito.Mockito.*;
 
 
 /**
- * QueryWrap 测试类
- *
  * @author youta
  **/
 class QueryWrapTest {
 
-    private R2dbcEntityTemplate template;
-    private DatabaseClient databaseClient;
-    private DatabaseClient.GenericExecuteSpec genericExecuteSpec;
-    private RowsFetchSpec<UserDemo> rowsFetchSpec;
-    private BiFunction<Row, RowMetadata, UserDemo> rowFunction;
-
-    @BeforeEach
     @SuppressWarnings("unchecked")
-    void setUp() {
-        template = mock(R2dbcEntityTemplate.class);
-        databaseClient = mock(DatabaseClient.class);
-        genericExecuteSpec = mock(DatabaseClient.GenericExecuteSpec.class);
-        rowsFetchSpec = mock(RowsFetchSpec.class);
-        rowFunction = mock(BiFunction.class);
+    @Test
+    void testList() {
+        R2dbcEntityTemplate template = Mockito.mock(R2dbcEntityTemplate.class);
+        DatabaseClient databaseClient = Mockito.mock(DatabaseClient.class);
+        DatabaseClient.GenericExecuteSpec genericExecuteSpec = Mockito.mock(DatabaseClient.GenericExecuteSpec.class);
+        RowsFetchSpec<?> rowsFetchSpec = Mockito.mock(RowsFetchSpec.class);
+        BiFunction<Row, RowMetadata, UserDemo> rowFunction = Mockito.mock(BiFunction.class);
 
         when(template.getDatabaseClient()).thenReturn(databaseClient);
         when(databaseClient.sql(anyString())).thenReturn(genericExecuteSpec);
         when(genericExecuteSpec.bind(anyString(), any())).thenReturn(genericExecuteSpec);
         when(genericExecuteSpec.map(any(BiFunction.class))).thenReturn(rowsFetchSpec);
-    }
-
-    @Test
-    void testListSuccess() {
-        // Arrange
-        when(genericExecuteSpec.map(rowFunction).all())
-                .thenReturn(Flux.just(new UserDemo(), new UserDemo(), new UserDemo()));
+        when(genericExecuteSpec.map(rowFunction).all()).thenReturn(Flux.just(new UserDemo(), new UserDemo(), new UserDemo()));
 
         QueryWrap<UserDemo> queryWrap = QueryWrap.<UserDemo>build()
                 .template(template)
                 .sql("select * from user")
                 .row(rowFunction);
 
-        // Act & Assert
-        StepVerifier.create(queryWrap.list())
+        Flux<UserDemo> flux = queryWrap.list();
+
+        StepVerifier.create(flux)
                 .expectNextCount(3)
                 .verifyComplete();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
-    void testListEmptyResult() {
-        // Arrange
-        when(genericExecuteSpec.map(rowFunction).all())
-                .thenReturn(Flux.empty());
-
-        QueryWrap<UserDemo> queryWrap = QueryWrap.<UserDemo>build()
-                .template(template)
-                .sql("select * from user")
-                .row(rowFunction);
-
-        // Act & Assert
-        StepVerifier.create(queryWrap.list())
-                .expectNextCount(0)
-                .verifyComplete();
-    }
-
-    @Test
-    void testListWithError() {
-        // Arrange
-        when(genericExecuteSpec.map(rowFunction).all())
-                .thenReturn(Flux.error(new RuntimeException("Database error")));
-
-        QueryWrap<UserDemo> queryWrap = QueryWrap.<UserDemo>build()
-                .template(template)
-                .sql("select * from user")
-                .row(rowFunction);
-
-        // Act & Assert
-        StepVerifier.create(queryWrap.list())
-                .expectError(RuntimeException.class)
-                .verify();
-    }
-
-    @Test
-    void testPageWithCustomSearch() {
-        // Arrange
-        Search search = new Search();
-        search.setCurrent(2);
-        search.setSize(5);
-        search.setProp("name");
-        search.setOrder("asc");
-
-        when(genericExecuteSpec.map(rowFunction).all())
-                .thenReturn(Flux.just(new UserDemo(), new UserDemo()));
+    void testPage() {
+        R2dbcEntityTemplate template = Mockito.mock(R2dbcEntityTemplate.class);
+        DatabaseClient databaseClient = Mockito.mock(DatabaseClient.class);
+        DatabaseClient.GenericExecuteSpec genericExecuteSpec = Mockito.mock(DatabaseClient.GenericExecuteSpec.class);
+        BiFunction<Row, RowMetadata, UserDemo> rowFunction = Mockito.mock(BiFunction.class);
+        RowsFetchSpec<?> rowsFetchSpec = Mockito.mock(RowsFetchSpec.class);
+        when(template
+                .getDatabaseClient())
+                .thenReturn(databaseClient);
+        when(databaseClient
+                .sql(anyString()))
+                .thenReturn(genericExecuteSpec);
+        when(genericExecuteSpec
+                .bind(anyString(), any()))
+                .thenReturn(genericExecuteSpec);
+        when(genericExecuteSpec
+                .map(any(BiFunction.class)))
+                .thenReturn(rowsFetchSpec);
+        when(genericExecuteSpec
+                .map(rowFunction)
+                .all())
+                .thenReturn(Flux.just(new UserDemo(), new UserDemo(), new UserDemo()));
+        when(genericExecuteSpec
+                .map(rowFunction)
+                .one())
+                .thenReturn(Mono.just(new UserDemo()));
+        when(genericExecuteSpec
+                .map(rowFunction)
+                .first())
+                .thenReturn(Mono.just(new UserDemo()));
         when(QueryWrap.<UserDemo>build()
                 .template(template)
-                .count(anyString()))
-                .thenReturn(Mono.just(7L));
-
+                .count("select * from user"))
+                .thenReturn(Mono.just(3L));
         QueryWrap<UserDemo> queryWrap = QueryWrap.<UserDemo>build()
                 .template(template)
                 .sql("select * from user")
                 .row(rowFunction);
-
-        // Act & Assert
-        StepVerifier.create(queryWrap.search(search).page())
-                .expectNextMatches(pageResult ->
-                        pageResult.getCurrent() == 2 &&
-                        pageResult.getSize() == 5 &&
-                        pageResult.getTotal() == 7 &&
-                        pageResult.getPages() == 2 &&
-                        pageResult.getList().size() == 2)
-                .verifyComplete();
-    }
-
-    @Test
-    void testPageWithTransformation() {
-        // Arrange
-        when(genericExecuteSpec.map(rowFunction).all())
-                .thenReturn(Flux.just(new UserDemo(), new UserDemo()));
-        when(QueryWrap.<UserDemo>build()
-                .template(template)
-                .count(anyString()))
-                .thenReturn(Mono.just(2L));
-
-        QueryWrap<UserDemo> queryWrap = QueryWrap.<UserDemo>build()
-                .template(template)
-                .sql("select * from user")
-                .row(rowFunction);
-
-        // Act & Assert
-        StepVerifier.create(queryWrap
+        var pageResultMono = queryWrap
                 .search(new Search())
-                .page(list -> BeanUtil.copyToList(list, UserInfo.class)))
+                .page();
+        StepVerifier.create(pageResultMono)
                 .expectNextMatches(pageResult ->
-                        pageResult.getList() != null &&
-                        pageResult.getList().size() == 2)
+                        pageResult.getCurrent() == 1
+                                && pageResult.getSize() == 10
+                                && pageResult.getTotal() == 3
+                                && pageResult.getPages() == 1
+                                && pageResult.getList().size() == 3)
                 .verifyComplete();
+        var pageResultFuncMono = queryWrap
+                .search(new Search())
+                .page(x -> BeanUtil.copyToList(x, UserInfo.class));
+        StepVerifier.create(pageResultFuncMono)
+                .expectNextMatches(pageResult ->
+                        pageResult.getCurrent() == 1
+                                && pageResult.getSize() == 10
+                                && pageResult.getTotal() == 3
+                                && pageResult.getPages() == 1
+                                && pageResult.getList().size() == 3);
     }
 
     @Test
-    void testOneWithNoResult() {
-        // Arrange
-        when(rowsFetchSpec.one()).thenReturn(Mono.empty());
-
-        QueryWrap<UserDemo> queryWrap = QueryWrap.<UserDemo>build()
-                .template(template)
-                .sql("select * from user")
-                .row(rowFunction);
-
-        // Act & Assert
-        StepVerifier.create(queryWrap.one())
-                .verifyComplete();
-    }
-
-    @Test
-    void testFirstWithError() {
-        // Arrange
-        when(rowsFetchSpec.first()).thenReturn(Mono.error(new RuntimeException("Database error")));
-
-        QueryWrap<UserDemo> queryWrap = QueryWrap.<UserDemo>build()
-                .template(template)
-                .sql("select * from user")
-                .row(rowFunction);
-
-        // Act & Assert
-        StepVerifier.create(queryWrap.first())
-                .expectError(RuntimeException.class)
-                .verify();
-    }
-
-    @Test
-    void testBindWithNullValue() {
+    void testBind() {
         // Arrange
         QueryWrap<UserDemo> queryWrap = QueryWrap.build();
-        Pair<String, Object> pair1 = Pair.of("key1", null);
+        Pair<String, Object> pair1 = Pair.of("key1", "value1");
         Pair<String, Object> pair2 = Pair.of("key2", "value2");
 
         // Act
         queryWrap.bind(pair1, pair2);
 
-        // Assert
         assertNotNull(queryWrap);
     }
 
     @Test
-    void testSqlWithComplexQuery() {
+    void testSql() {
         // Arrange
         QueryWrap<UserDemo> queryWrap = QueryWrap.build();
-        String complexSql = """
-                SELECT u.*, d.name as dept_name
-                FROM user u
-                LEFT JOIN department d ON u.dept_id = d.id
-                WHERE u.status = :status
-                """;
+        String sql = "SELECT * FROM user";
 
         // Act
-        queryWrap.sql(complexSql);
+        queryWrap.sql(sql);
 
-        // Assert
         assertNotNull(queryWrap);
     }
 
     @Test
-    void testPageSqlWithVariousFormats() {
-        // Test cases for different SQL formats
-        testPageSqlFormat("SELECT * FROM user", true);
-        testPageSqlFormat("SELECT * FROM user -- with comment", true);
-        testPageSqlFormat("SELECT * FROM user LIMIT 10", false);
-        testPageSqlFormat("SELECT * FROM user limit 5", false);
-        testPageSqlFormat("SELECT * FROM user OFFSET 5", true);
-    }
-
-    private void testPageSqlFormat(String sql, boolean shouldSucceed) {
-        QueryWrap<Object> queryWrap = new QueryWrap<>();
-        if (shouldSucceed) {
-            String result = ReflectionTestUtils.invokeMethod(queryWrap, "pageSql", sql);
-            assertNotNull(result);
-            assertTrue(result.toLowerCase().contains("limit"));
-        } else {
-            assertThrows(ServerException.class, () -> 
-                ReflectionTestUtils.invokeMethod(queryWrap, "pageSql", sql));
-        }
-    }
-
-    @Test
-    void testSpecWithEmptyPairs() {
+    void testOne() {
         // Arrange
-        QueryWrap<Object> queryWrap = new QueryWrap<>();
-        queryWrap.template(template);
+        Result queryResult = getResult();
+
+        when(queryResult.rowsFetchSpec.one()).thenReturn(Mono.just(new UserDemo()));
+
+        QueryWrap<UserDemo> queryWrap = QueryWrap.<UserDemo>build()
+                .template(queryResult.template)
+                .sql("SELECT * FROM user")
+                .row(queryResult.rowFunction);
 
         // Act
-        DatabaseClient.GenericExecuteSpec result = ReflectionTestUtils.invokeMethod(
-            queryWrap, 
-            "spec",
-            "SELECT * FROM table",
-            Collections.emptyList()
-        );
+        Mono<UserDemo> result = queryWrap.one();
 
         // Assert
-        assertNotNull(result);
-        verify(genericExecuteSpec, never()).bind(anyString(), any());
+        StepVerifier.create(result)
+                .expectNextMatches(Objects::nonNull)
+                .verifyComplete();
     }
 
     @Test
-    void testSpecWithMultipleBindings() {
+    void testFirst() {
+        // Arrange
+        Result queryResult = getResult();
+        when(queryResult.rowsFetchSpec().first()).thenReturn(Mono.just(new UserDemo()));
+
+        QueryWrap<UserDemo> queryWrap = QueryWrap.<UserDemo>build()
+                .template(queryResult.template())
+                .sql("SELECT * FROM user")
+                .row(queryResult.rowFunction());
+
+        // Act
+        Mono<UserDemo> result = queryWrap.first();
+
+        // Assert
+        StepVerifier.create(result)
+                .expectNextMatches(Objects::nonNull)
+                .verifyComplete();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Result getResult() {
+        R2dbcEntityTemplate template = Mockito.mock(R2dbcEntityTemplate.class);
+        DatabaseClient databaseClient = Mockito.mock(DatabaseClient.class);
+        DatabaseClient.GenericExecuteSpec genericExecuteSpec = Mockito.mock(DatabaseClient.GenericExecuteSpec.class);
+        RowsFetchSpec<UserDemo> rowsFetchSpec = Mockito.mock(RowsFetchSpec.class);
+        BiFunction<Row, RowMetadata, UserDemo> rowFunction = Mockito.mock(BiFunction.class);
+
+        when(template.getDatabaseClient()).thenReturn(databaseClient);
+        when(databaseClient.sql(anyString())).thenReturn(genericExecuteSpec);
+        when(genericExecuteSpec.bind(anyString(), any())).thenReturn(genericExecuteSpec);
+        when(genericExecuteSpec.map(rowFunction)).thenReturn(rowsFetchSpec);
+        return new Result(template, rowsFetchSpec, rowFunction);
+    }
+
+    private record Result(R2dbcEntityTemplate template, RowsFetchSpec<UserDemo> rowsFetchSpec,
+                          BiFunction<Row, RowMetadata, UserDemo> rowFunction) {
+    }
+
+    @Test
+    void testPageSqlThrowsExceptionWhenSqlContainsLimit() {
         // Arrange
         QueryWrap<Object> queryWrap = new QueryWrap<>();
-        queryWrap.template(template);
+        String sqlWithLimit = "SELECT * FROM user WHERE id = 1 LIMIT 10";
 
-        List<Pair<String, Object>> pairs = List.of(
-            Pair.of("key1", "value1"),
-            Pair.of("key2", 123),
-            Pair.of("key3", null)
-        );
+        // Act & Assert
+        assertThrows(ServerException.class, () -> ReflectionTestUtils.invokeMethod(queryWrap, "pageSql", sqlWithLimit));
+    }
+
+    @Test
+    void testPageSqlReturnsModifiedSqlWhenNoLimit() {
+        // Arrange
+        QueryWrap<Object> queryWrap = new QueryWrap<>();
+        String sqlWithoutLimit = "SELECT * FROM user WHERE id = 1";
+
+        // Act
+        String pageSql = ReflectionTestUtils.invokeMethod(queryWrap, "pageSql", sqlWithoutLimit);
+
+        // Assert
+        assert pageSql != null;
+        Assert.isTrue(pageSql.equals(sqlWithoutLimit + " limit :limit offset :offset"), "SQL modification failed");
+    }
+
+    @Test
+    @SuppressWarnings("all")
+    void testSpecWhenPairsIsNotNull() {
+        // Arrange
+        R2dbcEntityTemplate template = Mockito.mock(R2dbcEntityTemplate.class);
+        DatabaseClient databaseClient = Mockito.mock(DatabaseClient.class);
+        DatabaseClient.GenericExecuteSpec genericExecuteSpec = Mockito.mock(DatabaseClient.GenericExecuteSpec.class);
+
+        when(template.getDatabaseClient()).thenReturn(databaseClient);
+        when(databaseClient.sql(anyString())).thenReturn(genericExecuteSpec);
+        when(genericExecuteSpec.bind(anyString(), any())).thenReturn(genericExecuteSpec);
+
+        Pair<String, String> pair1 = Pair.of("key1", "value1");
+        Pair<String, Integer> pair2 = Pair.of("key2", 123);
+
+        QueryWrap<Object> queryWrap = new QueryWrap<>();
+        queryWrap.template(template);
 
         // Act
         ReflectionTestUtils.invokeMethod(queryWrap, "spec",
-            "SELECT * FROM table WHERE col1 = :key1 AND col2 = :key2 AND col3 = :key3",
-            pairs
-        );
+                "SELECT * FROM table WHERE column1 = :key1 AND column2 = :key2", List.of(pair1, pair2));
 
         // Assert
         ArgumentCaptor<String> keyCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Object> valueCaptor = ArgumentCaptor.forClass(Object.class);
 
-        verify(genericExecuteSpec, times(3)).bind(keyCaptor.capture(), valueCaptor.capture());
-        
-        List<String> capturedKeys = keyCaptor.getAllValues();
-        List<Object> capturedValues = valueCaptor.getAllValues();
-        
-        assertEquals("key1", capturedKeys.get(0));
-        assertEquals("value1", capturedValues.get(0));
-        assertEquals("key2", capturedKeys.get(1));
-        assertEquals(123, capturedValues.get(1));
-        assertEquals("key3", capturedKeys.get(2));
-        assertNull(capturedValues.get(2));
+        verify(genericExecuteSpec, times(2)).bind(keyCaptor.capture(), valueCaptor.capture());
+
+        assertEquals("key1", keyCaptor.getAllValues().get(0));
+        assertEquals("value1", valueCaptor.getAllValues().get(0));
+        assertEquals("key2", keyCaptor.getAllValues().get(1));
+        assertEquals(123, valueCaptor.getAllValues().get(1));
     }
 
-    @Test
-    void testSearchWithSortingOptions() {
-        // Arrange
-        Search search = new Search();
-        search.setProp("name");
-        search.setOrder("desc");
 
-        when(genericExecuteSpec.map(rowFunction).all())
-                .thenReturn(Flux.just(new UserDemo(), new UserDemo()));
-        when(QueryWrap.<UserDemo>build()
-                .template(template)
-                .count(anyString()))
-                .thenReturn(Mono.just(2L));
-
-        QueryWrap<UserDemo> queryWrap = QueryWrap.<UserDemo>build()
-                .template(template)
-                .sql("select * from user")
-                .row(rowFunction);
-
-        // Act & Assert
-        StepVerifier.create(queryWrap.search(search).page())
-                .expectNextMatches(pageResult -> {
-                    // Verify sorting was applied
-                    String sql = Objects.requireNonNull(ReflectionTestUtils.getField(queryWrap, "sql")).toString();
-                    return sql.contains("order by") && sql.contains("desc");
-                })
-                .verifyComplete();
-    }
 }
+

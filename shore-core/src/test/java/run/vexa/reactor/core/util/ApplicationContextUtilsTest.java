@@ -94,7 +94,7 @@ class ApplicationContextUtilsTest {
      * Sample service class with static create method
      */
     @Getter
-    static class ServiceWithCreateMethod {
+    static final class ServiceWithCreateMethod {
         private final boolean createdByStaticMethod;
 
         private ServiceWithCreateMethod() {
