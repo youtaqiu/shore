@@ -25,7 +25,10 @@ public final class TestUtils {
      */
     public static <T> void invokePrivateConstructor(Class<T> clazz) throws Exception {
         java.lang.reflect.Constructor<T> constructor = clazz.getDeclaredConstructor();
-        constructor.setAccessible(true);
+        if (!constructor.canAccess(null) && !constructor.trySetAccessible()) {
+            throw new InvocationTargetException(new IllegalAccessException(
+                "Unable to access constructor of " + clazz.getName()));
+        }
         try {
             constructor.newInstance();
         } catch (InvocationTargetException invocationTargetException) {
@@ -67,9 +70,13 @@ public final class TestUtils {
                     java.lang.reflect.Modifier.toString(constructor.getModifiers())));
             }
 
-            constructor.setAccessible(true);
-
             try {
+                if (!constructor.canAccess(null) && !constructor.trySetAccessible()) {
+                    Assertions.fail(String.format(
+                        "Constructor of utility class %s could not be made accessible for invocation.",
+                        clazz.getSimpleName()));
+                }
+
                 constructor.newInstance();
                 Assertions.fail(String.format(
                     "Constructor of utility class %s should throw UnsupportedOperationException. "
