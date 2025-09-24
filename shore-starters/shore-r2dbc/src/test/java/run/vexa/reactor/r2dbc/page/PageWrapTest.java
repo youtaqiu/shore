@@ -24,7 +24,6 @@ import run.vexa.reactor.security.domain.CurrentUser;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -35,13 +34,12 @@ class PageWrapTest {
 
     private static final Duration BLOCK_TIMEOUT = Duration.ofSeconds(5);
 
-    private ConnectionFactory connectionFactory;
     private DatabaseClient databaseClient;
     private R2dbcEntityTemplate template;
 
     @BeforeEach
     void setUp() {
-        connectionFactory = new H2ConnectionFactory(
+        ConnectionFactory connectionFactory = new H2ConnectionFactory(
                 H2ConnectionConfiguration.builder()
                         .inMemory("h2db-" + System.nanoTime())
                         .property("DB_CLOSE_DELAY", "-1")
@@ -72,7 +70,7 @@ class PageWrapTest {
                     assertEquals(2, result.getPages());
                     List<Long> userIds = result.getList().stream()
                             .map(TestUser::getUserId)
-                            .collect(Collectors.toList());
+                            .toList();
                     assertEquals(List.of(3L, 2L), userIds);
                 })
                 .verifyComplete();
@@ -91,7 +89,7 @@ class PageWrapTest {
 
         Mono<PageResult<String>> pageResult = pageWrap.page(users -> users.stream()
                 .map(TestUser::getUsername)
-                .collect(Collectors.toList()));
+                .toList());
 
         StepVerifier.create(pageResult)
                 .assertNext(result -> {
