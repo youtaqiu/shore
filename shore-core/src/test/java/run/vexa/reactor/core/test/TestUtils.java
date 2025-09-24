@@ -2,9 +2,6 @@ package run.vexa.reactor.core.test;
 
 import org.junit.jupiter.api.Assertions;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -12,7 +9,6 @@ import java.lang.reflect.InvocationTargetException;
  * 
  * @author ve-xa
  */
-@SuppressWarnings("unused")
 public final class TestUtils {
 
     private TestUtils() {
@@ -28,15 +24,14 @@ public final class TestUtils {
      * @throws Exception if an error occurs during reflection
      */
     public static <T> void invokePrivateConstructor(Class<T> clazz) throws Exception {
-        MethodHandle constructorHandle = MethodHandles.privateLookupIn(clazz, MethodHandles.lookup())
-                .findConstructor(clazz, MethodType.methodType(void.class));
+        java.lang.reflect.Constructor<T> constructor = clazz.getDeclaredConstructor();
+        constructor.setAccessible(true);
         try {
-            constructorHandle.invokeWithArguments();
-        } catch (Throwable throwable) {
-            if (throwable instanceof InvocationTargetException invocationTargetException) {
-                throw invocationTargetException;
-            }
-            throw new InvocationTargetException(throwable);
+            constructor.newInstance();
+        } catch (InvocationTargetException invocationTargetException) {
+            throw invocationTargetException;
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new InvocationTargetException(e);
         }
     }
 
@@ -72,20 +67,17 @@ public final class TestUtils {
                     java.lang.reflect.Modifier.toString(constructor.getModifiers())));
             }
 
-            MethodHandle constructorHandle = MethodHandles.privateLookupIn(clazz, MethodHandles.lookup())
-                    .findConstructor(clazz, MethodType.methodType(void.class));
+            constructor.setAccessible(true);
 
             try {
-                constructorHandle.invokeWithArguments();
+                constructor.newInstance();
                 Assertions.fail(String.format(
                     "Constructor of utility class %s should throw UnsupportedOperationException. "
                             + "Successfully created instance of type: %s",
                     clazz.getSimpleName(),
                     clazz.getName()));
-            } catch (Throwable throwable) {
-                Throwable cause = throwable instanceof InvocationTargetException invocationException
-                        ? invocationException.getCause()
-                        : throwable;
+            } catch (InvocationTargetException invocationException) {
+                Throwable cause = invocationException.getCause();
 
                 if (!(cause instanceof UnsupportedOperationException)) {
                     throw new AssertionError(String.format(
@@ -95,15 +87,15 @@ public final class TestUtils {
                         cause.getClass().getName(),
                         cause.getMessage()), cause);
                 }
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new AssertionError(String.format(
+                    "Failed to create instance of utility class %s via reflection. Error: %s",
+                    clazz.getSimpleName(), e.getMessage()), e);
             }
             
         } catch (NoSuchMethodException e) {
             throw new AssertionError(String.format(
                 "Utility class %s should have a no-argument constructor. Error: %s",
-                clazz.getSimpleName(), e.getMessage()), e);
-        } catch (IllegalAccessException e) {
-            throw new AssertionError(String.format(
-                "Failed to access constructor of utility class %s. Error: %s",
                 clazz.getSimpleName(), e.getMessage()), e);
         } catch (Exception e) {
             throw new AssertionError(String.format(
