@@ -146,12 +146,11 @@ class WebClientConfigurationTest {
                 String errorMessage = cause.getMessage();
                 
                 // Check for connection refused or timeout in the error message
-                boolean isConnectionError = errorMessage.contains("Connection") || 
-                                          errorMessage.contains("refused") ||
-                                          errorMessage.contains("Connection refused");
-                boolean isTimeoutError = errorMessage.contains("timeout") || 
-                                       errorMessage.contains("Timeout") ||
-                                       errorMessage.contains("Did not observe any item or terminal signal");
+                boolean isConnectionError = errorMessage.contains("Connection")
+                        || errorMessage.contains("refused") || errorMessage.contains("Connection refused");
+                boolean isTimeoutError = errorMessage.contains("timeout")
+                        || errorMessage.contains("Timeout")
+                        || errorMessage.contains("Did not observe any item or terminal signal");
                 
                 assertTrue(isConnectionError || isTimeoutError,
                     String.format("Expected connection failure or timeout but got: %s, Message: %s for method: %s",

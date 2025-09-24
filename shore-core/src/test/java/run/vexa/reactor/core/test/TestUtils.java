@@ -1,6 +1,10 @@
 package run.vexa.reactor.core.test;
 
 import org.junit.jupiter.api.Assertions;
+
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -24,12 +28,15 @@ public final class TestUtils {
      * @throws Exception if an error occurs during reflection
      */
     public static <T> void invokePrivateConstructor(Class<T> clazz) throws Exception {
-        java.lang.reflect.Constructor<T> constructor = clazz.getDeclaredConstructor();
-        constructor.setAccessible(true);
+        MethodHandle constructorHandle = MethodHandles.privateLookupIn(clazz, MethodHandles.lookup())
+                .findConstructor(clazz, MethodType.methodType(void.class));
         try {
-            constructor.newInstance();
-        } finally {
-            constructor.setAccessible(false);
+            constructorHandle.invokeWithArguments();
+        } catch (Throwable throwable) {
+            if (throwable instanceof InvocationTargetException invocationTargetException) {
+                throw invocationTargetException;
+            }
+            throw new InvocationTargetException(throwable);
         }
     }
 
@@ -65,37 +72,38 @@ public final class TestUtils {
                     java.lang.reflect.Modifier.toString(constructor.getModifiers())));
             }
 
-            // Make the constructor accessible for testing
-            constructor.setAccessible(true);
-            
-            // Try to create an instance
+            MethodHandle constructorHandle = MethodHandles.privateLookupIn(clazz, MethodHandles.lookup())
+                    .findConstructor(clazz, MethodType.methodType(void.class));
+
             try {
-                T instance = constructor.newInstance();
+                constructorHandle.invokeWithArguments();
                 Assertions.fail(String.format(
-                    "Constructor of utility class %s should throw UnsupportedOperationException. " +
-                    "Successfully created instance of type: %s",
+                    "Constructor of utility class %s should throw UnsupportedOperationException. "
+                            + "Successfully created instance of type: %s",
                     clazz.getSimpleName(),
-                    instance.getClass().getName()));
-            } catch (InvocationTargetException e) {
-                // Check if the thrown exception is the expected one
-                if (!(e.getCause() instanceof UnsupportedOperationException)) {
+                    clazz.getName()));
+            } catch (Throwable throwable) {
+                Throwable cause = throwable instanceof InvocationTargetException invocationException
+                        ? invocationException.getCause()
+                        : throwable;
+
+                if (!(cause instanceof UnsupportedOperationException)) {
                     throw new AssertionError(String.format(
-                        "Constructor of utility class %s should throw UnsupportedOperationException, " +
-                        "but threw: %s with message: %s",
+                        "Constructor of utility class %s should throw UnsupportedOperationException, "
+                                + "but threw: %s with message: %s",
                         clazz.getSimpleName(),
-                        e.getCause().getClass().getName(),
-                        e.getCause().getMessage()), e);
+                        cause.getClass().getName(),
+                        cause.getMessage()), cause);
                 }
-                // If UnsupportedOperationException was thrown, the test passes
             }
             
         } catch (NoSuchMethodException e) {
             throw new AssertionError(String.format(
                 "Utility class %s should have a no-argument constructor. Error: %s",
                 clazz.getSimpleName(), e.getMessage()), e);
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (IllegalAccessException e) {
             throw new AssertionError(String.format(
-                "Failed to instantiate utility class %s. Error: %s",
+                "Failed to access constructor of utility class %s. Error: %s",
                 clazz.getSimpleName(), e.getMessage()), e);
         } catch (Exception e) {
             throw new AssertionError(String.format(
