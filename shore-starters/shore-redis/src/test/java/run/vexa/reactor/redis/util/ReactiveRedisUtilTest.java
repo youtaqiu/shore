@@ -1,20 +1,25 @@
 package run.vexa.reactor.redis.util;
 
-import run.vexa.reactor.redis.supprot.CustomizeReactiveRedisTemplate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.redis.core.ReactiveHashOperations;
 import org.springframework.data.redis.core.ReactiveValueOperations;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+import run.vexa.reactor.redis.supprot.CustomizeReactiveRedisTemplate;
 
 import java.time.Duration;
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 /**
@@ -96,6 +101,13 @@ class ReactiveRedisUtilTest {
     }
 
     @Test
+    void testGetReturnsEmptyWhenKeyNull() {
+        StepVerifier.create(util.get(null))
+                .verifyComplete();
+        verifyNoInteractions(mockTemplate);
+    }
+
+    @Test
     void testSet() {
         String key = "testKey";
         Object value = "testValue";
@@ -144,6 +156,29 @@ class ReactiveRedisUtilTest {
     }
 
     @Test
+    void testGetExpire() {
+        String key = "expireKey";
+        Duration expected = Duration.ofMinutes(5);
+        when(mockTemplate.getExpire(key)).thenReturn(Mono.just(expected));
+
+        Mono<Duration> result = util.getExpire(key);
+
+        verify(mockTemplate).getExpire(key);
+        assertEquals(expected, result.block());
+    }
+
+    @Test
+    void testDelete() {
+        String key = "deleteKey";
+        when(mockTemplate.delete(key)).thenReturn(Mono.just(1L));
+
+        Mono<Long> result = util.del(key);
+
+        verify(mockTemplate).delete(key);
+        assertEquals(1L, result.block());
+    }
+
+    @Test
     void testHashSet() {
         String key = "testKey";
         Map<String, Object> map = new HashMap<>();
@@ -175,9 +210,70 @@ class ReactiveRedisUtilTest {
         when(mockTemplate.expire(key, time)).thenReturn(Mono.just(expectedValue));
         Mono<Boolean> result = util.hashSet(key, map, time);
 
+        Boolean actual = result.block();
+
         verify(mockTemplate).opsForHash();
         verify(mockHashOps).putAll(key, map);
-        assertEquals(expectedValue, result.block());
+        verify(mockTemplate).expire(key, time);
+        assertEquals(expectedValue, actual);
+        verifyNoMoreInteractions(mockTemplate);
+    }
+
+
+    @Test
+    void testHSetWithExpire() {
+        String key = "hashKey";
+        String item = "hashItem";
+        Object value = "hashValue";
+        long seconds = 30L;
+
+        when(mockTemplate.opsForHash()).thenReturn(mockHashOps);
+        when(mockHashOps.put(key, item, value)).thenReturn(Mono.just(true));
+        when(mockTemplate.expire(key, Duration.ofSeconds(seconds))).thenReturn(Mono.just(true));
+
+        Mono<Boolean> result = util.hSet(key, item, value, seconds);
+
+        Boolean actual = result.block();
+
+        verify(mockTemplate).opsForHash();
+        verify(mockHashOps).put(key, item, value);
+        verify(mockTemplate).expire(key, Duration.ofSeconds(seconds));
+        assertEquals(Boolean.TRUE, actual);
+        verifyNoMoreInteractions(mockTemplate);
+    }
+
+    @Test
+    void testHSetWithoutExpireWhenTimeNonPositive() {
+        String key = "hashKey";
+        String item = "hashItem";
+        Object value = "hashValue";
+
+        when(mockTemplate.opsForHash()).thenReturn(mockHashOps);
+        when(mockHashOps.put(key, item, value)).thenReturn(Mono.just(true));
+
+        Mono<Boolean> result = util.hSet(key, item, value, 0L);
+
+        StepVerifier.create(result)
+                .expectComplete()
+                .verify();
+
+        verify(mockTemplate).opsForHash();
+        verify(mockHashOps).put(key, item, value);
+        verifyNoMoreInteractions(mockTemplate);
+    }
+
+    @Test
+    void testHmget() {
+        String key = "hashKey";
+        when(mockTemplate.opsForHash()).thenReturn(mockHashOps);
+        when(mockHashOps.entries(key)).thenReturn(Flux.just(new AbstractMap.SimpleEntry<>("field", "value")));
+
+        StepVerifier.create(util.hmget(key))
+                .expectNextMatches(entry -> entry.getKey().equals("field") && entry.getValue().equals("value"))
+                .verifyComplete();
+
+        verify(mockTemplate).opsForHash();
+        verify(mockHashOps).entries(key);
     }
 
 

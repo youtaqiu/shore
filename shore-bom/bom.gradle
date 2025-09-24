@@ -26,6 +26,13 @@ dependencies {
     dependencyManagement(bom, versionCatalog).forEach { api(platform(it)) }
     constraints {
         dependencyManagement(dependency, versionCatalog).forEach { api(it) }
+        api("org.junit:junit-bom") {
+            version {
+                strictly("5.12.2")
+                prefer("5.12.2")
+            }
+            because("Keep JUnit aligned with Spring Boot's managed version to avoid mixing junit-platform libraries from tools like VS Code")
+        }
         api(project(":shore-commons"))
         api(project(":shore-core"))
         project(":shore-starters").subprojects {

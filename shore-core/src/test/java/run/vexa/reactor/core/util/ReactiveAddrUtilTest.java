@@ -33,6 +33,17 @@ class ReactiveAddrUtilTest {
 
 
     @Test
+    void testGetRemoteAddrWithMultipleForwardedIps() {
+        ServerHttpRequest request = MockServerHttpRequest.get("/")
+                .header("X-Forwarded-For", "unknown, 10.0.0.1 , 10.0.0.2")
+                .build();
+
+        String remoteAddr = ReactiveAddrUtil.getRemoteAddr(request);
+        assertEquals("10.0.0.1", remoteAddr);
+    }
+
+
+    @Test
     void testGetRemoteAddrFromRemoteAddress() {
         // 获取回环地址（通常为127.0.0.1或其他本地地址）
         InetAddress inetAddress = InetAddress.getLoopbackAddress();
@@ -72,6 +83,17 @@ class ReactiveAddrUtilTest {
 
 
     @Test
+    void testGetRemoteAddrFromProxyClientHeader() {
+        ServerHttpRequest request = MockServerHttpRequest.get("/")
+                .header("Proxy-Client-IP", "10.0.0.5")
+                .build();
+
+        String remoteAddr = ReactiveAddrUtil.getRemoteAddr(request);
+        assertEquals("10.0.0.5", remoteAddr);
+    }
+
+
+    @Test
     void testGetLocalAddr() {
         String localAddr = ReactiveAddrUtil.getLocalAddr();
         assertNotNull(localAddr);
@@ -90,6 +112,14 @@ class ReactiveAddrUtilTest {
                 "unknown, 192.168.1.1");
         assert result != null;
         assertEquals("192.168.1.1", result.trim());
+    }
+
+
+    @Test
+    void testExtractFirstNonEmptyIpReturnsOriginalWhenAllUnknown() {
+        String result = ReflectionTestUtils.invokeMethod(ReactiveAddrUtil.class,
+                "extractFirstNonEmptyIp", "unknown, ,   ");
+        assertEquals("unknown, ,   ", result);
     }
 
 
@@ -115,6 +145,17 @@ class ReactiveAddrUtilTest {
     }
 
     @Test
+    void testGetIpFromHeadersFallbackToAnotherHeader() {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("X-Forwarded-For", "unknown");
+        headers.put("Proxy-Client-IP", "172.16.0.5");
+
+        String result = ReflectionTestUtils.invokeMethod(ReactiveAddrUtil.class,
+                "getIpFromHeaders", headers);
+        assertEquals("172.16.0.5", result);
+    }
+
+    @Test
     void testGetIpFromHeadersWithEmptyIp() {
         Map<String, String> headers = new HashMap<>();
         headers.put("X-Forwarded-For", "");
@@ -134,4 +175,3 @@ class ReactiveAddrUtilTest {
     }
 
 }
-
