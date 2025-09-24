@@ -81,9 +81,17 @@ class LimitAspectTest {
     }
 
     static class DemoService {
-        public Mono<String> ok() { return Mono.just("ok"); }
-        public String plain() { return "plain"; }
-        public Flux<String> stream() { return Flux.just("alpha", "beta"); }
+        public Mono<String> ok() {
+            return Mono.just("ok");
+        }
+
+        public String plain() {
+            return "plain";
+        }
+
+        public Flux<String> stream() {
+            return Flux.just("alpha", "beta");
+        }
     }
 
     @Test
