@@ -12,7 +12,9 @@ import run.vexa.reactor.http.testclients.NoCloudHttpClient;
 import run.vexa.reactor.http.testclients.ServerNameHttpClient;
 import run.vexa.reactor.http.testconfig.LoadBalancerExchangeFilterConfigurationSupport;
 
-import java.lang.reflect.Method;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,7 +88,7 @@ class HttpExchangeClientFactoryBeanTest {
 
     private static WebClient buildWebClient(Class<?> clientInterface,
                                             AnnotationConfigApplicationContext context,
-                                            MockEnvironment environment) throws Exception {
+                                            MockEnvironment environment) throws ReflectiveOperationException {
         HttpExchangeClientFactoryBean factoryBean = new HttpExchangeClientFactoryBean();
         @SuppressWarnings("unchecked")
         Class<Object> cast = (Class<Object>) clientInterface;
@@ -94,9 +96,15 @@ class HttpExchangeClientFactoryBeanTest {
         factoryBean.setApplicationContext(context);
         factoryBean.setEnvironment(environment);
 
-        Method method = HttpExchangeClientFactoryBean.class.getDeclaredMethod("createWebClient");
-        method.setAccessible(true);
-        return (WebClient) method.invoke(factoryBean);
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        MethodHandles.Lookup privateLookup = MethodHandles.privateLookupIn(HttpExchangeClientFactoryBean.class, lookup);
+        MethodHandle methodHandle = privateLookup.findVirtual(HttpExchangeClientFactoryBean.class, "createWebClient",
+                MethodType.methodType(WebClient.class));
+        try {
+            return (WebClient) methodHandle.invoke(factoryBean);
+        } catch (Throwable throwable) {
+            throw new IllegalStateException("Failed to invoke createWebClient", throwable);
+        }
     }
 
     private static List<ExchangeFilterFunction> extractFilters(WebClient webClient) {
@@ -105,10 +113,16 @@ class HttpExchangeClientFactoryBeanTest {
         return filters;
     }
 
-    private static String invokeConvertBaseUrl(String baseUrl, String serverName, Environment environment) throws Exception {
+    private static String invokeConvertBaseUrl(String baseUrl, String serverName, Environment environment) throws ReflectiveOperationException {
         Class<?> configureClass = Class.forName("run.vexa.reactor.http.core.HttpExchangeClientFactoryBean$WebClientConfigure");
-        Method convertMethod = configureClass.getDeclaredMethod("convertBaseUrl", String.class, String.class, Environment.class);
-        convertMethod.setAccessible(true);
-        return (String) convertMethod.invoke(null, baseUrl, serverName, environment);
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        MethodHandles.Lookup privateLookup = MethodHandles.privateLookupIn(configureClass, lookup);
+        MethodHandle convertHandle = privateLookup.findStatic(configureClass, "convertBaseUrl",
+                MethodType.methodType(String.class, String.class, String.class, Environment.class));
+        try {
+            return (String) convertHandle.invoke(baseUrl, serverName, environment);
+        } catch (Throwable throwable) {
+            throw new IllegalStateException("Failed to invoke convertBaseUrl", throwable);
+        }
     }
 }
