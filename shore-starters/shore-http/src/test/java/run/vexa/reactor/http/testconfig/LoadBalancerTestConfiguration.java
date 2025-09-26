@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 
 @Configuration
-@SuppressWarnings("java:S2187")
 public class LoadBalancerTestConfiguration {
 
     @Bean
