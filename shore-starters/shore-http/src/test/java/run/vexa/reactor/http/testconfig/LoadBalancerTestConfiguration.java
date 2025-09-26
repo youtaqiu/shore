@@ -1,12 +1,12 @@
 package run.vexa.reactor.http.testconfig;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import run.vexa.reactor.http.core.LoadBalancerExchangeFilterFunctionsConsumer;
 import run.vexa.reactor.http.function.CustomLoadBalancerExchangeFilterFunction;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 
@@ -22,6 +22,10 @@ public class LoadBalancerTestConfiguration {
     public LoadBalancerExchangeFilterFunctionsConsumer loadBalancerExchangeFilterFunctionsConsumer() {
         return new LoadBalancerExchangeFilterFunctionsConsumer();
     }
+
+}
+
+class LoadBalancerTestConfigurationTest {
 
     @Test
     void registersBeans() {
