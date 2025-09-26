@@ -10,7 +10,7 @@ import run.vexa.reactor.http.function.CustomLoadBalancerExchangeFilterFunction;
 import run.vexa.reactor.http.testclients.CloudHttpClient;
 import run.vexa.reactor.http.testclients.NoCloudHttpClient;
 import run.vexa.reactor.http.testclients.ServerNameHttpClient;
-import run.vexa.reactor.http.testconfig.LoadBalancerTestConfiguration;
+import run.vexa.reactor.http.testconfig.LoadBalancerExchangeFilterConfigurationSupport;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ class HttpExchangeClientFactoryBeanTest {
     @Test
     void filterSkippedWhenCloudDisabled() throws Exception {
         try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
-            context.register(LoadBalancerTestConfiguration.class);
+            context.register(LoadBalancerExchangeFilterConfigurationSupport.class);
             context.refresh();
 
             MockEnvironment environment = new MockEnvironment();
@@ -38,7 +38,7 @@ class HttpExchangeClientFactoryBeanTest {
     @Test
     void filterIncludedWhenCloudEnabled() throws Exception {
         try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
-            context.register(LoadBalancerTestConfiguration.class);
+            context.register(LoadBalancerExchangeFilterConfigurationSupport.class);
             context.refresh();
 
             MockEnvironment environment = new MockEnvironment();
@@ -53,7 +53,7 @@ class HttpExchangeClientFactoryBeanTest {
     @Test
     void filterIncludedWhenServerNamePresent() throws Exception {
         try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
-            context.register(LoadBalancerTestConfiguration.class);
+            context.register(LoadBalancerExchangeFilterConfigurationSupport.class);
             context.refresh();
 
             MockEnvironment environment = new MockEnvironment();
