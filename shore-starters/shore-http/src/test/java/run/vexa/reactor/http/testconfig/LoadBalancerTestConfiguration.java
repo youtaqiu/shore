@@ -22,9 +22,6 @@ public class LoadBalancerTestConfiguration {
     public LoadBalancerExchangeFilterFunctionsConsumer loadBalancerExchangeFilterFunctionsConsumer() {
         return new LoadBalancerExchangeFilterFunctionsConsumer();
     }
-}
-
-class LoadBalancerTestConfigurationTest {
 
     @Test
     void registersBeans() {
