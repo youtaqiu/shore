@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.ResolvableType;
 import org.springframework.util.ClassUtils;
 import run.vexa.reactor.http.aot.HttpExchangeClientBeanFactoryInitializationAotProcessor;
@@ -32,6 +33,25 @@ class HttpInterfaceAutoConfigurationTest {
     }
 
     @Test
+    void loadBalancerExchangeFilterFunctionsConsumerCreatesNewInstance() {
+        HttpInterfaceAutoConfiguration configuration = new HttpInterfaceAutoConfiguration();
+        assertThat(configuration.loadBalancerExchangeFilterFunctionsConsumer())
+                .isInstanceOf(LoadBalancerExchangeFilterFunctionsConsumer.class);
+        // Ensure a second call yields a distinct instance to prevent accidental caching
+        assertThat(configuration.loadBalancerExchangeFilterFunctionsConsumer())
+                .isNotSameAs(configuration.loadBalancerExchangeFilterFunctionsConsumer());
+    }
+
+    @Test
+    void aotProcessorFactoryMethodCreatesProcessor() {
+        GenericApplicationContext applicationContext = new GenericApplicationContext();
+        applicationContext.refresh();
+        HttpExchangeClientBeanFactoryInitializationAotProcessor processor =
+                HttpInterfaceAutoConfiguration.httpExchangeClientBeanFactoryInitializationAotProcessor(applicationContext);
+        assertThat(processor).isNotNull();
+    }
+
+    @Test
     void postProcessorResolvesGenericType() {
         DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
         HttpInterfaceAutoConfiguration.HttpExchangeClientFactoryBeanPostProcessor postProcessor =
@@ -53,6 +73,25 @@ class HttpInterfaceAutoConfigurationTest {
         ResolvableType expectedType = ResolvableType.forClassWithGenerics(GenericHttpExchangeClientFactoryBean.class, SampleHttpClient.class);
         assertThat(beanDefinition.capturedTargetType()).isEqualTo(expectedType);
         assertThat(beanDefinition.getResolvableType()).isEqualTo(expectedType);
+    }
+
+    @Test
+    void postProcessorSkipsWhenThirdPartyFactoryMissing() {
+        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+        HttpInterfaceAutoConfiguration.HttpExchangeClientFactoryBeanPostProcessor postProcessor =
+                new HttpInterfaceAutoConfiguration.HttpExchangeClientFactoryBeanPostProcessor();
+        postProcessor.setBeanFactory(beanFactory);
+
+        CapturingRootBeanDefinition beanDefinition = new CapturingRootBeanDefinition(GenericHttpExchangeClientFactoryBean.class);
+        beanDefinition.getPropertyValues().add("httpExchangeClientInterface", SampleHttpClient.class);
+
+        try (MockedStatic<ClassUtils> mocked = Mockito.mockStatic(ClassUtils.class)) {
+            mocked.when(() -> ClassUtils.isPresent(Mockito.anyString(), Mockito.any())).thenReturn(false);
+            postProcessor.postProcessMergedBeanDefinition(beanDefinition, HttpExchangeClientFactoryBean.class, "httpExchangeClientFactoryBean");
+        }
+
+        assertThat(beanDefinition.capturedTargetType()).isNull();
+        assertThat(beanDefinition.getResolvableType().hasUnresolvableGenerics()).isTrue();
     }
 
     private interface SampleHttpClient {
