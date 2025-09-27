@@ -14,7 +14,9 @@ import run.vexa.reactor.http.testclients.scanner.PrototypeScanHttpClient;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.lang.reflect.Method;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -75,9 +77,17 @@ class ClassPathHttpExchangeClientScannerTest {
         Set<BeanDefinitionHolder> holders = new HashSet<>();
         holders.add(holder);
 
-        Method process = ClassPathHttpExchangeClientScanner.class.getDeclaredMethod("processBeanDefinitions", Set.class);
-        process.setAccessible(true);
-        process.invoke(scanner, holders);
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        MethodHandles.Lookup privateLookup = MethodHandles.privateLookupIn(ClassPathHttpExchangeClientScanner.class, lookup);
+        MethodHandle methodHandle = privateLookup.findSpecial(ClassPathHttpExchangeClientScanner.class,
+                "processBeanDefinitions",
+                MethodType.methodType(void.class, Set.class),
+                ClassPathHttpExchangeClientScanner.class);
+        try {
+            methodHandle.invoke(scanner, holders);
+        } catch (Throwable throwable) {
+            throw new IllegalStateException("Failed to invoke processBeanDefinitions", throwable);
+        }
 
         assertEquals(HttpExchangeClientFactoryBean.class, targetDefinition.getBeanClass());
         assertEquals(BasicScanHttpClient.class,
