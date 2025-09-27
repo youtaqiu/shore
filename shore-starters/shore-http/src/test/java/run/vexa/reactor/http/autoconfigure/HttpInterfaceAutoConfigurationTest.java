@@ -65,15 +65,22 @@ class HttpInterfaceAutoConfigurationTest {
 
         private ResolvableType currentType;
         private ResolvableType capturedTargetType;
+        private final Class<?> capturedBeanClass;
 
         private CapturingRootBeanDefinition(Class<?> beanClass) {
             super(beanClass);
+            this.capturedBeanClass = beanClass;
             this.currentType = ResolvableType.forClass(beanClass);
         }
 
         @Override
         public ResolvableType getResolvableType() {
             return currentType;
+        }
+
+        @Override
+        public Class<?> getBeanClass() {
+            return this.capturedBeanClass;
         }
 
         @Override
