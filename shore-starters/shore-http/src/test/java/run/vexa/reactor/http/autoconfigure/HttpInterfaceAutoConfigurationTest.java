@@ -94,6 +94,62 @@ class HttpInterfaceAutoConfigurationTest {
         assertThat(beanDefinition.getResolvableType().hasUnresolvableGenerics()).isTrue();
     }
 
+    @Test
+    void postProcessorSkipsWhenBeanClassNotSet() {
+        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+        HttpInterfaceAutoConfiguration.HttpExchangeClientFactoryBeanPostProcessor postProcessor =
+                new HttpInterfaceAutoConfiguration.HttpExchangeClientFactoryBeanPostProcessor();
+        postProcessor.setBeanFactory(beanFactory);
+
+        RootBeanDefinition beanDefinition = new RootBeanDefinition();
+        beanDefinition.getPropertyValues().add("httpExchangeClientInterface", SampleHttpClient.class);
+
+        try (MockedStatic<ClassUtils> mocked = Mockito.mockStatic(ClassUtils.class)) {
+            mocked.when(() -> ClassUtils.isPresent(Mockito.anyString(), Mockito.any())).thenReturn(true);
+            postProcessor.postProcessMergedBeanDefinition(beanDefinition, HttpExchangeClientFactoryBean.class, "httpExchangeClientFactoryBean");
+        }
+
+        assertThat(beanDefinition.getTargetType()).isNull();
+    }
+
+    @Test
+    void postProcessorSkipsWhenBeanClassNotAssignable() {
+        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+        HttpInterfaceAutoConfiguration.HttpExchangeClientFactoryBeanPostProcessor postProcessor =
+                new HttpInterfaceAutoConfiguration.HttpExchangeClientFactoryBeanPostProcessor();
+        postProcessor.setBeanFactory(beanFactory);
+
+        RootBeanDefinition beanDefinition = new RootBeanDefinition(String.class);
+        beanDefinition.getPropertyValues().add("httpExchangeClientInterface", SampleHttpClient.class);
+
+        try (MockedStatic<ClassUtils> mocked = Mockito.mockStatic(ClassUtils.class)) {
+            mocked.when(() -> ClassUtils.isPresent(Mockito.anyString(), Mockito.any())).thenReturn(true);
+            postProcessor.postProcessMergedBeanDefinition(beanDefinition, HttpExchangeClientFactoryBean.class, "httpExchangeClientFactoryBean");
+        }
+
+        assertThat(beanDefinition.getTargetType()).isNull();
+    }
+
+    @Test
+    void postProcessorHandlesInvalidInterfaceValueGracefully() {
+        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+        HttpInterfaceAutoConfiguration.HttpExchangeClientFactoryBeanPostProcessor postProcessor =
+                new HttpInterfaceAutoConfiguration.HttpExchangeClientFactoryBeanPostProcessor();
+        postProcessor.setBeanFactory(beanFactory);
+
+        CapturingRootBeanDefinition beanDefinition = new CapturingRootBeanDefinition(GenericHttpExchangeClientFactoryBean.class);
+        beanDefinition.getPropertyValues().add("httpExchangeClientInterface", "not-a-class");
+        assertThat(beanDefinition.getResolvableType().hasUnresolvableGenerics()).isTrue();
+
+        try (MockedStatic<ClassUtils> mocked = Mockito.mockStatic(ClassUtils.class)) {
+            mocked.when(() -> ClassUtils.isPresent(Mockito.anyString(), Mockito.any())).thenReturn(true);
+            postProcessor.postProcessMergedBeanDefinition(beanDefinition, HttpExchangeClientFactoryBean.class, "httpExchangeClientFactoryBean");
+        }
+
+        assertThat(beanDefinition.capturedTargetType()).isNull();
+        assertThat(beanDefinition.getResolvableType().hasUnresolvableGenerics()).isTrue();
+    }
+
     private interface SampleHttpClient {
     }
 
