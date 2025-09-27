@@ -3,9 +3,17 @@ package run.vexa.reactor.http.core;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.codec.ClientCodecConfigurer;
 import org.springframework.mock.env.MockEnvironment;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.client.ClientRequest;
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
+import org.springframework.web.reactive.function.client.ExchangeFunction;
 import org.springframework.web.reactive.function.client.WebClient;
+import run.vexa.reactor.http.annotation.HttpClient;
 import run.vexa.reactor.http.function.CustomLoadBalancerExchangeFilterFunction;
 import run.vexa.reactor.http.testclients.CloudHttpClient;
 import run.vexa.reactor.http.testclients.NoCloudHttpClient;
@@ -17,6 +25,10 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import reactor.core.publisher.Mono;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -86,6 +98,43 @@ class HttpExchangeClientFactoryBeanTest {
         assertEquals("http://orders-service", converted);
     }
 
+    @Test
+    void appliesCustomAnnotationConfiguration() throws Exception {
+        InvocationTracker.reset();
+        try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
+            context.register(LoadBalancerExchangeFilterConfigurationSupport.class);
+            context.registerBean(TestHttpHeadersConsumer.class);
+            context.registerBean(TestCookiesConsumer.class);
+            context.registerBean(TestRequestHeadersSpecConsumer.class);
+            context.registerBean(TestDefaultStatusHandlerHolder.class);
+            context.registerBean(TestExchangeFilterFunction.class);
+            context.registerBean(TestExchangeFilterFunctionsConsumer.class);
+            context.registerBean(TestClientCodecConfigurerConsumer.class);
+            context.registerBean(TestDefaultUriVariablesSupplier.class);
+            context.registerBean(TestUriBuilderFactory.class);
+            context.refresh();
+
+            MockEnvironment environment = new MockEnvironment();
+            environment.setProperty("service.base", "https://custom.example");
+
+            WebClient webClient = buildWebClient(CustomConfiguredHttpClient.class, context, environment);
+
+            assertTrue(InvocationTracker.headerConsumerInvoked);
+            assertTrue(InvocationTracker.cookiesConsumerInvoked);
+            assertTrue(InvocationTracker.requestHeadersConsumerInvoked);
+            assertTrue(InvocationTracker.statusHandlerInvoked);
+            assertTrue(TestExchangeFilterFunction.INSTANTIATED.get());
+            assertTrue(InvocationTracker.filtersConsumerInvoked);
+            assertTrue(InvocationTracker.codecConfigurerInvoked);
+            assertTrue(TestDefaultUriVariablesSupplier.SUPPLY_INVOKED.get());
+            assertTrue(TestUriBuilderFactory.CREATED.get());
+
+            List<ExchangeFilterFunction> filters = extractFilters(webClient);
+            assertTrue(filters.stream().anyMatch(filter -> filter instanceof TestExchangeFilterFunction));
+            assertTrue(filters.contains(TestExchangeFilterFunctionsConsumer.ADDED_FILTER));
+        }
+    }
+
     private static WebClient buildWebClient(Class<?> clientInterface,
                                             AnnotationConfigApplicationContext context,
                                             MockEnvironment environment) throws ReflectiveOperationException {
@@ -104,6 +153,135 @@ class HttpExchangeClientFactoryBeanTest {
             return (WebClient) methodHandle.invoke(factoryBean);
         } catch (Throwable throwable) {
             throw new IllegalStateException("Failed to invoke createWebClient", throwable);
+        }
+    }
+
+    @HttpClient(
+            baseUrl = "${service.base}",
+            serverName = "custom-service",
+            cloud = true,
+            defaultHeaderKey = "X-Test",
+            defaultHeaderValues = {"one", "two"},
+            httpHeadersConsumer = TestHttpHeadersConsumer.class,
+            defaultCookieKey = "sid",
+            defaultCookieValues = {"cookie"},
+            cookiesConsumer = TestCookiesConsumer.class,
+            requestHeadersSpecConsumer = TestRequestHeadersSpecConsumer.class,
+            defaultStatusHandlerHolder = TestDefaultStatusHandlerHolder.class,
+            filter = TestExchangeFilterFunction.class,
+            filtersConsumer = TestExchangeFilterFunctionsConsumer.class,
+            codecConfigurerConsumer = TestClientCodecConfigurerConsumer.class,
+            defaultUriVariablesSupplier = TestDefaultUriVariablesSupplier.class,
+            uriBuilderFactory = TestUriBuilderFactory.class
+    )
+    interface CustomConfiguredHttpClient {
+    }
+
+    private static final class InvocationTracker {
+        private static boolean headerConsumerInvoked;
+        private static boolean cookiesConsumerInvoked;
+        private static boolean requestHeadersConsumerInvoked;
+        private static boolean statusHandlerInvoked;
+        private static boolean filtersConsumerInvoked;
+        private static boolean codecConfigurerInvoked;
+
+        private static void reset() {
+            headerConsumerInvoked = false;
+            cookiesConsumerInvoked = false;
+            requestHeadersConsumerInvoked = false;
+            statusHandlerInvoked = false;
+            filtersConsumerInvoked = false;
+            codecConfigurerInvoked = false;
+            TestExchangeFilterFunction.INSTANTIATED.set(false);
+            TestDefaultUriVariablesSupplier.SUPPLY_INVOKED.set(false);
+            TestUriBuilderFactory.CREATED.set(false);
+        }
+    }
+
+    static final class TestHttpHeadersConsumer implements HttpHeadersConsumer {
+        @Override
+        public java.util.function.Consumer<HttpHeaders> consume() {
+            InvocationTracker.headerConsumerInvoked = true;
+            return headers -> headers.add("X-Header", "value");
+        }
+    }
+
+    static final class TestCookiesConsumer implements CookiesConsumer {
+        @Override
+        public java.util.function.Consumer<MultiValueMap<String, String>> consume() {
+            InvocationTracker.cookiesConsumerInvoked = true;
+            return cookies -> cookies.add("session", "value");
+        }
+    }
+
+    static final class TestRequestHeadersSpecConsumer implements RequestHeadersSpecConsumer {
+        @Override
+        public java.util.function.Consumer<WebClient.RequestHeadersSpec<?>> consume() {
+            InvocationTracker.requestHeadersConsumerInvoked = true;
+            return spec -> spec.header("X-Request", "value");
+        }
+    }
+
+    static final class TestDefaultStatusHandlerHolder implements DefaultStatusHandlerHolder {
+        @Override
+        public java.util.function.Predicate<HttpStatusCode> statusPredicate() {
+            InvocationTracker.statusHandlerInvoked = true;
+            return status -> false;
+        }
+
+        @Override
+        public java.util.function.Function<ClientResponse, Mono<? extends Throwable>> exceptionFunction() {
+            return response -> Mono.empty();
+        }
+    }
+
+    static final class TestExchangeFilterFunction implements ExchangeFilterFunction {
+        private static final AtomicBoolean INSTANTIATED = new AtomicBoolean(false);
+
+    TestExchangeFilterFunction() {
+            INSTANTIATED.set(true);
+        }
+
+        @Override
+        public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
+            return next.exchange(request);
+        }
+    }
+
+    static final class TestExchangeFilterFunctionsConsumer implements ExchangeFilterFunctionsConsumer {
+        static final ExchangeFilterFunction ADDED_FILTER = (request, next) -> next.exchange(request);
+
+        @Override
+        public java.util.function.Consumer<List<ExchangeFilterFunction>> consume() {
+            InvocationTracker.filtersConsumerInvoked = true;
+            return filters -> filters.add(ADDED_FILTER);
+        }
+    }
+
+    static final class TestClientCodecConfigurerConsumer implements ClientCodecConfigurerConsumer {
+        @Override
+        public java.util.function.Consumer<ClientCodecConfigurer> consumer() {
+            InvocationTracker.codecConfigurerInvoked = true;
+            return configurer -> {
+            };
+        }
+    }
+
+    static final class TestDefaultUriVariablesSupplier implements DefaultUriVariablesSupplier {
+        private static final AtomicBoolean SUPPLY_INVOKED = new AtomicBoolean(false);
+
+        @Override
+        public Map<String, ?> supply() {
+            SUPPLY_INVOKED.set(true);
+            return Map.of("token", "123");
+        }
+    }
+
+    static final class TestUriBuilderFactory extends org.springframework.web.util.DefaultUriBuilderFactory {
+        private static final AtomicBoolean CREATED = new AtomicBoolean(false);
+
+    TestUriBuilderFactory() {
+            CREATED.set(true);
         }
     }
 
