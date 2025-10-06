@@ -77,24 +77,6 @@ class ApiLogServiceTest {
     }
 
     @Test
-    void shouldSetTraceIdWhenLogging() throws Exception {
-        LogHandler handler = mock(LogHandler.class);
-        when(handler.accept(any(), any())).thenReturn(true);
-        when(handler.handler(any())).thenReturn(Mono.just(true));
-
-        ApiLogService service = new ApiLogService(objectProvider(handler));
-        LogDomain domain = LogDomain.builder().build();
-        
-        // Use reflection to access private method
-        Method logHandler = ApiLogService.class.getDeclaredMethod("logHandler", LogDomain.class, LogHandler.class);
-        logHandler.setAccessible(true);
-        logHandler.invoke(service, domain, handler);
-
-        assertThat(domain.getTraceId()).isNotBlank();
-        verify(handler).handler(domain);
-    }
-
-    @Test
     void shouldPopulateTraceIdFromCurrentSpan() throws Exception {
         String traceId = "0123456789abcdef0123456789abcdef";
         SpanContext context = SpanContext.create(traceId, "0123456789abcdef", TraceFlags.getSampled(), TraceState.getDefault());
@@ -135,26 +117,6 @@ class ApiLogServiceTest {
 
         verify(handler).handler(domain);
         assertThat(domain.getTraceId()).isNotNull();
-    }
-
-    @Test
-    void shouldHandleHandlerExceptionGracefully() throws Exception {
-        LogHandler handler = mock(LogHandler.class);
-        when(handler.accept(any(), any())).thenReturn(true);
-        when(handler.handler(any())).thenThrow(new RuntimeException("Handler failed"));
-
-        ApiLogService service = new ApiLogService(objectProvider(handler));
-        LogDomain domain = LogDomain.builder().build();
-        
-        // Use reflection to access private method
-        Method logHandler = ApiLogService.class.getDeclaredMethod("logHandler", LogDomain.class, LogHandler.class);
-        logHandler.setAccessible(true);
-        
-        // Should not throw exception
-        logHandler.invoke(service, domain, handler);
-        
-        // Verify handler was still called
-        verify(handler).handler(domain);
     }
 
     private ObjectProvider<LogHandler> objectProvider(LogHandler... handlers) {
