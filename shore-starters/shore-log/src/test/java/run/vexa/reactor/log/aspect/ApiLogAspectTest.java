@@ -4,8 +4,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
@@ -21,10 +19,7 @@ import java.util.function.Function;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class ApiLogAspectTest {
 
@@ -54,7 +49,7 @@ class ApiLogAspectTest {
         ServerWebExchange exchange = MockServerWebExchange.from(request);
 
         Mono<String> response = ((Mono<?>) result)
-                .map(value -> (String) value)
+                .map(String.class::cast)
                 .contextWrite(context -> context.put(ReactiveContextHolder.CONTEXT_KEY, exchange));
 
         StepVerifier.create(response)

@@ -4,6 +4,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.lang.NonNull;
 import reactor.core.publisher.Mono;
 import run.vexa.reactor.log.annotation.Log;
 import run.vexa.reactor.log.handler.LogDomain;
@@ -14,10 +15,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class ApiLogServiceTest {
 
@@ -75,26 +73,29 @@ class ApiLogServiceTest {
             private final List<LogHandler> list = List.of(handlers);
 
             @Override
-            public LogHandler getObject(Object... args) {
-                return list.get(0);
+            @NonNull
+            public LogHandler getObject(@NonNull Object... args) {
+                return list.getFirst();
             }
 
             @Override
             public LogHandler getIfAvailable() {
-                return list.isEmpty() ? null : list.get(0);
+                return list.isEmpty() ? null : list.getFirst();
             }
 
             @Override
             public LogHandler getIfUnique() {
-                return list.size() == 1 ? list.get(0) : null;
+                return list.size() == 1 ? list.getFirst() : null;
             }
 
             @Override
+            @NonNull
             public Stream<LogHandler> stream() {
                 return list.stream();
             }
 
             @Override
+            @NonNull
             public Stream<LogHandler> orderedStream() {
                 return list.stream();
             }
@@ -103,6 +104,7 @@ class ApiLogServiceTest {
 
     private static final class SampleClass {
         @Log("sample")
+        @SuppressWarnings("unused")
         private void sample(String input) {
             // no-op
         }

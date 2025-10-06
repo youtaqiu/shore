@@ -4,7 +4,6 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -67,8 +66,9 @@ class JoinPointSerialiseTest {
         String output = serialiser.serialise(joinPoint, "Log content", null,
                 new IllegalArgumentException("invalid"), null);
 
-        assertThat(output).contains("invalid");
-        assertThat(output).contains("SampleController#handle");
+        assertThat(output)
+                .contains("invalid")
+                .contains("SampleController#handle");
     }
 
     private static final class SampleController {

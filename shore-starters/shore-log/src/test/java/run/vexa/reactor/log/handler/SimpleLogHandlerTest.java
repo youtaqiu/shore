@@ -8,7 +8,6 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import run.vexa.reactor.log.annotation.Log;
 
 import java.lang.reflect.Method;
@@ -97,9 +96,7 @@ class SimpleLogHandlerTest {
         assertThat(listAppender.list)
                 .hasSize(1)
                 .first()
-                .satisfies(event -> {
-                    assertThat(event.getFormattedMessage()).contains("boom");
-                });
+                .satisfies(event -> assertThat(event.getFormattedMessage()).contains("boom"));
     }
 
     private static final class SampleClass {

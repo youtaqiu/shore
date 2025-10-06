@@ -20,8 +20,9 @@ class UniqueMethodSignatureTest {
         UniqueMethodSignature signature1 = new UniqueMethodSignature(signature);
         UniqueMethodSignature signature2 = new UniqueMethodSignature(signature);
 
-        assertThat(signature1).isEqualTo(signature2);
-        assertThat(signature1.hashCode()).isEqualTo(signature2.hashCode());
+        assertThat(signature1)
+                .isEqualTo(signature2)
+                .hasSameHashCodeAs(signature2);
         assertThat(signature1.getMethodSignature()).isSameAs(signature);
     }
 
