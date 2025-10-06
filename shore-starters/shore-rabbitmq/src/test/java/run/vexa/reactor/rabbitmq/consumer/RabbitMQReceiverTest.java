@@ -145,7 +145,7 @@ class RabbitMQReceiverTest {
 
         @Override
         public String getQueue() {
-            return queueName;
+            return getQueueName();
         }
     }
 
