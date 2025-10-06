@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 import run.vexa.reactor.core.context.ReactiveContextHolder;
@@ -82,10 +83,86 @@ class ApiLogAspectTest {
         verify(logger).error("error-log");
     }
 
+    @Test
+    void handlerShouldLogFluxResult() throws Throwable {
+        JoinPointSerialise serialiser = mock(JoinPointSerialise.class);
+        when(serialiser.serialise(any(), any(), any(), any(), any())).thenReturn("flux-log");
+        Logger logger = mock(Logger.class);
+        ApiLogAspect aspect = new ApiLogAspect(serialiser, clazz -> logger);
+
+        ProceedingJoinPoint joinPoint = mock(ProceedingJoinPoint.class);
+        Method method = SampleService.class.getDeclaredMethod("flux", String.class);
+        MethodSignature signature = mock(MethodSignature.class);
+        when(signature.getDeclaringType()).thenReturn(SampleService.class);
+        when(signature.getMethod()).thenReturn(method);
+        when(joinPoint.getSignature()).thenReturn(signature);
+        when(joinPoint.getArgs()).thenReturn(new Object[]{"value"});
+        when(joinPoint.proceed()).thenReturn(Flux.just("value-1", "value-2"));
+
+        Log logAnnotation = method.getAnnotation(Log.class);
+
+        Object result = aspect.handler(joinPoint, logAnnotation);
+        assertThat(result).isInstanceOf(Mono.class);
+
+        MockServerHttpRequest request = MockServerHttpRequest.get("/flux").build();
+        ServerWebExchange exchange = MockServerWebExchange.from(request);
+
+        StepVerifier.create(((Mono<?>) result)
+                        .contextWrite(context -> context.put(ReactiveContextHolder.CONTEXT_KEY, exchange)))
+                .expectNextMatches(value -> value instanceof java.util.List<?> list
+                        && list.containsAll(java.util.List.of("value-1", "value-2")))
+                .verifyComplete();
+
+        verify(logger).info("flux-log");
+    }
+
+    @Test
+    void handlerShouldLogSynchronousValue() throws Throwable {
+        JoinPointSerialise serialiser = mock(JoinPointSerialise.class);
+        when(serialiser.serialise(any(), any(), any(), any(), any())).thenReturn("sync-log");
+        Logger logger = mock(Logger.class);
+        ApiLogAspect aspect = new ApiLogAspect(serialiser, clazz -> logger);
+
+        ProceedingJoinPoint joinPoint = mock(ProceedingJoinPoint.class);
+        Method method = SampleService.class.getDeclaredMethod("sync", String.class);
+        MethodSignature signature = mock(MethodSignature.class);
+        when(signature.getDeclaringType()).thenReturn(SampleService.class);
+        when(signature.getMethod()).thenReturn(method);
+        when(joinPoint.getSignature()).thenReturn(signature);
+        when(joinPoint.getArgs()).thenReturn(new Object[]{"value"});
+        when(joinPoint.proceed()).thenReturn("value-result");
+
+        Log logAnnotation = method.getAnnotation(Log.class);
+
+        Object result = aspect.handler(joinPoint, logAnnotation);
+        assertThat(result).isInstanceOf(Mono.class);
+
+        MockServerHttpRequest request = MockServerHttpRequest.get("/sync").build();
+        ServerWebExchange exchange = MockServerWebExchange.from(request);
+
+        StepVerifier.create(((Mono<?>) result)
+                        .map(String.class::cast)
+                        .contextWrite(context -> context.put(ReactiveContextHolder.CONTEXT_KEY, exchange)))
+                .expectNext("value-result")
+                .verifyComplete();
+
+        verify(logger).info("sync-log");
+    }
+
     private static final class SampleService {
         @Log("mono")
         private Mono<String> mono(String value) {
             return Mono.just(value);
+        }
+
+        @Log("flux")
+        private Flux<String> flux(String value) {
+            return Flux.just(value + "-1", value + "-2");
+        }
+
+        @Log("sync")
+        private String sync(String value) {
+            return value + "-result";
         }
     }
 }

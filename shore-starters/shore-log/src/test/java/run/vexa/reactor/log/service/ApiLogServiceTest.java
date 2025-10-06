@@ -1,5 +1,10 @@
 package run.vexa.reactor.log.service;
 
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanContext;
+import io.opentelemetry.api.trace.TraceFlags;
+import io.opentelemetry.api.trace.TraceState;
+import io.opentelemetry.context.Scope;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -63,8 +68,92 @@ class ApiLogServiceTest {
         when(signature.getMethod()).thenReturn(method);
         Log logAnnotation = method.getAnnotation(Log.class);
 
+        // This will trigger logHandler internally
         service.log(domain, signature, logAnnotation);
 
+        verify(handler).handler(domain);
+        // Verify traceId was set
+        assertThat(domain.getTraceId()).isNotNull();
+    }
+
+    @Test
+    void shouldSetTraceIdWhenLogging() throws Exception {
+        LogHandler handler = mock(LogHandler.class);
+        when(handler.accept(any(), any())).thenReturn(true);
+        when(handler.handler(any())).thenReturn(Mono.just(true));
+
+        ApiLogService service = new ApiLogService(objectProvider(handler));
+        LogDomain domain = LogDomain.builder().build();
+        
+        // Use reflection to access private method
+        Method logHandler = ApiLogService.class.getDeclaredMethod("logHandler", LogDomain.class, LogHandler.class);
+        logHandler.setAccessible(true);
+        logHandler.invoke(service, domain, handler);
+
+        assertThat(domain.getTraceId()).isNotBlank();
+        verify(handler).handler(domain);
+    }
+
+    @Test
+    void shouldPopulateTraceIdFromCurrentSpan() throws Exception {
+        String traceId = "0123456789abcdef0123456789abcdef";
+        SpanContext context = SpanContext.create(traceId, "0123456789abcdef", TraceFlags.getSampled(), TraceState.getDefault());
+        Span span = Span.wrap(context);
+
+        LogHandler handler = mock(LogHandler.class);
+        when(handler.accept(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(handler.handler(Mockito.any())).thenReturn(Mono.just(true));
+
+        ApiLogService service = new ApiLogService(objectProvider(handler));
+        LogDomain domain = LogDomain.builder().build();
+        Method method = SampleClass.class.getDeclaredMethod("sample", String.class);
+        MethodSignature signature = mock(MethodSignature.class);
+        when(signature.getMethod()).thenReturn(method);
+        Log logAnnotation = method.getAnnotation(Log.class);
+
+        try (Scope ignored = span.makeCurrent()) {
+            service.log(domain, signature, logAnnotation);
+        }
+
+        assertThat(domain.getTraceId()).isEqualTo(traceId);
+    }
+
+    @Test
+    void shouldCatchThrownExceptionsFromHandler() throws Exception {
+        LogHandler handler = mock(LogHandler.class);
+        when(handler.accept(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(handler.handler(Mockito.any())).thenThrow(new IllegalArgumentException("fail"));
+
+        ApiLogService service = new ApiLogService(objectProvider(handler));
+        LogDomain domain = LogDomain.builder().build();
+        Method method = SampleClass.class.getDeclaredMethod("sample", String.class);
+        MethodSignature signature = mock(MethodSignature.class);
+        when(signature.getMethod()).thenReturn(method);
+        Log logAnnotation = method.getAnnotation(Log.class);
+
+        service.log(domain, signature, logAnnotation);
+
+        verify(handler).handler(domain);
+        assertThat(domain.getTraceId()).isNotNull();
+    }
+
+    @Test
+    void shouldHandleHandlerExceptionGracefully() throws Exception {
+        LogHandler handler = mock(LogHandler.class);
+        when(handler.accept(any(), any())).thenReturn(true);
+        when(handler.handler(any())).thenThrow(new RuntimeException("Handler failed"));
+
+        ApiLogService service = new ApiLogService(objectProvider(handler));
+        LogDomain domain = LogDomain.builder().build();
+        
+        // Use reflection to access private method
+        Method logHandler = ApiLogService.class.getDeclaredMethod("logHandler", LogDomain.class, LogHandler.class);
+        logHandler.setAccessible(true);
+        
+        // Should not throw exception
+        logHandler.invoke(service, domain, handler);
+        
+        // Verify handler was still called
         verify(handler).handler(domain);
     }
 
