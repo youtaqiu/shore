@@ -12,6 +12,8 @@ import reactor.rabbitmq.SenderOptions;
 import run.vexa.reactor.rabbitmq.producer.RabbitMQSender;
 import run.vexa.reactor.rabbitmq.properties.RabbitMQProperties;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
@@ -28,7 +30,7 @@ class RabbitMqAutoConfigurationTest {
         properties.setHost("example.com");
         properties.setPort(1234);
         String username = "user";
-        String password = "pwdValue";
+        String password = randomPassword();
         properties.setUsername(username);
         properties.setPassword(password);
         properties.setVirtualHost("/vh");
@@ -69,7 +71,7 @@ class RabbitMqAutoConfigurationTest {
     void senderOptionsShouldConfigureConnectionSupplierWhenAddressesProvided() throws Exception {
         RabbitMQProperties properties = new RabbitMQProperties();
         String username = "user";
-        String password = "pwdValue";
+        String password = randomPassword();
         properties.setUsername(username);
         properties.setPassword(password);
         properties.setVirtualHost("/vh");
@@ -113,7 +115,7 @@ class RabbitMqAutoConfigurationTest {
     void receiverOptionsShouldConfigureConnectionSupplierWhenAddressesProvided() throws Exception {
         RabbitMQProperties properties = new RabbitMQProperties();
         String username = "user";
-        String password = "pwdValue";
+        String password = randomPassword();
         properties.setUsername(username);
         properties.setPassword(password);
         properties.setVirtualHost("/vh");
@@ -148,5 +150,9 @@ class RabbitMqAutoConfigurationTest {
         RabbitMQSender rabbitSender = configuration.rabbitSender(sender);
 
         assertThat(rabbitSender).isNotNull();
+    }
+
+    private static String randomPassword() {
+        return UUID.randomUUID().toString();
     }
 }
