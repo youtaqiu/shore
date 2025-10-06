@@ -16,11 +16,12 @@ import run.vexa.reactor.rabbitmq.exception.QueueException;
 import run.vexa.reactor.rabbitmq.message.QueueEvent;
 import run.vexa.reactor.rabbitmq.properties.RabbitMQProperties;
 
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -46,10 +47,10 @@ class RabbitMQReceiverTest {
         rabbitMQProperties.setMinBackoff(0L);
 
         testReceiver = new TestRabbitMQReceiver();
-        inject(testReceiver, "sender", sender);
-        inject(testReceiver, "receiver", reactorReceiver);
-        inject(testReceiver, "objectMapper", objectMapper);
-        inject(testReceiver, "rabbitMQProperties", rabbitMQProperties);
+        ReflectionTestUtils.setField(testReceiver, "sender", sender);
+        ReflectionTestUtils.setField(testReceiver, "receiver", reactorReceiver);
+        ReflectionTestUtils.setField(testReceiver, "objectMapper", objectMapper);
+        ReflectionTestUtils.setField(testReceiver, "rabbitMQProperties", rabbitMQProperties);
     }
 
     @Test
@@ -108,12 +109,6 @@ class RabbitMQReceiverTest {
     private Delivery delivery(TestQueueEvent payload) throws Exception {
         byte[] body = objectMapper.writeValueAsBytes(payload);
         return new Delivery(new Envelope(1L, false, "", ""), new AMQP.BasicProperties(), body);
-    }
-
-    private static void inject(Object target, String fieldName, Object value) throws Exception {
-        Field field = RabbitMQReceiver.class.getDeclaredField(fieldName);
-        field.setAccessible(true);
-        field.set(target, value);
     }
 
     private static final class TestQueueEvent extends QueueEvent {

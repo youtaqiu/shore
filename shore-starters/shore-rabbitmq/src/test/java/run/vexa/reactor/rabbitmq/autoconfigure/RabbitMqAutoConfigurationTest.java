@@ -27,8 +27,10 @@ class RabbitMqAutoConfigurationTest {
         RabbitMQProperties properties = new RabbitMQProperties();
         properties.setHost("example.com");
         properties.setPort(1234);
-        properties.setUsername("user");
-        properties.setPassword("pass");
+        String username = "user";
+        String password = "pwdValue";
+        properties.setUsername(username);
+        properties.setPassword(password);
         properties.setVirtualHost("/vh");
 
         Connection connection = mock(Connection.class);
@@ -44,8 +46,8 @@ class RabbitMqAutoConfigurationTest {
             ConnectionFactory factory = mocked.constructed().get(0);
             verify(factory).setHost("example.com");
             verify(factory).setPort(1234);
-            verify(factory).setUsername("user");
-            verify(factory).setPassword("pass");
+            verify(factory).setUsername(username);
+            verify(factory).setPassword(password);
             verify(factory).setVirtualHost("/vh");
             verify(factory).useNio();
         }
@@ -66,8 +68,10 @@ class RabbitMqAutoConfigurationTest {
     @Test
     void senderOptionsShouldConfigureConnectionSupplierWhenAddressesProvided() throws Exception {
         RabbitMQProperties properties = new RabbitMQProperties();
-        properties.setUsername("user");
-        properties.setPassword("pass");
+        String username = "user";
+        String password = "pwdValue";
+        properties.setUsername(username);
+        properties.setPassword(password);
         properties.setVirtualHost("/vh");
         properties.setAddresses("host1:1111,host2:2222");
 
@@ -84,8 +88,8 @@ class RabbitMqAutoConfigurationTest {
 
             ConnectionFactory factory = mocked.constructed().get(0);
             verify(factory).useNio();
-            verify(factory).setUsername("user");
-            verify(factory).setPassword("pass");
+            verify(factory).setUsername(username);
+            verify(factory).setPassword(password);
             verify(factory).setVirtualHost("/vh");
 
             Connection created = options.getConnectionSupplier().apply(factory);
@@ -108,8 +112,10 @@ class RabbitMqAutoConfigurationTest {
     @Test
     void receiverOptionsShouldConfigureConnectionSupplierWhenAddressesProvided() throws Exception {
         RabbitMQProperties properties = new RabbitMQProperties();
-        properties.setUsername("user");
-        properties.setPassword("pass");
+        String username = "user";
+        String password = "pwdValue";
+        properties.setUsername(username);
+        properties.setPassword(password);
         properties.setVirtualHost("/vh");
         properties.setAddresses("host1:1111,host2:2222");
 
@@ -126,8 +132,8 @@ class RabbitMqAutoConfigurationTest {
 
             ConnectionFactory factory = mocked.constructed().get(0);
             verify(factory).useNio();
-            verify(factory).setUsername("user");
-            verify(factory).setPassword("pass");
+            verify(factory).setUsername(username);
+            verify(factory).setPassword(password);
             verify(factory).setVirtualHost("/vh");
 
             Connection created = options.getConnectionSupplier().apply(factory);
