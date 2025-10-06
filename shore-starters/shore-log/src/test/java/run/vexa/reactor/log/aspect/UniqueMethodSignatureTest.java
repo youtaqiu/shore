@@ -13,7 +13,7 @@ class UniqueMethodSignatureTest {
 
     @Test
     void shouldUseUnderlyingMethodForEquality() throws Exception {
-        Method method = SampleClass.class.getDeclaredMethod("sample");
+        Method method = Object.class.getDeclaredMethod("toString");
         MethodSignature signature = mock(MethodSignature.class);
         when(signature.getMethod()).thenReturn(method);
 
@@ -25,9 +25,4 @@ class UniqueMethodSignatureTest {
         assertThat(signature1.getMethodSignature()).isSameAs(signature);
     }
 
-    private static final class SampleClass {
-        private void sample() {
-            // no-op
-        }
-    }
 }
