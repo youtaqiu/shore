@@ -45,7 +45,7 @@ public class CustomAuthorizationManager implements ReactiveAuthorizationManager<
         var requestPath = exchange.getRequest().getURI().getPath();
         var httpMethod = exchange.getRequest().getMethod();
         if (authenticated(httpMethod, requestPath)) {
-            return Mono.just(AuthorizationDecision.TRUE);
+            return Mono.just(new AuthorizationDecision(true));
         }
 
         var needAuthorityList = Arrays.stream(RoleEnum.values())
@@ -57,7 +57,7 @@ public class CustomAuthorizationManager implements ReactiveAuthorizationManager<
                 .map(GrantedAuthority::getAuthority)
                 .any(needAuthorityList::contains)
                 .map(AuthorizationDecision::new)
-                .defaultIfEmpty(AuthorizationDecision.FALSE);
+                .defaultIfEmpty(new AuthorizationDecision(false));
     }
 
 
