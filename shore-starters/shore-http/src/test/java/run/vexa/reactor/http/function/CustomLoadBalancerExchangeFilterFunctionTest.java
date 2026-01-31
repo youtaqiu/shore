@@ -82,7 +82,7 @@ class CustomLoadBalancerExchangeFilterFunctionTest {
 
         ClientRequest captured = interceptedRequest.get();
         assertThat(captured).isNotNull();
-        assertThat(captured.headers().containsKey(HttpHeaders.AUTHORIZATION)).isFalse();
+        assertThat(captured.headers().contains(HttpHeaders.AUTHORIZATION)).isFalse();
     }
 
     private ReactiveLoadBalancer.Factory<ServiceInstance> loadBalancerFactory() {
