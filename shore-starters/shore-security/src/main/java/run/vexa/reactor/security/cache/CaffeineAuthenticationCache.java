@@ -2,11 +2,14 @@ package run.vexa.reactor.security.cache;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Mono;
 import run.vexa.reactor.security.domain.CurrentUser;
 
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -15,6 +18,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author rained
  */
+@NullMarked
 public class CaffeineAuthenticationCache implements AuthenticationCache<CurrentUser> {
 
     private final Cache<String, String> tokenCache;
@@ -43,18 +47,28 @@ public class CaffeineAuthenticationCache implements AuthenticationCache<CurrentU
     }
 
     @Override
-    public Mono<Boolean> token(String key, String username, long expire) {
+    public Mono<Boolean> token(@Nullable String key, @Nullable String username, long expire) {
+        if (key == null || username == null) {
+            return Mono.just(false);
+        }
         return Mono.fromRunnable(() -> tokenCache.put(key, username))
                 .thenReturn(true);
     }
 
     @Override
-    public Mono<List<String>> getTokenList(String key) {
-        return Mono.justOrEmpty(tokenListCache.get(key, k -> null));
+    public Mono<List<String>> getTokenList(@Nullable String key) {
+        if (key == null) {
+            return Mono.just(Collections.emptyList());
+        }
+        List<String> tokens = tokenListCache.getIfPresent(key);
+        return tokens != null ? Mono.just(tokens) : Mono.just(Collections.emptyList());
     }
 
     @Override
-    public Mono<Boolean> tokenList(String key, List<String> tokens, long expire) {
+    public Mono<Boolean> tokenList(@Nullable String key, @Nullable List<String> tokens, long expire) {
+        if (key == null) {
+            return Mono.just(false);
+        }
         return Mono.fromRunnable(() -> {
                     if (!CollectionUtils.isEmpty(tokens)) {
                         tokenListCache.put(key, tokens);
@@ -64,34 +78,46 @@ public class CaffeineAuthenticationCache implements AuthenticationCache<CurrentU
     }
 
     @Override
-    public Mono<Duration> getExpire(String key) {
+    public Mono<Duration> getExpire(@Nullable String key) {
         return Mono.just(Duration.ofSeconds(3600));
     }
 
     @Override
-    public Mono<Boolean> user(String key, CurrentUser currentUser, long expire) {
+    public Mono<Boolean> user(@Nullable String key, CurrentUser currentUser, long expire) {
+        if (key == null) {
+            return Mono.just(false);
+        }
         return Mono.fromRunnable(() -> userCache.put(key, currentUser))
                 .thenReturn(true);
     }
 
     @Override
-    public Mono<String> token(String key) {
-        return Mono.justOrEmpty(tokenCache.get(key, k -> null));
+    public Mono<String> token(@Nullable String key) {
+        if (key == null) {
+            return Mono.empty();
+        }
+        return Mono.justOrEmpty(tokenCache.getIfPresent(key));
     }
 
     @Override
-    public Mono<CurrentUser> user(String key) {
-        return Mono.justOrEmpty(userCache.get(key, k -> null));
+    public Mono<CurrentUser> user(@Nullable String key) {
+        if (key == null) {
+            return Mono.empty();
+        }
+        return Mono.justOrEmpty(userCache.getIfPresent(key));
     }
 
     @Override
-    public Mono<Boolean> refreshToken(String key, String username, long expire) {
-        return Mono.fromRunnable(() -> tokenCache.put(key, username))
-                .thenReturn(true);
+    public Mono<Boolean> refreshToken(@Nullable String key, @Nullable String username, long expire) {
+        // Delegate to token() since they have the same implementation
+        return token(key, username, expire);
     }
 
     @Override
-    public Mono<Long> delete(String key) {
+    public Mono<Long> delete(@Nullable String key) {
+        if (key == null) {
+            return Mono.just(0L);
+        }
         return Mono.fromRunnable(() -> {
             userCache.invalidate(key);
             tokenCache.invalidate(key);
@@ -100,7 +126,7 @@ public class CaffeineAuthenticationCache implements AuthenticationCache<CurrentU
     }
 
     @Override
-    public Mono<Boolean> renew(String tokenKey, long expire) {
+    public Mono<Boolean> renew(@Nullable String tokenKey, long expire) {
         return Mono.just(true);
     }
 }

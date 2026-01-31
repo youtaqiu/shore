@@ -1,6 +1,6 @@
 [versions]
-springBoot = "3.5.7"
-springCloud = "2023.0.3"
+springBoot = "4.0.0"
+springCloud = "2024.0.0"
 hutool = "5.8.41"
 slf4jApi = "2.0.17"
 logstash = "9.0"
@@ -44,6 +44,8 @@ opentelemetry-extension = { group = "io.opentelemetry.instrumentation", name = "
 reactor-rabbitmq = { group = "io.projectreactor.rabbitmq", name = "reactor-rabbitmq", version.ref = "reactorRabbitmq" }
 reactor-kafka = { group = "io.projectreactor.kafka", name = "reactor-kafka", version.ref = "reactorKafka" }
 swagger-v3-annotations = { group = "io.swagger.core.v3", name = "swagger-annotations-jakarta", version.ref = "swaggerAnnotations" }
+spring-boot-starter-aop = { group = "org.springframework.boot", name = "spring-boot-starter-aop", version.ref = "springBoot" }
+spring-boot-starter-autoconfigure = { group = "org.springframework.boot", name = "spring-boot-starter-autoconfigure", version.ref = "springBoot" }
 squareup-okhttp3 = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp3" }
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
 

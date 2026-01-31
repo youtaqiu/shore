@@ -1,14 +1,10 @@
 package run.vexa.reactor.redis;
 
-import run.vexa.reactor.redis.supprot.CustomizeReactiveRedisTemplate;
-import run.vexa.reactor.redis.supprot.CustomizeRedisTemplate;
-import run.vexa.reactor.redis.util.JacksonSerializerUtils;
-import run.vexa.reactor.redis.util.ReactiveRedisUtil;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
-import org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration;
+import org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfiguration;
+import org.springframework.boot.data.redis.autoconfigure.DataRedisReactiveAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -17,6 +13,10 @@ import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import reactor.core.publisher.Flux;
+import run.vexa.reactor.redis.supprot.CustomizeReactiveRedisTemplate;
+import run.vexa.reactor.redis.supprot.CustomizeRedisTemplate;
+import run.vexa.reactor.redis.util.JacksonSerializerUtils;
+import run.vexa.reactor.redis.util.ReactiveRedisUtil;
 
 /**
  * The type Customize redis autoconfiguration.
@@ -24,7 +24,7 @@ import reactor.core.publisher.Flux;
  * @author youta
  **/
 @ConditionalOnClass(RedisOperations.class)
-@AutoConfiguration(before = {RedisAutoConfiguration.class})
+@AutoConfiguration(before = {DataRedisAutoConfiguration.class})
 public class CustomizeRedisAutoConfiguration {
 
     /**
@@ -32,6 +32,7 @@ public class CustomizeRedisAutoConfiguration {
      * This constructor is used for serialization and other reflective operations.
      */
     public CustomizeRedisAutoConfiguration() {
+        // No initialization needed
     }
 
     /**
@@ -48,16 +49,18 @@ public class CustomizeRedisAutoConfiguration {
     /**
      * The type Customize reactive redis autoconfiguration.
      */
-    @AutoConfiguration(before = {RedisReactiveAutoConfiguration.class})
+    @AutoConfiguration(before = {DataRedisReactiveAutoConfiguration.class})
     @ConditionalOnClass({ReactiveRedisConnectionFactory.class, ReactiveRedisTemplate.class, Flux.class})
     public static class CustomizeReactiveRedisAutoConfiguration {
 
         /**
-         * Default constructor.
-         * This constructor is used for serialization and other reflective operations.
-         */
-        public CustomizeReactiveRedisAutoConfiguration() {
-        }
+     * Default constructor used by Spring's dependency injection framework.
+     * This class only provides static configuration through @Bean methods,
+     * so no instance fields need to be initialized.
+     */
+    public CustomizeReactiveRedisAutoConfiguration() {
+        // No initialization needed - configuration is done through @Bean methods
+    }
 
         /**
          * customize reactive redis template customize reactive redis template.
@@ -67,7 +70,7 @@ public class CustomizeRedisAutoConfiguration {
          */
         @Bean("customizeReactiveRedisTemplate")
         public CustomizeReactiveRedisTemplate<String, Object> customizeReactiveRedisTemplate(ReactiveRedisConnectionFactory redisConnectionFactory) {
-            RedisSerializationContext<String, Object> serializationContext = RedisSerializationContext.
+            var serializationContext = RedisSerializationContext.
                     <String, Object>newSerializationContext()
                     .key(RedisSerializer.string()).value(JacksonSerializerUtils.json())
                     .hashKey(RedisSerializer.string()).hashValue(JacksonSerializerUtils.json()).build();

@@ -1,6 +1,0 @@
-description "shore elastic search starter"
-
-dependencies {
-    optional "org.springframework.boot:spring-boot-autoconfigure"
-    api "org.springframework.boot:spring-boot-starter-data-elasticsearch"
-}

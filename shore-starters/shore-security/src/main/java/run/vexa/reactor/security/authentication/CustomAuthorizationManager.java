@@ -2,6 +2,7 @@ package run.vexa.reactor.security.authentication;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authorization.AuthorizationDecision;
+import org.springframework.security.authorization.AuthorizationResult;
 import org.springframework.security.authorization.ReactiveAuthorizationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -37,8 +38,9 @@ public class CustomAuthorizationManager implements ReactiveAuthorizationManager<
         this.properties = properties;
     }
 
+
     @Override
-    public Mono<AuthorizationDecision> check(Mono<Authentication> authentication, AuthorizationContext context) {
+    public Mono<AuthorizationResult> authorize(Mono<Authentication> authentication, AuthorizationContext context) {
         var exchange = context.getExchange();
         var requestPath = exchange.getRequest().getURI().getPath();
         var httpMethod = exchange.getRequest().getMethod();
@@ -54,17 +56,8 @@ public class CustomAuthorizationManager implements ReactiveAuthorizationManager<
                 .flatMapIterable(Authentication::getAuthorities)
                 .map(GrantedAuthority::getAuthority)
                 .any(needAuthorityList::contains)
-                .map(AuthorizationDecision::new)
+                .<AuthorizationResult>map(AuthorizationDecision::new)
                 .defaultIfEmpty(new AuthorizationDecision(false));
-    }
-
-
-    @Override
-    public Mono<Void> verify(Mono<Authentication> authentication, AuthorizationContext object) {
-        return check(authentication, object)
-                .filter(AuthorizationDecision::isGranted)
-                .switchIfEmpty(Mono.defer(() -> R.error(CommonExceptionEnum.FORBIDDEN)))
-                .flatMap(d -> Mono.empty());
     }
 
 

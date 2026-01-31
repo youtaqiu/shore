@@ -15,7 +15,7 @@ public class TokenConstants {
      * Default constructor.
      * This constructor is used for serialization and other reflective operations.
      */
-    public TokenConstants() {
+    protected TokenConstants() {
     }
 
     /**

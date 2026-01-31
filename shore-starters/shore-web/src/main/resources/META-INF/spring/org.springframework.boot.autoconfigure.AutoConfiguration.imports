@@ -2,4 +2,3 @@ run.vexa.reactor.web.autoconfigure.ReactorContextWebFilterAutoConfigure
 run.vexa.reactor.web.autoconfigure.WebFluxGlobalExceptionHandlerAutoConfigure
 run.vexa.reactor.web.autoconfigure.SwaggerConfiguration
 run.vexa.reactor.web.autoconfigure.WebSocketAutoConfiguration
-run.vexa.reactor.web.autoconfigure.JacksonConfiguration
