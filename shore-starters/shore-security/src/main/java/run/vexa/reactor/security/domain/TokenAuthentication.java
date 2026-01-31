@@ -74,7 +74,7 @@ public class TokenAuthentication extends AbstractAuthenticationToken {
      * @param credentials credentials
      */
     public TokenAuthentication(Object principal, Object credentials) {
-        super(null);
+        super(Collections.emptyList());
         this.principal = principal;
         this.credentials = credentials;
     }

@@ -2,6 +2,7 @@ package run.vexa.reactor.security.authentication;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authorization.AuthorizationDecision;
+import org.springframework.security.authorization.AuthorizationResult;
 import org.springframework.security.authorization.ReactiveAuthorizationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -39,12 +40,12 @@ public class CustomAuthorizationManager implements ReactiveAuthorizationManager<
 
 
     @Override
-    public Mono<AuthorizationDecision> authorize(Mono<Authentication> authentication, AuthorizationContext context) {
+    public Mono<AuthorizationResult> authorize(Mono<Authentication> authentication, AuthorizationContext context) {
         var exchange = context.getExchange();
         var requestPath = exchange.getRequest().getURI().getPath();
         var httpMethod = exchange.getRequest().getMethod();
         if (authenticated(httpMethod, requestPath)) {
-            return Mono.just(new AuthorizationDecision(true));
+            return Mono.just(AuthorizationDecision.TRUE);
         }
 
         var needAuthorityList = Arrays.stream(RoleEnum.values())
@@ -56,7 +57,7 @@ public class CustomAuthorizationManager implements ReactiveAuthorizationManager<
                 .map(GrantedAuthority::getAuthority)
                 .any(needAuthorityList::contains)
                 .map(AuthorizationDecision::new)
-                .defaultIfEmpty(new AuthorizationDecision(false));
+                .defaultIfEmpty(AuthorizationDecision.FALSE);
     }
 
 
