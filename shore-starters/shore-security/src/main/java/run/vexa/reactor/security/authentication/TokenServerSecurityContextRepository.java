@@ -1,6 +1,8 @@
 package run.vexa.reactor.security.authentication;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextImpl;
@@ -50,11 +52,13 @@ public class TokenServerSecurityContextRepository implements ServerSecurityConte
     }
 
     @Override
-    public Mono<Void> save(ServerWebExchange exchange, SecurityContext context) {
+    @NullMarked
+    public Mono<Void> save(ServerWebExchange exchange, @Nullable SecurityContext context) {
         return Mono.empty();
     }
 
     @Override
+    @NullMarked
     public Mono<SecurityContext> load(ServerWebExchange exchange) {
         return Mono.justOrEmpty(exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION))
                 .filter(authHeader -> authHeader.startsWith(Constants.TOKEN_TYPE))

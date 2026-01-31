@@ -1,5 +1,6 @@
 package run.vexa.reactor.security.authentication;
 
+import org.jspecify.annotations.NullMarked;
 import run.vexa.reactor.commons.bean.R;
 import run.vexa.reactor.security.domain.SecurityExceptionEnum;
 import run.vexa.reactor.security.domain.TokenAuthentication;
@@ -33,6 +34,7 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
     }
 
     @Override
+    @NullMarked
     public Mono<Authentication> authenticate(Authentication authentication) {
         if (authentication.isAuthenticated()) {
             return Mono.just(authentication);
@@ -49,6 +51,7 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
      * @param tokenAuthentication {@link TokenAuthentication}
      * @return {@link TokenAuthentication}
      */
+    @NullMarked
     private Mono<TokenAuthentication> getTokenAuthentication(TokenAuthentication tokenAuthentication) {
         return this.authenticationGrantManager.grant(tokenAuthentication.getLoginUser().getType(),
                         authenticationGrant -> authenticationGrant.userDetails(tokenAuthentication.getLoginUser()))

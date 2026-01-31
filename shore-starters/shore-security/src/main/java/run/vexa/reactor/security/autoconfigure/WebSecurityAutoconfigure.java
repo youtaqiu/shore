@@ -14,13 +14,14 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
-import org.springframework.web.method.HandlerMethod;
 import run.vexa.reactor.core.properties.AuthProperties;
 import run.vexa.reactor.security.anonymous.AnonymousUrlLoader;
-import run.vexa.reactor.security.authentication.*;
+import run.vexa.reactor.security.authentication.AuthenticationManager;
+import run.vexa.reactor.security.authentication.CustomAuthorizationManager;
+import run.vexa.reactor.security.authentication.ReactiveServerAuthenticationConverter;
+import run.vexa.reactor.security.authentication.TokenServerSecurityContextRepository;
 import run.vexa.reactor.security.handler.*;
 
-import java.lang.annotation.Annotation;
 import java.util.LinkedList;
 
 
@@ -38,7 +39,6 @@ import java.util.LinkedList;
         "run.vexa.reactor.security.handler",
         "run.vexa.reactor.security.grant"
 })
-@SuppressWarnings("all")
 public class WebSecurityAutoconfigure {
 
     private final AuthenticationManager authenticationManager;
@@ -97,7 +97,7 @@ public class WebSecurityAutoconfigure {
         AnonymousUrlLoader urlLoader = new AnonymousUrlLoader(authProperties);
         urlLoader.loadAnonymousUrls();
         http.authorizeExchange(authorizeRequests -> {
-                            if (!authProperties.getEnable()) {
+                            if (Boolean.FALSE.equals(authProperties.getEnable())) {
                                 authorizeRequests.anyExchange().permitAll();
                                 return;
                             }
@@ -110,7 +110,7 @@ public class WebSecurityAutoconfigure {
                 )
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
-                .formLogin(formLoginSpec -> formLoginSpec.disable())
+                .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
                 .securityContextRepository(tokenServerSecurityContextRepository)
                 .exceptionHandling(exceptionHandlingSpec -> exceptionHandlingSpec
                         .accessDeniedHandler(authAccessDeniedHandler)
@@ -121,7 +121,6 @@ public class WebSecurityAutoconfigure {
                         .logoutSuccessHandler(tokenServerLogoutSuccessHandler));
         return http.build();
     }
-
 
 
     /**
@@ -151,29 +150,6 @@ public class WebSecurityAutoconfigure {
         LinkedList<ReactiveAuthenticationManager> managers = new LinkedList<>();
         managers.add(authenticationManager);
         return new DelegatingReactiveAuthenticationManager(managers);
-    }
-
-
-    /**
-     * 获取注解.
-     *
-     * @param handlerMethod   处理方法
-     * @param annotationClass 注解类
-     * @param <A>             注解类
-     * @return 注解对象
-     */
-    @SuppressWarnings("SameParameterValue")
-    protected static <A extends Annotation> A getAnnotation(HandlerMethod handlerMethod, Class<A> annotationClass) {
-        A annotation = handlerMethod.getMethodAnnotation(annotationClass);
-        if (annotation == null) {
-            Class<?> clazz = handlerMethod.getBeanType();
-            annotation = clazz.getAnnotation(annotationClass);
-
-            if (annotation == null) {
-                annotation = clazz.getPackage().getAnnotation(annotationClass);
-            }
-        }
-        return annotation;
     }
 
 }

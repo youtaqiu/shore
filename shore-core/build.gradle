@@ -9,7 +9,7 @@ dependencies {
     api project(":shore-commons")
     api "cn.hutool:hutool-all"
     api "org.slf4j:slf4j-api"
-    api "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+//    api "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
     compileOnly "org.springframework.boot:spring-boot-autoconfigure"
     compileOnly "jakarta.annotation:jakarta.annotation-api"
     api "io.vavr:vavr"
@@ -17,5 +17,6 @@ dependencies {
     api "com.github.ben-manes.caffeine:caffeine"
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     optional "org.springframework.boot:spring-boot-starter-webflux"
+    optional "org.springframework.boot:spring-boot-webclient"
     optional "io.projectreactor:reactor-core"
 }

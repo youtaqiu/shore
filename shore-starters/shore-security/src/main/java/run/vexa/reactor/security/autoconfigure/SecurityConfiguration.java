@@ -19,7 +19,7 @@ public class SecurityConfiguration {
      * Default constructor.
      * This constructor is used for serialization and other reflective operations.
      */
-    public SecurityConfiguration() {
+    protected SecurityConfiguration() {
     }
 
 }

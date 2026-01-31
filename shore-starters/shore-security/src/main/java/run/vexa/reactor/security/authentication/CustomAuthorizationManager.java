@@ -37,6 +37,7 @@ public class CustomAuthorizationManager implements ReactiveAuthorizationManager<
         this.properties = properties;
     }
 
+
     @Override
     public Mono<AuthorizationDecision> check(Mono<Authentication> authentication, AuthorizationContext context) {
         var exchange = context.getExchange();

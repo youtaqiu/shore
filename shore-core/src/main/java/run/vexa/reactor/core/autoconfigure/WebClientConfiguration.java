@@ -7,8 +7,8 @@ import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.web.reactive.function.client.WebClientAutoConfiguration;
-import org.springframework.boot.web.reactive.function.client.WebClientCustomizer;
+import org.springframework.boot.webclient.WebClientCustomizer;
+import org.springframework.boot.webclient.autoconfigure.WebClientAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ReactorResourceFactory;
@@ -18,7 +18,7 @@ import reactor.netty.http.client.HttpClient;
 import reactor.netty.transport.logging.AdvancedByteBufFormat;
 
 import java.time.Duration;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 /**
  * webClient configuration.
@@ -88,7 +88,7 @@ public class WebClientConfiguration {
         @Bean
         @ConditionalOnClass(ReactorResourceFactory.class)
         public WebClientCustomizer shoreWebClientCustomizer(ReactorResourceFactory reactorResourceFactory) {
-            Function<HttpClient, HttpClient> function = httpClient ->
+            UnaryOperator<HttpClient> function = httpClient ->
                     httpClient.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 3000)
                             .wiretap(WebClient.class.getName(), LogLevel.DEBUG, AdvancedByteBufFormat.TEXTUAL)
                             .responseTimeout(Duration.ofSeconds(15))

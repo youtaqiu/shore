@@ -1,18 +1,19 @@
 package run.vexa.reactor.security.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.security.web.server.authentication.ServerAuthenticationConverter;
-import run.vexa.reactor.commons.exception.ServerException;
-import run.vexa.reactor.security.domain.LoginRequest;
-import run.vexa.reactor.security.grant.AuthenticationGrantManager;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.web.server.authentication.ServerAuthenticationConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.ServerWebInputException;
 import reactor.core.publisher.Mono;
+import run.vexa.reactor.commons.exception.ServerException;
+import run.vexa.reactor.security.domain.LoginRequest;
+import run.vexa.reactor.security.grant.AuthenticationGrantManager;
 
 import java.io.IOException;
 
@@ -44,6 +45,7 @@ public class ReactiveServerAuthenticationConverter implements ServerAuthenticati
     }
 
     @Override
+    @NullMarked
     public Mono<Authentication> convert(ServerWebExchange exchange) {
         // 读取请求体
         return exchange
@@ -60,7 +62,11 @@ public class ReactiveServerAuthenticationConverter implements ServerAuthenticati
      * @param body {@link DataBuffer}
      * @return {@link Authentication}
      */
-    private Mono<Authentication> getTokenAuthentication(@NonNull DataBuffer body) {
+    @NullMarked
+    private Mono<Authentication> getTokenAuthentication(@Nullable DataBuffer body) {
+        if (body == null) {
+            return Mono.error(new ServerException(LOGIN_BODY_PARSE_ERROR));
+        }
         try {
             var loginRequest = objectMapper.readValue(body.asInputStream(), LoginRequest.class);
             return this.authenticationGrantManager.grant(loginRequest.getType(), client -> client.authentication(loginRequest));

@@ -28,7 +28,7 @@ public class AuthenticationCacheAutoconfigure {
      * Default constructor.
      * This constructor is used for serialization and other reflective operations.
      */
-    public AuthenticationCacheAutoconfigure() {
+    protected AuthenticationCacheAutoconfigure() {
         // This constructor is intentionally empty.
     }
 

@@ -1,6 +1,8 @@
 package run.vexa.reactor.security.cache;
 
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -13,6 +15,7 @@ import java.util.List;
  * @param <T> token information
  * @author rained
  */
+@NullMarked
 public interface AuthenticationCache<T> {
 
     /**
@@ -23,7 +26,7 @@ public interface AuthenticationCache<T> {
      * @param expire   expire time in seconds
      * @return success or not
      */
-    Mono<Boolean> token(String key, String username, long expire);
+    Mono<Boolean> token(@Nullable String key, @Nullable String username, long expire);
 
     /**
      * get token list
@@ -31,7 +34,7 @@ public interface AuthenticationCache<T> {
      * @param key key
      * @return token list
      */
-    Mono<List<String>> getTokenList(String key);
+    Mono<List<String>> getTokenList(@Nullable String key);
 
     /**
      * cache token list
@@ -41,7 +44,7 @@ public interface AuthenticationCache<T> {
      * @param expire expire time in seconds
      * @return success or not
      */
-    Mono<Boolean> tokenList(String key, List<String> tokens, long expire);
+    Mono<Boolean> tokenList(@Nullable String key, @Nullable List<String> tokens, long expire);
 
     /**
      * get expire time
@@ -49,7 +52,7 @@ public interface AuthenticationCache<T> {
      * @param key key
      * @return expire time
      */
-    Mono<Duration> getExpire(String key);
+    Mono<Duration> getExpire(@Nullable String key);
 
     /**
      * cache authentication information
@@ -59,7 +62,7 @@ public interface AuthenticationCache<T> {
      * @param expire      expire time in seconds
      * @return success or not
      */
-    Mono<Boolean> user(String key, T currentUser, long expire);
+    Mono<Boolean> user(@Nullable String key, T currentUser, long expire);
 
     /**
      * get token information
@@ -67,7 +70,7 @@ public interface AuthenticationCache<T> {
      * @param key token
      * @return token information
      */
-    Mono<String> token(String key);
+    Mono<String> token(@Nullable String key);
 
     /**
      * get current user
@@ -75,7 +78,7 @@ public interface AuthenticationCache<T> {
      * @param key token
      * @return current user
      */
-    Mono<T> user(String key);
+    Mono<T> user(@Nullable String key);
 
     /**
      * refresh token
@@ -85,7 +88,7 @@ public interface AuthenticationCache<T> {
      * @param expire   expire time in seconds
      * @return success or not
      */
-    Mono<Boolean> refreshToken(String key, String username, long expire);
+    Mono<Boolean> refreshToken(@Nullable String key, @Nullable String username, long expire);
 
     /**
      * set the value of the key.
@@ -93,23 +96,23 @@ public interface AuthenticationCache<T> {
      * @param key the key
      * @return a Mono of Boolean
      */
-    Mono<Long> delete(String key);
+    Mono<Long> delete(@Nullable String key);
 
     /**
      * Set the value of the key.
      *
      * @param tokenKey The token key
-     * @param expire   The expire time
+     * @param expire    The expiry time in seconds
      * @return a Mono of Boolean
      */
-    Mono<Boolean> renew(String tokenKey, long expire);
+    Mono<Boolean> renew(@Nullable String tokenKey, long expire);
 
     /**
      * Renew the token
      *
-     * @param expire    The expire time
      * @param tokenKey  The token key
-     * @param renewTime The renew time
+     * @param expire    The expiry time in seconds
+     * @param renewTime The renewal time in seconds
      */
     default void renew(String tokenKey, long expire, long renewTime) {
         var renewExpire = expire - renewTime > 0 ? renewTime : expire;
