@@ -39,7 +39,7 @@ public class CustomAuthorizationManager implements ReactiveAuthorizationManager<
 
 
     @Override
-    public Mono<AuthorizationDecision> check(Mono<Authentication> authentication, AuthorizationContext context) {
+    public Mono<AuthorizationDecision> authorize(Mono<Authentication> authentication, AuthorizationContext context) {
         var exchange = context.getExchange();
         var requestPath = exchange.getRequest().getURI().getPath();
         var httpMethod = exchange.getRequest().getMethod();
@@ -57,15 +57,6 @@ public class CustomAuthorizationManager implements ReactiveAuthorizationManager<
                 .any(needAuthorityList::contains)
                 .map(AuthorizationDecision::new)
                 .defaultIfEmpty(new AuthorizationDecision(false));
-    }
-
-
-    @Override
-    public Mono<Void> verify(Mono<Authentication> authentication, AuthorizationContext object) {
-        return check(authentication, object)
-                .filter(AuthorizationDecision::isGranted)
-                .switchIfEmpty(Mono.defer(() -> R.error(CommonExceptionEnum.FORBIDDEN)))
-                .flatMap(d -> Mono.empty());
     }
 
 
