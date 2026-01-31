@@ -56,7 +56,7 @@ public class CustomAuthorizationManager implements ReactiveAuthorizationManager<
                 .flatMapIterable(Authentication::getAuthorities)
                 .map(GrantedAuthority::getAuthority)
                 .any(needAuthorityList::contains)
-                .map(AuthorizationDecision::new)
+                .<AuthorizationResult>map(AuthorizationDecision::new)
                 .defaultIfEmpty(new AuthorizationDecision(false));
     }
 
