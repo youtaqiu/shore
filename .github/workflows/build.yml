@@ -89,8 +89,8 @@ jobs:
       - name: Compute next version for release
         if: inputs.perform_release && inputs.bump != 'custom'
         run: |
-          VERSION_NEXT=$(svu ${{ inputs.bump }} --tag.prefix "")
-          VERSION_NEXT_SUFFIX=$(svu ${{ inputs.bump }} --tag.prefix "")
+          VERSION_NEXT=$(svu ${{ inputs.bump }} --tag.prefix "v" | sed 's/^v//')
+          VERSION_NEXT_SUFFIX=$(svu ${{ inputs.bump }} --tag.prefix "v" | sed 's/^v//')
           echo "VERSION_NEXT=${VERSION_NEXT}" | tee -a $GITHUB_ENV
           echo "VERSION_NEXT_SUFFIX=${VERSION_NEXT_SUFFIX}" | tee -a $GITHUB_ENV
       - name: Use custom version for release
@@ -107,8 +107,8 @@ jobs:
       - name: Compute next version for snapshot
         if: inputs.perform_release != true
         run: |
-          VERSION_NEXT=$(svu next --tag.prefix "")
-          VERSION_NEXT_SUFFIX=$(svu next --tag.prefix "")-SNAPSHOT
+          VERSION_NEXT=$(svu next --tag.prefix "v" | sed 's/^v//')
+          VERSION_NEXT_SUFFIX=$(svu next --tag.prefix "v" | sed 's/^v//')-SNAPSHOT
           echo "VERSION_NEXT=${VERSION_NEXT}" | tee -a $GITHUB_ENV
           echo "VERSION_NEXT_SUFFIX=${VERSION_NEXT_SUFFIX}" | tee -a $GITHUB_ENV
       - name: Set Versions
