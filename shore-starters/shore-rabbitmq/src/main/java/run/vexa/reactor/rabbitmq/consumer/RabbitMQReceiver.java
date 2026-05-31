@@ -1,7 +1,7 @@
 package run.vexa.reactor.rabbitmq.consumer;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import run.vexa.reactor.rabbitmq.message.QueueEvent;
 import run.vexa.reactor.rabbitmq.properties.RabbitMQProperties;
 import run.vexa.reactor.rabbitmq.exception.QueueException;
@@ -100,7 +100,7 @@ public abstract class RabbitMQReceiver<T extends QueueEvent> {
      */
     private Mono<T> deserializeEvent(byte[] event) {
         return Mono.fromCallable(() -> objectMapper.readValue(event, getType()))
-                .onErrorMap(JsonParseException.class, QueueException::new)
+                .onErrorMap(JacksonException.class, QueueException::new)
                 .subscribeOn(Schedulers.boundedElastic());
     }
 

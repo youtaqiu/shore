@@ -1,9 +1,7 @@
 package run.vexa.reactor.core.util;
 
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.json.JsonReadFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
 import org.junit.jupiter.api.BeforeEach;
@@ -104,12 +102,9 @@ class BeanUtilTest {
         assertNotNull(objectMapper);
         assertSame(objectMapper, secondInstance);
 
-        ObjectMapper copy = objectMapper.copy();
-
-        assertNotSame(objectMapper, copy);
-        assertTrue(objectMapper.getFactory().isEnabled(JsonParser.Feature.ALLOW_SINGLE_QUOTES));
-        assertTrue(copy.getFactory().isEnabled(JsonParser.Feature.ALLOW_SINGLE_QUOTES));
-        assertTrue(copy.getFactory().isEnabled(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature()));
+        // Verify configuration: Long serialized as String
+        String json = objectMapper.writeValueAsString(1234567890123456789L);
+        assertEquals("\"1234567890123456789\"", json);
     }
 
     // 测试用的简单的Bean类

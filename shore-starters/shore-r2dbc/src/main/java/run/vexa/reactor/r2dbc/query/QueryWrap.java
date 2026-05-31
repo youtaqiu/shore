@@ -6,7 +6,7 @@ import io.r2dbc.spi.RowMetadata;
 import io.vavr.control.Option;
 import lombok.AllArgsConstructor;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.r2dbc.core.DatabaseClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -28,6 +28,7 @@ import java.util.function.Function;
  **/
 @AllArgsConstructor
 @SuppressWarnings("unused")
+@NullMarked
 public class QueryWrap<T> {
 
     /**
@@ -200,7 +201,6 @@ public class QueryWrap<T> {
      *
      * @return PageResult
      */
-    @NonNull
     public final Mono<PageResult<T>> page() {
         return Mono.zip(this.pageSpec(search, this.pageSql(sql), pairs)
                         .map(rowFunction)
@@ -245,7 +245,7 @@ public class QueryWrap<T> {
      * @param pairs  pairs
      * @return spec
      */
-    private DatabaseClient.GenericExecuteSpec pageSpec(@NonNull Search search, @NonNull String sql, Pair<String, ?>[] pairs) {
+    private DatabaseClient.GenericExecuteSpec pageSpec(Search search, String sql, Pair<String, ?>[] pairs) {
         return this.spec(sql, getPairs())
                 .bind("limit", search.getSize())
                 .bind("offset", (search.getCurrent() - 1) * search.getSize());
@@ -259,8 +259,7 @@ public class QueryWrap<T> {
      * @return count
      */
     @SafeVarargs
-    @NonNull
-    public final Mono<Long> count(@NonNull String sql, Pair<String, ?>... pairs) {
+    public final Mono<Long> count(String sql, Pair<String, ?>... pairs) {
         return this.spec(this.countSql(sql), getPairs())
                 .map((row, rowMetadata) -> row.get(0, Long.class))
                 .one();
@@ -289,8 +288,7 @@ public class QueryWrap<T> {
      *
      * @param sql sql
      */
-    @NonNull
-    private String pageSql(@NonNull String sql) {
+    private String pageSql(String sql) {
         if (sql.toLowerCase().contains("limit")) {
             throw new ServerException("sql error");
         }
@@ -303,8 +301,7 @@ public class QueryWrap<T> {
      *
      * @param sql sql
      */
-    @NonNull
-    private String countSql(@NonNull String sql) {
+    private String countSql(String sql) {
         var prefixSql = "select count(*) from (";
         var suffixSql = ") as count_data";
         return prefixSql + sql + suffixSql;

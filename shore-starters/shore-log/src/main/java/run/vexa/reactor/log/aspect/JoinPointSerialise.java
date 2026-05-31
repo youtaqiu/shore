@@ -1,7 +1,8 @@
 package run.vexa.reactor.log.aspect;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -26,7 +27,9 @@ public final class JoinPointSerialise {
      * The cache of logged methods.
      */
     private static final Map<UniqueMethodSignature, LoggedMethod> CACHE = new ConcurrentHashMap<>();
-    private static final ObjectMapper MAPPER = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+    private static final ObjectMapper MAPPER = JsonMapper.builder()
+            .enable(SerializationFeature.INDENT_OUTPUT)
+            .build();
 
     /**
      * Default constructor.
@@ -232,4 +235,3 @@ public final class JoinPointSerialise {
         return includedParameterIndexes;
     }
 }
-
