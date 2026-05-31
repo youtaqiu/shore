@@ -1,7 +1,7 @@
 package run.vexa.reactor.r2dbc.autoconfigure;
 
 import run.vexa.reactor.security.context.UserContextHolder;
-import org.springframework.boot.autoconfigure.r2dbc.R2dbcProperties;
+import org.springframework.boot.r2dbc.autoconfigure.R2dbcProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

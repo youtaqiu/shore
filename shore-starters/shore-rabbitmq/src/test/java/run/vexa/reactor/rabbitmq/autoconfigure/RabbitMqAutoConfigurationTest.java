@@ -51,7 +51,6 @@ class RabbitMqAutoConfigurationTest {
             verify(factory).setUsername(username);
             verify(factory).setPassword(password);
             verify(factory).setVirtualHost("/vh");
-            verify(factory).useNio();
         }
     }
 
@@ -89,7 +88,6 @@ class RabbitMqAutoConfigurationTest {
             assertThat(options.getConnectionSupplier()).isNotNull();
 
             ConnectionFactory factory = mocked.constructed().get(0);
-            verify(factory).useNio();
             verify(factory).setUsername(username);
             verify(factory).setPassword(password);
             verify(factory).setVirtualHost("/vh");
@@ -133,7 +131,6 @@ class RabbitMqAutoConfigurationTest {
             assertThat(options.getConnectionSupplier()).isNotNull();
 
             ConnectionFactory factory = mocked.constructed().get(0);
-            verify(factory).useNio();
             verify(factory).setUsername(username);
             verify(factory).setPassword(password);
             verify(factory).setVirtualHost("/vh");

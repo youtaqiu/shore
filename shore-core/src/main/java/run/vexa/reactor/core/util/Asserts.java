@@ -2,7 +2,7 @@ package run.vexa.reactor.core.util;
 
 import run.vexa.reactor.commons.exception.ServerException;
 import run.vexa.reactor.commons.exception.ServerFailure;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;

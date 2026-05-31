@@ -3,7 +3,7 @@ package run.vexa.reactor.web.filter;
 import lombok.extern.slf4j.Slf4j;
 import run.vexa.reactor.core.context.ReactiveContextHolder;
 import org.springframework.core.Ordered;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
@@ -17,6 +17,7 @@ import reactor.core.publisher.Mono;
  * @author youta
  */
 @Slf4j
+@NullMarked
 public class ReactorContextWebFilter implements WebFilter, Ordered {
 
     /**
@@ -46,8 +47,7 @@ public class ReactorContextWebFilter implements WebFilter, Ordered {
      * @param chain    provides a way to delegate to the next filter
      * @return {@code Mono<Void>} to indicate when request processing is complete
      */
-    @NonNull
-    public final Mono<Void> filter(@NonNull ServerWebExchange exchange, @NonNull WebFilterChain chain) {
+    public final Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         return chain.filter(exchange).contextWrite(context ->
                 context.put(ReactiveContextHolder.CONTEXT_KEY, exchange));
     }

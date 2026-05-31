@@ -4,7 +4,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.autoconfigure.r2dbc.R2dbcProperties;
+import org.springframework.boot.r2dbc.autoconfigure.R2dbcProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.ReactiveAuditorAware;
@@ -50,7 +50,7 @@ class R2dbcAutoConfigurationTest {
 
         // 验证 EnableConfigurationProperties 注解的值
         EnableConfigurationProperties configProps = R2dbcAutoConfiguration.class.getAnnotation(EnableConfigurationProperties.class);
-        assertArrayEquals(new Class[]{R2dbcProperties.class}, configProps.value(),
+        assertArrayEquals(new Class<?>[]{R2dbcProperties.class}, configProps.value(),
                 "EnableConfigurationProperties should be configured for R2dbcProperties.class");
     }
 

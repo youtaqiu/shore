@@ -7,7 +7,7 @@ import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
  *
  * @author youta
  **/
+@NullMarked
 public class CacheBodyGlobalFilter implements WebFilter, Ordered {
 
     /**
@@ -42,9 +43,8 @@ public class CacheBodyGlobalFilter implements WebFilter, Ordered {
      * @param chain    WebFilterChain
      * @return mono
      */
-    @NonNull
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, @NonNull WebFilterChain chain) {
+    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 
         final ServerHttpRequest request = exchange.getRequest();
         long contentLength = request.getHeaders().getContentLength();
@@ -62,7 +62,6 @@ public class CacheBodyGlobalFilter implements WebFilter, Ordered {
                 .flatMap(req -> {
                     final ServerHttpRequestDecorator decorator = new ServerHttpRequestDecorator(req) {
                         @Override
-                        @NonNull
                         public Flux<DataBuffer> getBody() {
                             return DataBufferUtils.read(new ByteArrayResource(outputStream.toByteArray()), exchange.getResponse().bufferFactory(), 1024 * 8);
                         }

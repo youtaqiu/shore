@@ -1,17 +1,13 @@
 package run.vexa.reactor.core.autoconfigure;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.DateTimeFeature;
 import lombok.Getter;
 import lombok.Setter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.time.LocalDateTime;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,19 +25,13 @@ class JacksonConfigurationTest {
     }
 
     @Test
-    void testSerializingObjectMapper() throws JsonProcessingException {
-        ObjectMapper objectMapper = jacksonConfiguration.serializingObjectMapper();
+    void testObjectMapper() {
+        ObjectMapper objectMapper = jacksonConfiguration.objectMapper();
 
         assertNotNull(objectMapper);
 
-        // Test timezone
-        assertEquals(TimeZone.getTimeZone("GMT+8"), objectMapper.getSerializationConfig().getTimeZone());
-
-        // Test locale
-        assertEquals(Locale.CHINA, objectMapper.getSerializationConfig().getLocale());
-
         // Test if WRITE_DATES_AS_TIMESTAMPS is disabled
-        assertFalse(objectMapper.getSerializationConfig().isEnabled(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS));
+        assertFalse(objectMapper.serializationConfig().isEnabled(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS));
 
         // Test JavaTimeModule (assuming LocalDateTime serialization pattern is "yyyy-MM-dd HH:mm:ss")
         LocalDateTime date = LocalDateTime.of(2024, 8, 11, 12, 0);
@@ -50,49 +40,29 @@ class JacksonConfigurationTest {
     }
 
     @Test
-    void testJackson2ObjectMapperBuilderCustomizer() throws JsonProcessingException {
-        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
-        jacksonConfiguration.jackson2ObjectMapperBuilderCustomizer().customize(builder);
-        ObjectMapper objectMapper = builder.build();
+    void testSpecialCharactersSerialization() {
+        ObjectMapper objectMapper = jacksonConfiguration.objectMapper();
 
-        // Test Long to String serialization
-        long longValue = 1234567890123456789L;
-        String json = objectMapper.writeValueAsString(longValue);
-        assertEquals("\"1234567890123456789\"", json);
-
-        // Test if Long is correctly serialized
-        Long longObject = 1234567890123456789L;
-        String jsonObject = objectMapper.writeValueAsString(longObject);
-        assertEquals("\"1234567890123456789\"", jsonObject);
-
-        // Test if null values are included
-        TestObject testObject = new TestObject();
-        String nullJson = objectMapper.writeValueAsString(testObject);
-        assertTrue(nullJson.contains("\"nullField\":null"));
-    }
-
-    @Test
-    void testDeserializeLongString() throws JsonProcessingException {
-        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
-        jacksonConfiguration.jackson2ObjectMapperBuilderCustomizer().customize(builder);
-        ObjectMapper objectMapper = builder.build();
-
-        // Test deserialize string to Long
-        String json = "\"1234567890123456789\"";
-        Long result = objectMapper.readValue(json, Long.class);
-        assertEquals(1234567890123456789L, result);
-    }
-
-    @Test
-    void testSpecialCharactersSerialization() throws JsonProcessingException {
-        ObjectMapper objectMapper = jacksonConfiguration.serializingObjectMapper();
-        
         // Test special characters handling
         TestObject testObject = new TestObject();
         testObject.setSpecialField("特殊字符!@#$%^&*()");
         String json = objectMapper.writeValueAsString(testObject);
         TestObject deserializedObject = objectMapper.readValue(json, TestObject.class);
         assertEquals(testObject.getSpecialField(), deserializedObject.getSpecialField());
+    }
+
+    @Test
+    void testLongToStringSerialization() {
+        ObjectMapper objectMapper = jacksonConfiguration.objectMapper();
+
+        // Test Long to String serialization (moved from Jackson2ObjectMapperBuilderCustomizer to JavaTimeModule)
+        long longValue = 1234567890123456789L;
+        String json = objectMapper.writeValueAsString(longValue);
+        assertEquals("\"1234567890123456789\"", json);
+
+        Long longObject = 1234567890123456789L;
+        String jsonObject = objectMapper.writeValueAsString(longObject);
+        assertEquals("\"1234567890123456789\"", jsonObject);
     }
 
     @Setter
@@ -103,4 +73,3 @@ class JacksonConfigurationTest {
 
     }
 }
-

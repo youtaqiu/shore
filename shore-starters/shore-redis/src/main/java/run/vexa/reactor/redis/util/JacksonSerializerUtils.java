@@ -1,11 +1,11 @@
 package run.vexa.reactor.redis.util;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import tools.jackson.databind.DefaultTyping;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
 /**
@@ -22,6 +22,20 @@ public final class JacksonSerializerUtils {
     }
 
     /**
+     * Creates an ObjectMapper with default typing enabled for Redis serialization.
+     *
+     * @return ObjectMapper with default typing
+     */
+    private static ObjectMapper createTypingMapper() {
+        return JsonMapper.builder()
+                .activateDefaultTyping(
+                        BasicPolymorphicTypeValidator.builder().allowIfBaseType(Object.class).build(),
+                        DefaultTyping.NON_FINAL,
+                        JsonTypeInfo.As.PROPERTY)
+                .build();
+    }
+
+    /**
      * Json redis serializer.
      *
      * @param <T>         the type parameter
@@ -29,8 +43,9 @@ public final class JacksonSerializerUtils {
      * @param mapper      the mapper
      * @return the redis serializer
      */
+    @SuppressWarnings("unchecked")
     public static <T> RedisSerializer<T> json(Class<T> targetClass, ObjectMapper mapper) {
-        return new Jackson2JsonRedisSerializer<>(mapper, targetClass);
+        return (RedisSerializer<T>) new GenericJacksonJsonRedisSerializer(mapper);
     }
 
     /**
@@ -41,25 +56,7 @@ public final class JacksonSerializerUtils {
      * @return the redis serializer
      */
     public static <T> RedisSerializer<T> json(Class<T> targetClass) {
-        return json(targetClass, new JavaTimeModule());
-    }
-
-    /**
-     * Json redis serializer.
-     *
-     * @param <T>         the type parameter
-     * @param targetClass the target class
-     * @param modules     the modules
-     * @return the redis serializer
-     */
-    public static <T> RedisSerializer<T> json(Class<T> targetClass, Module... modules) {
-        ObjectMapper mapper = JsonMapper.builder().build();
-        mapper.registerModules(modules);
-        mapper.activateDefaultTyping(
-                mapper.getPolymorphicTypeValidator(),
-                ObjectMapper.DefaultTyping.NON_FINAL,
-                JsonTypeInfo.As.PROPERTY);
-        return json(targetClass, mapper);
+        return json(targetClass, createTypingMapper());
     }
 
     /**
@@ -68,7 +65,7 @@ public final class JacksonSerializerUtils {
      * @return the redis serializer
      */
     public static RedisSerializer<Object> json() {
-        return json(Object.class);
+        return new GenericJacksonJsonRedisSerializer(createTypingMapper());
     }
 
 }

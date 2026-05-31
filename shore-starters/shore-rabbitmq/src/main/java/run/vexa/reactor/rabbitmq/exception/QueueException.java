@@ -1,7 +1,8 @@
 package run.vexa.reactor.rabbitmq.exception;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
 import reactor.rabbitmq.RabbitFluxException;
 
 /**
@@ -34,7 +35,7 @@ public class QueueException extends RuntimeException {
      *
      * @param exception the exception to wrap
      */
-    public QueueException(JsonParseException exception) {
+    public QueueException(StreamReadException exception) {
         this("deserialize", exception);
     }
 
@@ -43,8 +44,17 @@ public class QueueException extends RuntimeException {
      *
      * @param exception the exception to wrap
      */
-    public QueueException(JsonMappingException exception) {
+    public QueueException(DatabindException exception) {
         this("serialize", exception);
+    }
+
+    /**
+     * constructor.
+     *
+     * @param exception the exception to wrap
+     */
+    public QueueException(JacksonException exception) {
+        this("process", exception);
     }
 
     /**

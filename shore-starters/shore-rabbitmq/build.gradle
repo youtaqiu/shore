@@ -1,5 +1,9 @@
 description "shore rabbitmq starter"
 
+configurations.all {
+    resolutionStrategy.force("com.rabbitmq:amqp-client:5.14.2")
+}
+
 dependencies {
     api project(":shore-core")
     optional "org.springframework.boot:spring-boot-autoconfigure"

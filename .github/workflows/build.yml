@@ -25,6 +25,11 @@ on:
           - 'major'
           - 'minor'
           - 'patch'
+          - 'custom'
+      custom_version:
+        description: 'Custom version (e.g. 4.0.3). Only used when bump is custom.'
+        required: false
+        type: string
 
 jobs:
   test:
@@ -82,17 +87,28 @@ jobs:
       - name: Install svu
         run: brew install caarlos0/tap/svu
       - name: Compute next version for release
-        if: inputs.perform_release
+        if: inputs.perform_release && inputs.bump != 'custom'
         run: |
-          VERSION_NEXT=$(svu ${{ inputs.bump }} --tag.prefix "")
-          VERSION_NEXT_SUFFIX=$(svu ${{ inputs.bump }} --tag.prefix "")
+          VERSION_NEXT=$(svu ${{ inputs.bump }} --tag.prefix "v" | sed 's/^v//')
+          VERSION_NEXT_SUFFIX=$(svu ${{ inputs.bump }} --tag.prefix "v" | sed 's/^v//')
+          echo "VERSION_NEXT=${VERSION_NEXT}" | tee -a $GITHUB_ENV
+          echo "VERSION_NEXT_SUFFIX=${VERSION_NEXT_SUFFIX}" | tee -a $GITHUB_ENV
+      - name: Use custom version for release
+        if: inputs.perform_release && inputs.bump == 'custom'
+        run: |
+          if [ -z "${{ inputs.custom_version }}" ]; then
+            echo "Error: custom_version is required when bump is 'custom'"
+            exit 1
+          fi
+          VERSION_NEXT="${{ inputs.custom_version }}"
+          VERSION_NEXT_SUFFIX="${{ inputs.custom_version }}"
           echo "VERSION_NEXT=${VERSION_NEXT}" | tee -a $GITHUB_ENV
           echo "VERSION_NEXT_SUFFIX=${VERSION_NEXT_SUFFIX}" | tee -a $GITHUB_ENV
       - name: Compute next version for snapshot
         if: inputs.perform_release != true
         run: |
-          VERSION_NEXT=$(svu next --tag.prefix "")
-          VERSION_NEXT_SUFFIX=$(svu next --tag.prefix "")-SNAPSHOT
+          VERSION_NEXT=$(svu next --tag.prefix "v" | sed 's/^v//')
+          VERSION_NEXT_SUFFIX=$(svu next --tag.prefix "v" | sed 's/^v//')-SNAPSHOT
           echo "VERSION_NEXT=${VERSION_NEXT}" | tee -a $GITHUB_ENV
           echo "VERSION_NEXT_SUFFIX=${VERSION_NEXT_SUFFIX}" | tee -a $GITHUB_ENV
       - name: Set Versions
