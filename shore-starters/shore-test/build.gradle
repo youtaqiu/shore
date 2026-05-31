@@ -4,6 +4,7 @@ dependencies {
     optional project(":shore-core")
     optional project(":shore-starters:shore-security")
     api 'org.springframework.boot:spring-boot-starter-test'
+    api 'org.springframework.boot:spring-boot-starter-webflux-test'
     api 'org.springframework.security:spring-security-test'
     api 'io.projectreactor:reactor-test'
 }

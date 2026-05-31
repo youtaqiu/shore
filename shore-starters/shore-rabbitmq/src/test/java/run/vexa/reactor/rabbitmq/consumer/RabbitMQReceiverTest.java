@@ -1,6 +1,7 @@
 package run.vexa.reactor.rabbitmq.consumer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Delivery;
 import com.rabbitmq.client.Envelope;
@@ -41,7 +42,7 @@ class RabbitMQReceiverTest {
     void setUp() throws Exception {
         sender = mock(Sender.class);
         reactorReceiver = mock(Receiver.class);
-        objectMapper = new ObjectMapper();
+        objectMapper = JsonMapper.builder().build();
         rabbitMQProperties = new RabbitMQProperties();
         rabbitMQProperties.setRetry(1L);
         rabbitMQProperties.setMinBackoff(0L);
@@ -99,7 +100,7 @@ class RabbitMQReceiverTest {
                     assertThat(throwable)
                             .hasCauseInstanceOf(QueueException.class);
                     assertThat(throwable.getCause())
-                            .hasCauseInstanceOf(com.fasterxml.jackson.core.JsonParseException.class);
+                            .hasCauseInstanceOf(tools.jackson.core.JacksonException.class);
                 })
                 .verify();
 

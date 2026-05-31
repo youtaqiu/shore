@@ -2,7 +2,7 @@ package run.vexa.reactor.logging.listener;
 
 import run.vexa.reactor.logging.properties.LoggingProperties;
 import run.vexa.reactor.logging.utils.LoggingUtil;
-import org.springframework.boot.web.context.WebServerInitializedEvent;
+import org.springframework.boot.web.server.context.WebServerInitializedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.Async;

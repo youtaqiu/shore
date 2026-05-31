@@ -7,8 +7,8 @@ import run.vexa.reactor.redis.util.ReactiveRedisUtil;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
-import org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration;
+import org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfiguration;
+import org.springframework.boot.data.redis.autoconfigure.DataRedisReactiveAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -24,7 +24,7 @@ import reactor.core.publisher.Flux;
  * @author youta
  **/
 @ConditionalOnClass(RedisOperations.class)
-@AutoConfiguration(before = {RedisAutoConfiguration.class})
+@AutoConfiguration(before = {DataRedisAutoConfiguration.class})
 public class CustomizeRedisAutoConfiguration {
 
     /**
@@ -48,7 +48,7 @@ public class CustomizeRedisAutoConfiguration {
     /**
      * The type Customize reactive redis autoconfiguration.
      */
-    @AutoConfiguration(before = {RedisReactiveAutoConfiguration.class})
+    @AutoConfiguration(before = {DataRedisReactiveAutoConfiguration.class})
     @ConditionalOnClass({ReactiveRedisConnectionFactory.class, ReactiveRedisTemplate.class, Flux.class})
     public static class CustomizeReactiveRedisAutoConfiguration {
 

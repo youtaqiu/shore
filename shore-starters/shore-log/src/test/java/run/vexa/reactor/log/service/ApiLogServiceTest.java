@@ -9,7 +9,6 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.lang.NonNull;
 import reactor.core.publisher.Mono;
 import run.vexa.reactor.log.annotation.Log;
 import run.vexa.reactor.log.handler.LogDomain;
@@ -124,8 +123,7 @@ class ApiLogServiceTest {
             private final List<LogHandler> list = List.of(handlers);
 
             @Override
-            @NonNull
-            public LogHandler getObject(@NonNull Object... args) {
+            public LogHandler getObject(Object... args) {
                 return list.getFirst();
             }
 
@@ -140,13 +138,11 @@ class ApiLogServiceTest {
             }
 
             @Override
-            @NonNull
             public Stream<LogHandler> stream() {
                 return list.stream();
             }
 
             @Override
-            @NonNull
             public Stream<LogHandler> orderedStream() {
                 return list.stream();
             }

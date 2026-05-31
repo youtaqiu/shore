@@ -14,7 +14,7 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
@@ -30,6 +30,7 @@ import java.util.Set;
  * @author rained
  **/
 @Slf4j
+@NullMarked
 @SuppressWarnings("unused")
 public class ClassPathHttpExchangeClientScanner extends ClassPathBeanDefinitionScanner {
 
@@ -75,8 +76,7 @@ public class ClassPathHttpExchangeClientScanner extends ClassPathBeanDefinitionS
     }
 
     @Override
-    @NonNull
-    protected Set<BeanDefinitionHolder> doScan(@NonNull String... basePackages) {
+    protected Set<BeanDefinitionHolder> doScan(String... basePackages) {
         Set<BeanDefinitionHolder> beanDefinitions = super.doScan(basePackages);
         if (beanDefinitions.isEmpty()) {
             log.warn("No HttpExchangeClient was found in '{}' package. Please check your configuration.", Arrays.toString(basePackages));

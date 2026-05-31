@@ -9,7 +9,7 @@ import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
 import ch.qos.logback.core.util.FileSize;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.logging.logback.RollingPolicySystemProperty;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 

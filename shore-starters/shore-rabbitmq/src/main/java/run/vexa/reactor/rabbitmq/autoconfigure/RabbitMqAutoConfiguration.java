@@ -41,7 +41,6 @@ public class RabbitMqAutoConfiguration {
         connectionFactory.setUsername(rabbitProperties.getUsername());
         connectionFactory.setPassword(rabbitProperties.getPassword());
         connectionFactory.setVirtualHost(rabbitProperties.getVirtualHost());
-        connectionFactory.useNio();
         return Mono.fromCallable(() -> connectionFactory.newConnection("shore-rabbit")).cache();
     }
 
@@ -57,8 +56,7 @@ public class RabbitMqAutoConfiguration {
     public SenderOptions senderOptions(Mono<Connection> connectionMono, RabbitMQProperties rabbitProperties) {
         if (rabbitProperties.getParsedAddresses() != null && rabbitProperties.getParsedAddresses().length > 0) {
             ConnectionFactory connectionFactory = new ConnectionFactory();
-            connectionFactory.useNio();
-            connectionFactory.setUsername(rabbitProperties.getUsername());
+                connectionFactory.setUsername(rabbitProperties.getUsername());
             connectionFactory.setPassword(rabbitProperties.getPassword());
             connectionFactory.setVirtualHost(rabbitProperties.getVirtualHost());
             return new SenderOptions()
@@ -94,8 +92,7 @@ public class RabbitMqAutoConfiguration {
     public ReceiverOptions receiverOptions(Mono<Connection> connectionMono, RabbitMQProperties rabbitProperties) {
         if (rabbitProperties.getParsedAddresses() != null && rabbitProperties.getParsedAddresses().length > 0) {
             ConnectionFactory connectionFactory = new ConnectionFactory();
-            connectionFactory.useNio();
-            connectionFactory.setUsername(rabbitProperties.getUsername());
+                connectionFactory.setUsername(rabbitProperties.getUsername());
             connectionFactory.setPassword(rabbitProperties.getPassword());
             connectionFactory.setVirtualHost(rabbitProperties.getVirtualHost());
             return new ReceiverOptions()
