@@ -6,7 +6,8 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import run.vexa.reactor.core.jackson.JavaTimeModule;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
+import org.springframework.boot.jackson.autoconfigure.JacksonAutoConfiguration;
+import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -22,7 +23,7 @@ import java.util.TimeZone;
  */
 @Configuration
 @ConditionalOnClass(ObjectMapper.class)
-@AutoConfigureBefore(org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration.class)
+@AutoConfigureBefore(JacksonAutoConfiguration.class)
 public class JacksonConfiguration {
 
     /**
@@ -53,10 +54,10 @@ public class JacksonConfiguration {
     /**
      * jackson objectMapper customizer.
      *
-     * @return Jackson2ObjectMapperBuilderCustomizer
+     * @return JsonMapperBuilderCustomizer
      */
     @Bean
-    public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer() {
+    public JsonMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer() {
         return jacksonObjectMapperBuilder -> {
             // long -> String
             jacksonObjectMapperBuilder.serializerByType(Long.TYPE, ToStringSerializer.instance);
