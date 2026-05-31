@@ -3,11 +3,11 @@ package run.vexa.reactor.web.autoconfigure;
 import run.vexa.reactor.web.exception.GlobalExceptionHandler;
 import run.vexa.reactor.web.exception.WebFluxErrorWebExceptionHandler;
 import run.vexa.reactor.web.properties.GlobalExceptionProperties;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.autoconfigure.web.ErrorProperties;
 import org.springframework.boot.autoconfigure.web.WebProperties;
-import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
+import org.springframework.boot.webflux.autoconfigure.error.AbstractErrorWebExceptionHandler;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.web.reactive.error.ErrorAttributes;
+import org.springframework.boot.webflux.error.ErrorAttributes;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +28,7 @@ import java.util.List;
 @EnableConfigurationProperties(GlobalExceptionProperties.class)
 public class WebFluxGlobalExceptionHandlerAutoConfigure {
 
-    private final ServerProperties serverProperties;
+    private final ErrorProperties errorProperties;
 
     private final WebProperties.Resources resourceProperties;
 
@@ -39,14 +39,14 @@ public class WebFluxGlobalExceptionHandlerAutoConfigure {
     /**
      * Constructor for the WebFluxGlobalExceptionHandlerAutoConfigure class.
      *
-     * @param serverProperties      ServerProperties
+     * @param errorProperties       ErrorProperties
      * @param webProperties         WebProperties
      * @param viewResolvers         List of ViewResolvers
      * @param serverCodecConfigurer ServerCodecConfigurer
      */
-    public WebFluxGlobalExceptionHandlerAutoConfigure(ServerProperties serverProperties, WebProperties webProperties,
+    public WebFluxGlobalExceptionHandlerAutoConfigure(ErrorProperties errorProperties, WebProperties webProperties,
                                                       List<ViewResolver> viewResolvers, ServerCodecConfigurer serverCodecConfigurer) {
-        this.serverProperties = serverProperties;
+        this.errorProperties = errorProperties;
         this.resourceProperties = webProperties.getResources();
         this.viewResolvers = Collections.unmodifiableList(viewResolvers);
         this.serverCodecConfigurer = serverCodecConfigurer;
@@ -78,7 +78,7 @@ public class WebFluxGlobalExceptionHandlerAutoConfigure {
                                                                             ApplicationContext applicationContext, GlobalExceptionHandler globalExceptionHandler,
                                                                             GlobalExceptionProperties globalExceptionProperties) {
         AbstractErrorWebExceptionHandler exceptionHandler = new WebFluxErrorWebExceptionHandler(errorAttributes,
-                resourceProperties, this.serverProperties.getError(), applicationContext, globalExceptionHandler, globalExceptionProperties);
+                resourceProperties, this.errorProperties, applicationContext, globalExceptionHandler, globalExceptionProperties);
         exceptionHandler.setViewResolvers(this.viewResolvers);
         exceptionHandler.setMessageWriters(this.serverCodecConfigurer.getWriters());
         exceptionHandler.setMessageReaders(this.serverCodecConfigurer.getReaders());

@@ -58,8 +58,8 @@ class PageWrapTest {
 
         PageWrap<TestUser> pageWrap = PageWrap.build(TestUser.class)
                 .template(template)
-                .where(Criteria.where("user_id").greaterThan(0))
-                .sorted(Sort.by(Sort.Direction.DESC, "user_id"))
+                .where(Criteria.where("USER_ID").greaterThan(0))
+                .sorted(Sort.by(Sort.Direction.DESC, "USER_ID"))
                 .pageable(PageRequest.of(0, 2));
 
         StepVerifier.create(pageWrap.page())
@@ -84,7 +84,7 @@ class PageWrapTest {
 
         PageWrap<TestUser> pageWrap = PageWrap.build(TestUser.class)
                 .template(template)
-                .where(Criteria.where("user_id").greaterThan(0))
+                .where(Criteria.where("USER_ID").greaterThan(0))
                 .pageable(PageRequest.of(1, 2));
 
         Mono<PageResult<String>> pageResult = pageWrap.page(users -> users.stream()
@@ -172,15 +172,16 @@ class PageWrapTest {
                 .block(BLOCK_TIMEOUT);
     }
 
-    @Table("test_user")
+    @Table("TEST_USER")
     static class TestUser {
 
         @Id
         private Long id;
 
-        @Column("user_id")
+        @Column("USER_ID")
         private Long userId;
 
+        @Column("USERNAME")
         private String username;
 
         TestUser() {

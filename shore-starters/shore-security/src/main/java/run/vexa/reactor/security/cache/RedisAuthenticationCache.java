@@ -1,5 +1,7 @@
 package run.vexa.reactor.security.cache;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import reactor.core.publisher.Mono;
 import run.vexa.reactor.redis.util.ReactiveRedisUtil;
@@ -13,6 +15,7 @@ import java.util.List;
  * @param <T> token information
  * @author rained
  */
+@NullMarked
 public class RedisAuthenticationCache<T> implements AuthenticationCache<T> {
 
     private final ReactiveRedisUtil reactiveRedisUtil;
@@ -31,52 +34,61 @@ public class RedisAuthenticationCache<T> implements AuthenticationCache<T> {
     }
 
     @Override
-    public Mono<Boolean> token(String key, String username, long expire) {
+    public Mono<Boolean> token(@Nullable String key, @Nullable String username, long expire) {
+        if (key == null || username == null) {
+            return Mono.just(false);
+        }
         return this.reactiveStringRedisTemplate.opsForValue().set(key, username, Duration.ofSeconds(expire));
     }
 
     @Override
-    public Mono<List<String>> getTokenList(String key) {
+    public Mono<List<String>> getTokenList(@Nullable String key) {
         return this.reactiveRedisUtil.get(key);
     }
 
     @Override
-    public Mono<Boolean> tokenList(String key, List<String> tokens, long expire) {
+    public Mono<Boolean> tokenList(@Nullable String key, @Nullable List<String> tokens, long expire) {
         return this.reactiveRedisUtil.set(key, tokens, Duration.ofSeconds(expire));
     }
 
     @Override
-    public Mono<Duration> getExpire(String key) {
+    public Mono<Duration> getExpire(@Nullable String key) {
+        if (key == null) {
+            return Mono.just(Duration.ofSeconds(0));
+        }
         return this.reactiveStringRedisTemplate.getExpire(key);
     }
 
     @Override
-    public Mono<Boolean> user(String key, T currentUser, long expire) {
+    public Mono<Boolean> user(@Nullable String key, T currentUser, long expire) {
         return this.reactiveRedisUtil.set(key, currentUser, Duration.ofSeconds(expire));
     }
 
     @Override
-    public Mono<String> token(String key) {
+    public Mono<String> token(@Nullable String key) {
+        if (key == null) {
+            return Mono.empty();
+        }
         return this.reactiveStringRedisTemplate.opsForValue().get(key);
     }
 
     @Override
-    public Mono<T> user(String key) {
+    public Mono<T> user(@Nullable String key) {
         return this.reactiveRedisUtil.get(key);
     }
 
     @Override
-    public Mono<Boolean> refreshToken(String key, String username, long expire) {
+    public Mono<Boolean> refreshToken(@Nullable String key, @Nullable String username, long expire) {
         return this.reactiveRedisUtil.set(key, username, Duration.ofSeconds(expire));
     }
 
     @Override
-    public Mono<Long> delete(String key) {
+    public Mono<Long> delete(@Nullable String key) {
         return this.reactiveRedisUtil.del(key);
     }
 
     @Override
-    public Mono<Boolean> renew(String tokenKey, long expire) {
+    public Mono<Boolean> renew(@Nullable String tokenKey, long expire) {
         return this.reactiveRedisUtil.getExpire(tokenKey)
                 .map(Duration::getSeconds)
                 .map(expireTime -> expireTime + expire)

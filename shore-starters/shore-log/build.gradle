@@ -3,7 +3,7 @@ description "shore log starter"
 dependencies {
     api project(":shore-core")
     api project(":shore-starters:shore-logging")
-    api "org.springframework.boot:spring-boot-starter-aop"
+    api "org.springframework.boot:spring-boot-starter-aspectj"
     optional "org.springframework:spring-web"
     optional "io.projectreactor:reactor-core"
     api "io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations"

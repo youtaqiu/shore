@@ -1,18 +1,13 @@
 package run.vexa.reactor.core.util;
 
-import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.util.ReflectUtil;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.json.JsonReadFeature;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.core.json.JsonReadFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import run.vexa.reactor.core.jackson.JavaTimeModule;
 
-import java.io.Serial;
-import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -125,60 +120,14 @@ public class BeanUtil extends org.springframework.beans.BeanUtils {
      * JacksonHolder
      */
     private static final class JacksonHolder {
-        private static final ObjectMapper INSTANCE = new JacksonObjectMapper();
-    }
-
-    /**
-     * A custom ObjectMapper for configuring JSON serialization and deserialization settings.
-     */
-    private static class JacksonObjectMapper extends ObjectMapper {
-        @Serial
-        private static final long serialVersionUID = 4288193147502386170L;
-
-        private static final Locale CHINA = Locale.CHINA;
-
-        /**
-         * Default constructor.
-         */
-        JacksonObjectMapper() {
-            super(jsonFactory());
-            super.setLocale(CHINA);
-            super.setDateFormat(new SimpleDateFormat(DatePattern.NORM_DATETIME_PATTERN, CHINA));
-            // 单引号
-            super.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
-            // 忽略json字符串中不识别的属性
-            super.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            // 忽略无法转换的对象
-            super.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-            super.setTimeZone(TimeZone.getTimeZone(ZoneId.systemDefault()));
-            super.findAndRegisterModules();
-        }
-
-        /**
-         * Copy constructor.
-         *
-         * @param src the source ObjectMapper to copy from
-         */
-        JacksonObjectMapper(ObjectMapper src) {
-            super(src);
-        }
-
-        /**
-         * Creates a custom JsonFactory with specific settings.
-         *
-         * @return a configured JsonFactory instance
-         */
-        private static JsonFactory jsonFactory() {
-            return JsonFactory.builder()
-                    .configure(JsonReadFeature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true)
-                    .configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS, true)
-                    .build();
-        }
-
-        @Override
-        public ObjectMapper copy() {
-            return new JacksonObjectMapper(this);
-        }
+        private static final ObjectMapper INSTANCE = JsonMapper.builder()
+                .configure(JsonReadFeature.ALLOW_SINGLE_QUOTES, true)
+                .configure(JsonReadFeature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true)
+                .configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS, true)
+                .defaultLocale(Locale.CHINA)
+                .defaultTimeZone(TimeZone.getTimeZone(ZoneId.systemDefault()))
+                .addModule(new JavaTimeModule())
+                .build();
     }
 
 }

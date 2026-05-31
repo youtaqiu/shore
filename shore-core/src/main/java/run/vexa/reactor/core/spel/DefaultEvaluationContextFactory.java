@@ -3,7 +3,6 @@ package run.vexa.reactor.core.spel;
 import org.springframework.context.expression.BeanExpressionContextAccessor;
 import org.springframework.context.expression.BeanFactoryAccessor;
 import org.springframework.context.expression.EnvironmentAccessor;
-import org.springframework.context.expression.MapAccessor;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.core.StandardReflectionParameterNameDiscoverer;
 import org.springframework.expression.EvaluationContext;
@@ -55,7 +54,6 @@ class DefaultEvaluationContextFactory implements EvaluationContextFactory {
         StandardEvaluationContext context = new StandardEvaluationContext();
         context.addPropertyAccessor(new BeanExpressionContextAccessor());
         context.addPropertyAccessor(new BeanFactoryAccessor());
-        context.addPropertyAccessor(new MapAccessor());
         context.addPropertyAccessor(new EnvironmentAccessor());
         context.setTypeLocator(new StandardTypeLocator());
         context.setTypeConverter(new StandardTypeConverter());

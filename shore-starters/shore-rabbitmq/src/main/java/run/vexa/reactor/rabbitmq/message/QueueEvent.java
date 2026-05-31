@@ -2,8 +2,8 @@ package run.vexa.reactor.rabbitmq.message;
 
 import cn.hutool.core.util.IdUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -76,8 +76,8 @@ public abstract class QueueEvent implements Serializable {
     @JsonIgnore
     public byte[] getPayload() {
         try {
-            return new ObjectMapper().writeValueAsBytes(this);
-        } catch (JsonProcessingException e) {
+            return JsonMapper.builder().build().writeValueAsBytes(this);
+        } catch (JacksonException e) {
             throw new IllegalStateException(e);
         }
     }

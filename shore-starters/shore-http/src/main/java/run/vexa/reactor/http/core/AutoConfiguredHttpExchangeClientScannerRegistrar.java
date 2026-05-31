@@ -11,7 +11,7 @@ import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -22,6 +22,7 @@ import java.util.List;
  * @author rained
  **/
 @Slf4j
+@NullMarked
 public class AutoConfiguredHttpExchangeClientScannerRegistrar implements BeanFactoryAware, ImportBeanDefinitionRegistrar, ResourceLoaderAware, BeanClassLoaderAware {
 
     private ClassLoader classLoader;
@@ -38,22 +39,22 @@ public class AutoConfiguredHttpExchangeClientScannerRegistrar implements BeanFac
     }
 
     @Override
-    public void setBeanClassLoader(@NonNull ClassLoader classLoader) {
+    public void setBeanClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
 
     @Override
-    public void setBeanFactory(@NonNull BeanFactory beanFactory) throws BeansException {
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         this.beanFactory = beanFactory;
     }
 
     @Override
-    public void setResourceLoader(@NonNull ResourceLoader resourceLoader) {
+    public void setResourceLoader(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
 
     @Override
-    public void registerBeanDefinitions(@NonNull AnnotationMetadata importingClassMetadata, @NonNull BeanDefinitionRegistry registry) {
+    public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
         if (!AutoConfigurationPackages.has(this.beanFactory)) {
             log.warn("Could not determine auto-configuration package, automatic http exchange client scanning disabled.");
             return;

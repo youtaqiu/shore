@@ -17,7 +17,7 @@ public class PasswordEncoderAutoconfigure {
      * Default constructor.
      * This constructor is used for serialization and other reflective operations.
      */
-    public PasswordEncoderAutoconfigure() {
+    protected PasswordEncoderAutoconfigure() {
     }
 
     /**

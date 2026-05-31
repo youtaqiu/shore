@@ -8,7 +8,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.env.Environment;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
@@ -27,6 +27,7 @@ import java.util.Objects;
  * @author rained
  **/
 @SuppressWarnings("unused")
+@NullMarked
 public class HttpExchangeClientFactoryBean implements FactoryBean<Object>, EnvironmentAware, ApplicationContextAware {
 
     private static final String HTTP_PREFIX = "http://";
@@ -360,12 +361,12 @@ public class HttpExchangeClientFactoryBean implements FactoryBean<Object>, Envir
     }
 
     @Override
-    public void setEnvironment(@NonNull Environment environment) {
+    public void setEnvironment(Environment environment) {
         this.environment = environment;
     }
 
     @Override
-    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
 

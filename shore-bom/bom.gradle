@@ -35,7 +35,7 @@ dependencies {
         }
         api(project(":shore-commons"))
         api(project(":shore-core"))
-        project(":shore-starters").subprojects {
+        rootProject.project(":shore-starters").subprojects {
             api(it)
         }
     }

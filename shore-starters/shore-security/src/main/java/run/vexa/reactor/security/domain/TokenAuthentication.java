@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import javax.security.auth.Subject;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * TokenAuthentication is a class that represents token authentication information.
@@ -74,7 +75,7 @@ public class TokenAuthentication extends AbstractAuthenticationToken {
      * @param credentials credentials
      */
     public TokenAuthentication(Object principal, Object credentials) {
-        super(null);
+        super(Collections.emptyList());
         this.principal = principal;
         this.credentials = credentials;
     }

@@ -2,7 +2,7 @@ package run.vexa.reactor.log.autoconfigure;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NullMarked;
 import run.vexa.reactor.log.aspect.ApiLogAspect;
 import run.vexa.reactor.log.aspect.JoinPointSerialise;
 import run.vexa.reactor.log.handler.LogHandler;
@@ -39,11 +39,11 @@ class LogAutoConfigureTest {
         assertThat(handler).isNotNull();
     }
 
+    @NullMarked
     private record StaticObjectProvider(List<LogHandler> handlers) implements ObjectProvider<LogHandler> {
 
         @Override
-        @NonNull
-        public LogHandler getObject(@NonNull Object... args) {
+        public LogHandler getObject(Object... args) {
             return handlers.getFirst();
         }
 
@@ -58,13 +58,11 @@ class LogAutoConfigureTest {
         }
 
         @Override
-        @NonNull
         public Stream<LogHandler> stream() {
             return handlers.stream();
         }
 
         @Override
-        @NonNull
         public Stream<LogHandler> orderedStream() {
             return handlers.stream();
         }
