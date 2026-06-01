@@ -1,7 +1,7 @@
 [versions]
+hutool = "5.8.44"
 springBoot = "4.0.6"
 springCloud = "2025.1.0"
-hutool = "5.8.43"
 slf4jApi = "2.0.17"
 logstash = "9.0"
 loki4j = "2.0.3"
