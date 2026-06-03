@@ -2,7 +2,7 @@
 hutool = "5.8.44"
 springBoot = "4.0.6"
 springCloud = "2025.1.0"
-slf4jApi = "2.0.17"
+slf4jApi = "2.0.18"
 logstash = "9.0"
 loki4j = "2.0.3"
 jjwt = "0.13.0"
